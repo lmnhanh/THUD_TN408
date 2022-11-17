@@ -1,0 +1,20 @@
+﻿<a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+    <i class="fa fa-bell"></i>
+    <span class="badge bg-primary badge-number">4</span>
+</a><!-- End Notification Icon -->
+
+<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+    <li class="dropdown-header">
+        You have 4 new notifications
+        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+    </li>
+    @for(int i = 0; i< 4; i++){
+        <partial name="_NotificationItem"/>
+    }
+    <li>
+        <hr class="dropdown-divider">
+    </li>
+    <li class="dropdown-footer">
+        <a href="#">Show all notifications</a>
+    </li>
+</ul>

@@ -1,0 +1,97 @@
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.Category>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="pagetitle">
+    <h1>Danh sách loại sản phẩm</h1>
+    <nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item">Tables</li>
+        <li class="breadcrumb-item active">Data</li>
+    </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Datatables</h5>
+                    <table class="table datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>
+                                    Tên loại
+                                </th>
+                                <th>Trạng thái</th>
+                                <th>Tùy chọn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@Html.DisplayFor(modelItem => item.Id)</td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    @if (item.IsActive)
+                                    {
+                                        <td>
+                                            <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Đang kinh doanh</span>
+                                        </td>
+                                        <td class="justify-content-end">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" title="Xóa"><i class="fa-solid fa-trash-can me-1 text-danger"></i></a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Ngừng kinh doanh</span>
+                                        </td>
+                                        <td class="justify-content-end">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
+                                            <a asp-action="Recover" asp-route-id="@item.Id" title="Xóa"><i class="fa-solid fa-rotate-left me-1 text-success"></i></a>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if(!Model.IsFirstPage && !Model.IsLastPage){
+                        <nav>
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions()
+                            {
+                            ActiveLiElementClass = "active",
+                            PageClasses = new[]{ "page-link"},
+                            LiElementClasses=new[] { "page-item" },
+                            UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                            LinkToNextPageFormat = ">",
+                            LinkToPreviousPageFormat = "<",
+                            MaximumPageNumbersToDisplay = 4,
+                            DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                            DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+                            })
+                        </nav>
+                    }
+                </div>
+            </div>
+        }else{
+            <div>Danh sách trống</div>
+        }
+    </div>
+    @*<script>
+        function hello(e){
+            console.log(e.currentTarget.id)
+        }
+    </script>*@
+</div>
