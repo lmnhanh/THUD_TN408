@@ -1,0 +1,23 @@
+﻿<script>    
+    function deleteCate(id) {
+        event.preventDefault();
+        var url = event.currentTarget.href.substr(location.origin.length, 999)
+        $.ajax({
+            type: "GET",
+            url: url,
+        }).done(response => {
+            document.querySelector("#cate_" + id).innerHTML = response
+        })
+    }
+
+    function recoverCate(id) {
+        event.preventDefault();
+        var url = event.currentTarget.href.substr(location.origin.length, 999)
+        $.ajax({
+            type: "GET",
+            url: url,
+        }).done(response => {
+            document.querySelector("#cate_" + id).innerHTML = response
+        })
+    }
+</script>

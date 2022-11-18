@@ -60,7 +60,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Size,Color,Gender,Image1,Image2,ProductId")] ProductDetail productDetail)
         {
-            if (ModelState.IsValid)
+			if (ModelState.IsValid)
             {
                 _context.Add(productDetail);
                 await _context.SaveChangesAsync();

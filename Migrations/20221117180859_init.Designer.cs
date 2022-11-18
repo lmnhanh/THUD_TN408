@@ -12,7 +12,7 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    [Migration("20221117172331_init")]
+    [Migration("20221117180859_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -240,7 +240,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 17, 17, 23, 31, 630, DateTimeKind.Utc).AddTicks(1704))
+                        .HasDefaultValue(new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(690))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
@@ -306,7 +306,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("DateApply")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 17, 17, 23, 31, 630, DateTimeKind.Utc).AddTicks(3555));
+                        .HasDefaultValue(new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(2517));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");

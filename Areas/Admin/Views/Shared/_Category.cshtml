@@ -1,0 +1,30 @@
+﻿@model THUD_TN408.Models.Category
+
+<tr>
+    <td class="fw-bold">@Html.DisplayFor(modelItem => Model.Id)</td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Name)
+    </td>
+    @if (Model.IsActive == true)
+    {
+        <td>
+            <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Đang kinh doanh</span>
+        </td>
+        <td class="justify-content-end">
+            <a asp-action="Edit" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
+            <a asp-action="Details" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" title="Xóa"><i class="fa-solid fa-trash-can me-1 text-danger"></i></a>
+        </td>
+    }
+    else
+    {
+        <td>
+            <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Ngừng kinh doanh</span>
+        </td>
+        <td class="justify-content-end">
+            <a asp-action="Edit" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
+            <a asp-action="Details" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
+            <a asp-action="Recover" asp-route-id="@Model.Id" title="Xóa"><i class="fa-solid fa-rotate-left me-1 text-success"></i></a>
+        </td>
+    }
+</tr>

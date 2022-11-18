@@ -1,42 +1,68 @@
-﻿@model IEnumerable<THUD_TN408.Models.Category>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.Category>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="pagetitle">
+    <h1>Danh mục sản phẩm</h1>
+    <nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Categories/Index">Danh mục sản phẩm</a></li>
+    </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="card shadow">
+                <div class="card-body">
+                    <table class="table datatable table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>
+                                    Tên loại
+                                </th>
+                                <th>Trạng thái</th>
+                                <th>Tùy chọn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <partial name="_Category" model="item"/>
+                            }
+                        </tbody>
+                    </table>
+                    @if(!Model.IsFirstPage || !Model.IsLastPage){
+                        <nav>
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions()
+                            {
+                                ActiveLiElementClass = "active",
+                                PageClasses = new[]{ "page-link"},
+                                LiElementClasses=new[] { "page-item" },
+                                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                                LinkToNextPageFormat = ">",
+                                LinkToPreviousPageFormat = "<",
+                                MaximumPageNumbersToDisplay = 4,
+                                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+                            })
+                        </nav>
+                    }
+                </div>
+            </div>
+        }else{
+            <div>Danh sách trống</div>
+        }
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DeleteScriptsPartial");}
 }
-    </tbody>
-</table>
+

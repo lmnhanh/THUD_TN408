@@ -14,6 +14,6 @@
 		public virtual Product? Product { get; set; } = null!;
 		public virtual ICollection<Cart>? Carts { get; set; }
 		public virtual ICollection<WarehouseDetail>? StockDetails { get; set; }
-		public virtual ICollection<Price> Prices { get; set; } = null!;
+		public virtual ICollection<Price>? Prices { get; set; }
 	}
 }

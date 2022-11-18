@@ -1,27 +1,24 @@
 ﻿@model IEnumerable<THUD_TN408.Models.Product>
-<table class="table">
+<table class="table table-hover datatable">
     <thead>
         <tr>
+            <th>ID</th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Tên sản phẩm
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Origin)
+                Xuất xứ
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Trạng thái
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th></th>
+            <th>Tùy chọn</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <partial name="_Product" model="item"/>
+            <partial name="_Product" model="item" />
         }
     </tbody>
 </table>
-

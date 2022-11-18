@@ -157,7 +157,7 @@ namespace THUD_TN408.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 17, 17, 23, 31, 630, DateTimeKind.Utc).AddTicks(1704)),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(690)),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsTrans = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -350,7 +350,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 17, 17, 23, 31, 630, DateTimeKind.Utc).AddTicks(3555)),
+                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(2517)),
                     ProductDetailId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

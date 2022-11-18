@@ -4,24 +4,30 @@
     ViewData["Title"] = "Edit";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Edit</h1>
-
-<h4>Category</h4>
-<hr />
+<div class="pagetitle">
+    <h1>Chi tiết danh mục</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Categories/Index">Danh mục sản phẩm</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Categories/Details/@Model.Id">@Model.Name</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Categories/Edit/@Model.Id">Chỉnh sửa</a></li>
+        </ol>
+    </nav>
+</div>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+            <div class="form-floating">
+                <input asp-for="Name" class="form-control" placeholder="name"/>
+                <label asp-for="Name" class="control-label">Tên danh mục</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="IsActive" class="control-label"></label>
-                <input asp-for="IsActive" class="form-control" />
+            <div class="form-check">
+                <input asp-for="IsActive" type="checkbox" class="form-control" />
+                <label asp-for="IsActive" class="control-label">Đang kinh doanh?</label>
                 <span asp-validation-for="IsActive" class="text-danger"></span>
             </div>
             <div class="form-group">
