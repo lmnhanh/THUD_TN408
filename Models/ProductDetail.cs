@@ -6,7 +6,7 @@
 
 		public string Size { set; get; } = null!;
 		public string? Color { set; get; }
-		public bool? Gender { set; get; } = true;
+		public bool Gender { set; get; } = true;
 		public string? Image1 { set; get; }
 		public string? Image2 { set; get; }
 

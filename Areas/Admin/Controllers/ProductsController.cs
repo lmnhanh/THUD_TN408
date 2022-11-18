@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
+using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
@@ -21,10 +23,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var tN408DbContext = _context.Products.Include(p => p.Category);
-            return View(await tN408DbContext.ToListAsync());
+            page = (page < 1) ? 1 : page;
+            int size = 8;
+			var products = await _context.Products.ToPagedListAsync(page, size);
+			return View(products);
         }
 
         // GET: Admin/Products/Details/5

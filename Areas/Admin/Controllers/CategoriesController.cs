@@ -34,20 +34,21 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
 		// GET: Admin/Categories/Details/5
-		public async Task<IActionResult> Details(int? id)
+		public async Task<IActionResult> Details(int? id, int page= 1)
         {
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
             }
-
-            var category = await _context.Categories.Include(c => c.Products)
+			page = (page < 1) ? 1 : page;
+			int size = 5;
+			var category = await _context.Categories.Include(c => c.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
-            ViewData["ListProducts"] = category.Products;
+            ViewData["ListProducts"] = category.Products.ToPagedList(page, size);
 			ViewData["page"] = "categories";
 			return View(category);
         }

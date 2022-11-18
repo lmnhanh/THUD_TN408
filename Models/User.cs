@@ -6,7 +6,7 @@ namespace THUD_TN408.Models
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public bool? Gender { get; set; }
+        public bool Gender { get; set; } = true;
         public string? DateOfBirth { get; set; }
         public string? Address { get; set; }
 		public virtual ICollection<Cart>? Carts { get; set; }

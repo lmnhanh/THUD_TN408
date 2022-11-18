@@ -20,7 +20,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: true, defaultValue: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -64,7 +64,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Gender = table.Column<bool>(type: "bit", nullable: true),
+                    Gender = table.Column<bool>(type: "bit", nullable: false),
                     DOB = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -157,7 +157,7 @@ namespace THUD_TN408.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(690)),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 18, 5, 23, 12, 713, DateTimeKind.Utc).AddTicks(7854)),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsTrans = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -286,7 +286,7 @@ namespace THUD_TN408.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Size = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
                     Color = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    Gender = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
+                    Gender = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     Image1 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Image2 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: false)
@@ -350,7 +350,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(2517)),
+                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 18, 5, 23, 12, 714, DateTimeKind.Utc).AddTicks(1513)),
                     ProductDetailId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<THUD_TN408.Models.Product>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.Product>
 <table class="table table-hover datatable">
     <thead>
         <tr>
@@ -22,3 +24,20 @@
         }
     </tbody>
 </table>
+@if (!Model.IsFirstPage || !Model.IsLastPage)
+{
+    <nav>
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions()
+    {
+    ActiveLiElementClass = "active",
+    PageClasses = new[]{ "page-link"},
+    LiElementClasses=new[] { "page-item" },
+    UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+    LinkToNextPageFormat = ">",
+    LinkToPreviousPageFormat = "<",
+    MaximumPageNumbersToDisplay = 4,
+    DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+    DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+    })
+    </nav>
+}

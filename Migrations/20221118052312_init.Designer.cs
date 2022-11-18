@@ -12,7 +12,7 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    [Migration("20221117180859_init")]
+    [Migration("20221118052312_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -214,7 +214,7 @@ namespace THUD_TN408.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -240,7 +240,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(690))
+                        .HasDefaultValue(new DateTime(2022, 11, 18, 5, 23, 12, 713, DateTimeKind.Utc).AddTicks(7854))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
@@ -306,7 +306,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("DateApply")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 17, 18, 8, 59, 605, DateTimeKind.Utc).AddTicks(2517));
+                        .HasDefaultValue(new DateTime(2022, 11, 18, 5, 23, 12, 714, DateTimeKind.Utc).AddTicks(1513));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");
@@ -368,7 +368,7 @@ namespace THUD_TN408.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<bool?>("Gender")
+                    b.Property<bool>("Gender")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -428,7 +428,7 @@ namespace THUD_TN408.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<bool?>("Gender")
+                    b.Property<bool>("Gender")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")

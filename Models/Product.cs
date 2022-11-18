@@ -8,7 +8,7 @@ namespace THUD_TN408.Models
 		public string Name { get; set; } = null!;
 		public string Origin { get; set; } = null!;
 		public string Description { get; set; } = null!;
-		public bool? IsActive { get; set; }
+		public bool IsActive { get; set; }
 
 		public virtual ICollection<ProductDetail>? Details { get; set; }
 		public int CategoryId { get; set; }
