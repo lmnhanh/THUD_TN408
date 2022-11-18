@@ -174,25 +174,6 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return PartialView("_Category", category);
 		}
 
-		// POST: Admin/Categories/Delete/5
-		[HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Categories == null)
-            {
-                return Problem("Entity set 'TN408DbContext.Categories'  is null.");
-            }
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-            }
-            
-            await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
-        }
-
         private bool CategoryExists(int id)
         {
           return _context.Categories.Any(e => e.Id == id);

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
@@ -28,7 +29,26 @@ namespace THUD_TN408.Areas.Admin.Controllers
             page = (page < 1) ? 1 : page;
             int size = 8;
 			var products = await _context.Products.ToPagedListAsync(page, size);
+			ViewData["page"] = "products";
 			return View(products);
+        }
+
+        //GET product by category with paging
+        public async Task<IActionResult> GetProductByCate(int? id, int page = 1, int size = 5)
+        {
+            if (id == null || _context.Categories == null)
+            {
+                return NotFound();
+            }
+            page = (page < 1) ? 1 : page;
+            size = (size < 2) ? 5 : size;
+            var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(m => m.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            var products = category.Products.ToPagedList(page, size);
+            return View("_ListProducts", products);
         }
 
         // GET: Admin/Products/Details/5
@@ -46,15 +66,16 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
-            return View(product);
+			ViewData["page"] = "products";
+			return View(product);
         }
 
         // GET: Admin/Products/Create
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
-            return View();
+			ViewData["page"] = "products_create";
+			return View();
         }
 
         // POST: Admin/Products/Create
@@ -71,7 +92,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
+			ViewData["page"] = "products";
+			return View(product);
         }
 
         // GET: Admin/Products/Edit/5
@@ -87,8 +109,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+			ViewData["page"] = "products";
+			return View(product);
         }
 
         // POST: Admin/Products/Edit/5
@@ -123,8 +146,10 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
+            ViewData["CategoryId"] = new SelectList(_context.Categories.ToList(), "Id", "Name", product.CategoryId);
+			
+			ViewData["page"] = "products";
+			return View(product);
         }
 
         // GET: Admin/Products/Delete/5
@@ -142,7 +167,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["page"] = "products";
             return View(product);
         }
 

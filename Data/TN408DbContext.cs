@@ -43,7 +43,7 @@ namespace THUD_TN408.Data
 				product.Property("Id").ValueGeneratedOnAdd();
 				product.Property("Name").HasMaxLength(30);
 				product.Property("Origin").HasMaxLength(15);
-				product.Property("Description").HasMaxLength(200);
+				product.Property("Description").HasMaxLength(500);
 				product.Property("IsActive").HasDefaultValue(true);
 				product.HasMany<ProductDetail>(p => p.Details).WithOne(d => d.Product);
 			});

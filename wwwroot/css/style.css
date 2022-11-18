@@ -1075,3 +1075,21 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 13px;
   color: #012970;
 }
+
+/*Custom*/
+.minimize-toogle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.minimize-toogle:not(.collapsed){
+    transform: rotate(90deg);
+}
+
+.open {
+    transform: rotate(90deg);
+    transition-duration: 0.3s;
+    transition-property: transform;
+}

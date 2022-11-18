@@ -5,11 +5,11 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 <div class="pagetitle">
-    <h1>Chi tiết danh mục</h1>
+    <h1>Chỉnh sửa thông tin danh mục</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="/Admin/Categories/Index">Danh mục sản phẩm</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Categories/Index">Danh sách danh mục</a></li>
             <li class="breadcrumb-item"><a href="/Admin/Categories/Details/@Model.Id">@Model.Name</a></li>
             <li class="breadcrumb-item active"><a href="/Admin/Categories/Edit/@Model.Id">Chỉnh sửa</a></li>
         </ol>
@@ -24,9 +24,9 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
                     <div class="row mb-1 justify-content-center">
-                        <label asp-for="Name" class="col-4 col-form-label">Tên danh mục:</label>
-                        <div class="col-8">
-                            <input asp-for="Name" class="form-control" placeholder="name" />
+                        <label asp-for="Name" class="col-5 col-form-label fw-bold">Tên danh mục:</label>
+                        <div class="col-7">
+                            <input asp-for="Name" class="form-control" placeholder="Tên danh mục" />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                     </div>
                 </form>
                 <div class="d-flex">
-                    <input type="submit" form="edit_form" value="Lưu" class="mx-auto btn btn-sm btn-primary" />
+                    <input type="submit" form="edit_form" value="Lưu chỉnh sửa" class="mx-auto btn btn-sm btn-primary" />
                 </div>
             </div>
         </div>

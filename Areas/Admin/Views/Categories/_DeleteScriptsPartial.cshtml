@@ -12,7 +12,7 @@
 
     function recoverCate(id) {
         event.preventDefault();
-        var url = event.currentTarget.href.substr(location.origin.length, 999)
+        var url = event.currentTarget.href.substr(location.origin.length, 99)
         $.ajax({
             type: "GET",
             url: url,
