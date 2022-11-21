@@ -1,7 +1,7 @@
 ﻿@model THUD_TN408.Models.Category
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm danh mục";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 <div class="pagetitle">
@@ -25,7 +25,7 @@
                         <label asp-for="Name" class="col-4 col-form-label fw-bold">Tên danh mục:</label>
                         <div class="col-8">
                             <input asp-for="Name" class="form-control" placeholder="Tên danh mục" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
                     </div>
                 </form>

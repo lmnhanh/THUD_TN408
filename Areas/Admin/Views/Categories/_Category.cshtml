@@ -13,7 +13,7 @@
             <td class="justify-content-end">
                 <a asp-action="Edit" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
                 <a asp-action="Details" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
-                <a href="/Admin/Categories/Delete/@Model.Id" onclick="deleteCate(@Model.Id)" title="Xóa"><i class="fa-solid fa-trash-can me-1 text-danger"></i></a>
+                <a href="/Admin/Categories/Delete/@Model.Id" onclick="ModifyCate(@Model.Id)" title="Xóa"><i class="fa-solid fa-trash-can me-1 text-danger"></i></a>
             </td>
         }
         else
@@ -24,7 +24,7 @@
             <td class="justify-content-end">
                 <a asp-action="Edit" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
                 <a asp-action="Details" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
-                <a href="/Admin/Categories/Recover/@Model.Id" onclick="recoverCate(@Model.Id)" title="Khôi phục"><i class="fa-solid fa-rotate-left me-1 text-success"></i></a>
+                <a href="/Admin/Categories/Recovery/@Model.Id" onclick="ModifyCate(@Model.Id)" title="Khôi phục"><i class="fa-solid fa-rotate-left me-1 text-success"></i></a>
             </td>
         }
     </tr>

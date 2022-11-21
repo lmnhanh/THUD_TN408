@@ -27,14 +27,14 @@
                         <label asp-for="Name" class="col-3 col-form-label fw-bold">Tên sản phẩm:</label>
                         <div class="col-9">
                             <input asp-for="Name" class="form-control" placeholder="Giày Adidas AlphaBounce ..." />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
                     </div>
                     <div class="row mb-1 justify-content-center">
                         <label asp-for="Origin" class="col-3 col-form-label fw-bold">Nơi sản xuất:</label>
                         <div class="col-9">
                             <input asp-for="Origin" class="form-control" placeholder="Việt Nam" />
-                            <span asp-validation-for="Origin" class="text-danger"></span>
+                            <span asp-validation-for="Origin" class="text-danger small"></span>
                         </div>
                     </div>
                     <input type="hidden" id="real_description" asp-for="Description" />
@@ -45,6 +45,7 @@
                                 @Html.Raw(Model.Description)
                             </div>
                         </div>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
                     <div class="row mt-5 mb-1 justify-content-center">
                         <label asp-for="CategoryId" class="col-3 col-form-label fw-bold">Danh mục:</label>
@@ -72,7 +73,6 @@
             theme: 'snow'
         });
         function handleSubmit() {
-            console.info('handleSubmit called');
             document.getElementById('real_description').value = jdQuill.root.innerHTML;
         };
     </script>

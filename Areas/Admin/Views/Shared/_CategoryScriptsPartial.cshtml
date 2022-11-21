@@ -1,0 +1,12 @@
+﻿<script>    
+    function ModifyCate(id) {
+        event.preventDefault();
+        var url = event.currentTarget.href.substr(location.origin.length, 99)
+        $.ajax({
+            type: "POST",
+            url: url,
+        }).done(response => {
+            document.querySelector("#cate_" + id).innerHTML = response
+        })
+    }
+</script>

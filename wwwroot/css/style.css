@@ -1087,9 +1087,6 @@ h1, h2, h3, h4, h5, h6 {
 .minimize-toogle:not(.collapsed){
     transform: rotate(90deg);
 }
-
-.open {
-    transform: rotate(90deg);
-    transition-duration: 0.3s;
-    transition-property: transform;
+.title-collapse:hover{
+    cursor: pointer;
 }

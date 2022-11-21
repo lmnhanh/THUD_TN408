@@ -35,7 +35,7 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <partial name="_Category" model="item" />
+                               <partial name="_Category" model="item" />
                             }
                         </tbody>
                     </table>
@@ -69,6 +69,6 @@
     </div>
 </div>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_DeleteScriptsPartial");}
+    @{await Html.RenderPartialAsync("_CategoryScriptsPartial");}
 }
 

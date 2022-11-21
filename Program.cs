@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
+using THUD_TN408.Areas.Admin.Service;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<Services>();
 var connectionString = builder.Configuration.GetConnectionString("MyDatabase");
 builder.Services.AddDbContext<TN408DbContext>(options =>
 		options.UseSqlServer(connectionString));

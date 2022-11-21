@@ -3,11 +3,11 @@
 @model IPagedList<THUD_TN408.Models.Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách sản phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 <div class="pagetitle">
-    <h1>Danh mục sản phẩm</h1>
+    <h1>Danh sách sản phẩm</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
@@ -51,8 +51,8 @@
         </div>
     </div>
 </div>
-@*@section Scripts {
+@section Scripts {
     @{
-        await Html.RenderPartialAsync("_DeleteScriptsPartial");
+        await Html.RenderPartialAsync("_ProductScriptsPartial");
     }
-}*@
+}

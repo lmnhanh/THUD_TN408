@@ -1,4 +1,6 @@
-﻿@model THUD_TN408.Models.Product
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model THUD_TN408.Models.Product
 
 @{
     ViewData["Title"] = "Chi tiết sản phẩm";
@@ -19,117 +21,50 @@
     <div class="col-lg-7 col-md-8 col-12">
         <div class="card shadow">
             <div class="card-body">
-                <h5 class="card-title text-center my-1">Thông tin sản phẩm</h5>
-                <button class="btn btn-sm minimize-toogle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfo">
-                    <i class="fa fa-chevron-right"></i>
-                </button>
-                <div class="collapse" id="collapseInfo">
-                    <table class="table table-hover">
-                        <tr>
-                            <td class="fw-bold">ID</td>
-                            <td>@Model.Id</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Tên sản phẩm</td>
-                            <td>@Model.Name</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Nơi sản xuất</td>
-                            <td>@Model.Origin</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Mô tả</td>
-                            <td> @Html.Raw(Model.Description)</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Danh mục</td>
-                            <td> @Model.Category?.Name</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Trạng thái</td>
-                            @if (Model.IsActive == true)
-                            {
-                                <td>
-                                    <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Đang kinh doanh</span>
-                                </td>
-
-                            }
-                            else
-                            {
-                                <td>
-                                    <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Ngừng kinh doanh</span>
-                                </td>
-                            }
-                        </tr>
-                    </table>
-                    <div class="d-flex">
-                        <div class="mx-auto">
-                            @if (Model.IsActive == true)
-                            {
-                                <a class="btn btn-sm btn-primary mx-auto" href="/Admin/Products/Edit/@Model.Id">Chỉnh sửa</a>
-                            }
-                        </div>
-                    </div>
-                </div>
+                <partial name="_ProductInfo" model="Model"/>
             </div>
         </div>
     </div>
     <div class="col-12">
         <div class="card shadow">
             <div class="card-body">
-                Đay là danh sach chi tiết sản phẩm
-                @*@{
-                    IPagedList<Product>? products = (IPagedList<Product>?)ViewData["ListProducts"];
-                }
-                @if (products?.Any() == true)
+                <a asp-action="Create" asp-controller="ProductDetails" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
+                @{IPagedList<ProductDetail>? details = (IPagedList<ProductDetail>?)ViewData["ListDetails"];}
+                @if(details?.Any() == true)
                 {
-                    <h5 class="card-title text-center">Danh sách sản phẩm</h5>
-                    <table class="table table-hover datatable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>
-                                    Tên sản phẩm
-                                </th>
-                                <th>
-                                    Xuất xứ
-                                </th>
-                                <th>
-                                    Trạng thái
-                                </th>
-                                <th>Tùy chọn</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var product in products)
-                            {
-                                <partial name="_Product" model="product" />
-                            }
-                        </tbody>
-                    </table>
-                    @if (!products.IsFirstPage || !products.IsLastPage)
+                    <h5 class="card-title text-center">Danh sách chi tiết sản phẩm</h5>
+                    <partial name="_ListProductDetails" model="details"/>
+                    @if (!details.IsFirstPage || !details.IsLastPage)
                     {
                         <nav>
-                            @Html.PagedListPager(products, page => Url.Action("Details", new {id = Model.Id, page = page }), new PagedListRenderOptions()
-                    {
-                    ActiveLiElementClass = "active",
-                    PageClasses = new[]{ "page-link"},
-                    LiElementClasses=new[] { "page-item" },
-                    UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
-                    LinkToNextPageFormat = ">",
-                    LinkToPreviousPageFormat = "<",
-                    MaximumPageNumbersToDisplay = 4,
-                    DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
-                    DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
-                    })
+                            @Html.PagedListPager(details, page => Url.ActionLink("Details","Products", new {id = Model.Id, page = page }), new PagedListRenderOptions()
+                            {
+                                ActiveLiElementClass = "active",
+                                PageClasses = new[]{ "page-link"},
+                                LiElementClasses=new[] { "page-item" },
+                                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                                LinkToNextPageFormat = ">",
+                                LinkToPreviousPageFormat = "<",
+                                MaximumPageNumbersToDisplay = 4,
+                                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+                            })
                         </nav>
                     }
                 }
                 else
                 {
-                    <h6 class="card-title text-center">Chưa có sản phầm thuộc danh mục này</h6>
-                }*@
+                    <h6 class="card-title text-center">Chưa có chi tiết thuộc sản phẩm này!</h6>
+                    <div class="d-flex">
+                        <a asp-action="Create" asp-controller="ProductDetails" class="btn btn-sm btn-primary mx-auto">Thêm chi tiết mới!</a>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ProductScriptsPartial");
+    }
+}

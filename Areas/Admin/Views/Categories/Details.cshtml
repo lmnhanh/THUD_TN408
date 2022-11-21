@@ -22,11 +22,8 @@
     <div class="col-lg-6 col-md-7 col-12">
         <div class="card shadow">
             <div class="card-body">
-                <h5 class="card-title text-center my-1">Thông tin danh mục</h5>
-                <button class="btn btn-sm minimize-toogle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfo">
-                    <i class="fa fa-chevron-right"></i>
-                </button>
-                <div class="collapse" id="collapseInfo">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin danh mục</h5>
+                <div class="collapse show" id="collapseInfo">
                     <partial name="_CategoryDetail" model="Model"/>
                 </div>
             </div>
@@ -60,8 +57,16 @@
                     }
                 }else{
                     <h6 class="card-title text-center">Chưa có sản phầm thuộc danh mục này</h6>
+                    <div class="d-flex">
+                        <a asp-action="Create" asp-controller="Products" class="btn btn-sm btn-primary mx-auto">Thêm sản phẩm mới</a>
+                    </div>
                 }
             </div>
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ProductScriptsPartial");
+    }
+}

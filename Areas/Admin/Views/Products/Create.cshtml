@@ -1,48 +1,73 @@
 ﻿@model THUD_TN408.Models.Product
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm sản phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Create</h1>
-
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div class="pagetitle">
+    <h1>Thêm danh mục sản phẩm</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Products/Index">Danh sách sản phẩm</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Products/Create">Thêm</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin sản phẩm mới</h5>
+                <form asp-action="Create" id="create_form" onsubmit="handleSubmit()">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Name" class="col-3 col-form-label fw-bold">Tên sản phẩm:</label>
+                        <div class="col-9">
+                            <input asp-for="Name" class="form-control" placeholder="Tên sản phảm" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+                     <div class="row mb-1 justify-content-center">
+                        <label asp-for="Origin" class="col-3 col-form-label fw-bold">Nơi sản xuất:</label>
+                        <div class="col-9">
+                            <input asp-for="Origin" class="form-control" placeholder="Nơi sản xuất" />
+                            <span asp-validation-for="Origin" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-auto justify-content-center">
+                        <label asp-for="Description" class="col-3 col-form-label fw-bold">Mô tả:</label>
+                        <div class="col-9">
+                            <div id="description">
+                                @Html.Raw(Model?.Description)
+                            </div>
+                        </div>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                    <input type="hidden" id="real_description" asp-for="Description" />
+                    <div class="row mt-5 mb-1 justify-content-center">
+                        <label asp-for="CategoryId" class="col-3 col-form-label fw-bold">Danh mục:</label>
+                        <div class="col-9">
+                            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <input type="submit" value="Lưu" class="mx-auto mt-2 btn btn-sm btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Origin" class="control-label"></label>
-                <input asp-for="Origin" class="form-control" />
-                <span asp-validation-for="Origin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
+    <script>
+        let jdQuill = new Quill('#description', {
+            theme: 'snow'
+        });
+        function handleSubmit() {
+            document.getElementById('real_description').value = jdQuill.root.innerHTML;
+        };
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

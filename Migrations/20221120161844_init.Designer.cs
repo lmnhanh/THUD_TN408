@@ -12,7 +12,7 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    [Migration("20221118052312_init")]
+    [Migration("20221120161844_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -240,7 +240,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 18, 5, 23, 12, 713, DateTimeKind.Utc).AddTicks(7854))
+                        .HasDefaultValue(new DateTime(2022, 11, 20, 16, 18, 44, 2, DateTimeKind.Utc).AddTicks(5680))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
@@ -306,7 +306,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("DateApply")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 18, 5, 23, 12, 714, DateTimeKind.Utc).AddTicks(1513));
+                        .HasDefaultValue(new DateTime(2022, 11, 20, 16, 18, 44, 2, DateTimeKind.Utc).AddTicks(7690));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");
@@ -331,10 +331,10 @@ namespace THUD_TN408.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);

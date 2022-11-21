@@ -52,20 +52,22 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int page = 1)
         {
             if (id == null || _context.Products == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+			page = (page < 1) ? 1 : page;
+			int size = 5;
+			var product = await _context.Products.Include(p => p.Details).Include(p => p.Category).FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
+
+			ViewData["ListDetails"] = product.Details.ToPagedList(page, size);
 			ViewData["page"] = "products";
 			return View(product);
         }
@@ -73,7 +75,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
 			ViewData["page"] = "products_create";
 			return View();
         }
@@ -91,7 +93,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
 			ViewData["page"] = "products";
 			return View(product);
         }
@@ -152,7 +154,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(product);
         }
 
-        // GET: Admin/Products/Delete/5
+        // POST: Admin/Products/Delete/5
+        [HttpPost]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Products == null)
@@ -160,37 +163,45 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _context.Products.Include(p => p.Details).FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["page"] = "products";
-            return View(product);
-        }
 
-        // POST: Admin/Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'TN408DbContext.Products'  is null.");
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			if (product.Details!.Any())
+			{
+				_context.Update(product);
+				product.IsActive = false;
+				await _context.SaveChangesAsync();
+				return PartialView("_Product", product);
+			}
+			_context.Products.Remove(product);
+			_context.SaveChanges();
+			return PartialView("_Product", null);
+		}
 
-        private bool ProductExists(int id)
+        [HttpPost]
+		public async Task<IActionResult> Recovery(int? id)
+		{
+			if (id == null || _context.Products == null)
+			{
+				return NotFound();
+			}
+
+			var product = await _context.Products.Where(c => c.Id == id).FirstOrDefaultAsync();
+			if (product == null)
+			{
+				return NotFound();
+			}
+
+			_context.Update(product);
+			product.IsActive = true;
+			await _context.SaveChangesAsync();
+			return PartialView("_Product",product);
+		}
+
+		private bool ProductExists(int id)
         {
           return _context.Products.Any(e => e.Id == id);
         }

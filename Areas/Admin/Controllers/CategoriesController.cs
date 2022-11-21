@@ -130,34 +130,35 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(category);
 		}
 
-		// GET: Admin/Categories/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-        {
-			if (id == null || _context.Categories == null)
-            {
-                return NotFound();
-            }
-
-            var category = await _context.Categories.Where(c => c.Id == id).Include(c => c.Products).FirstOrDefaultAsync();
-            if (category == null)
-            {
-                return NotFound();
-            }
-            if (category.Products!.Any())
-            {
-                _context.Update(category);
-                category.IsActive = false;
-				await _context.SaveChangesAsync();
-                return PartialView("_Category", category);
+		[HttpPost]
+		public async Task<IActionResult> Delete(int id)
+		{
+			if (_context.Categories == null)
+			{
+				return NotFound();
 			}
-		    _context.Categories.Remove(category);
+
+			var category = await _context.Categories.Where(c => c.Id == id).Include(c => c.Products).FirstOrDefaultAsync();
+			if (category == null)
+			{
+				return NotFound();
+			}
+			if (category.Products!.Any())
+			{
+				_context.Update(category);
+				category.IsActive = false;
+				await _context.SaveChangesAsync();
+				return PartialView("_Category", category);
+			}
+			_context.Categories.Remove(category);
 			await _context.SaveChangesAsync();
 			return PartialView("_Category", null);
 		}
 
-		public async Task<IActionResult> Recover(int? id)
+		[HttpPost]
+		public async Task<IActionResult> Recovery(int id)
 		{
-			if (id == null || _context.Categories == null)
+			if (_context.Categories == null)
 			{
 				return NotFound();
 			}

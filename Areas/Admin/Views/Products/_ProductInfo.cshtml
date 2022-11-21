@@ -1,0 +1,50 @@
+﻿@model THUD_TN408.Models.Product
+<h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin sản phẩm</h5>
+<div class="collapse show" id="collapseInfo">
+    <table class="table table-hover">
+        <tr>
+            <td class="fw-bold">ID</td>
+            <td>@Model.Id</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Tên sản phẩm</td>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Nơi sản xuất</td>
+            <td>@Model.Origin</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Mô tả</td>
+            <td> @Html.Raw(Model.Description)</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Danh mục</td>
+            <td> @Model.Category?.Name</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Trạng thái</td>
+            @if (Model.IsActive == true)
+            {
+                <td>
+                    <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Đang kinh doanh</span>
+                </td>
+
+            }
+            else
+            {
+                <td>
+                    <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Ngừng kinh doanh</span>
+                </td>
+            }
+        </tr>
+    </table>
+    <div class="d-flex">
+        <div class="mx-auto">
+            @if (Model.IsActive == true)
+            {
+                <a class="btn btn-sm btn-primary mx-auto" href="/Admin/Products/Edit/@Model.Id">Chỉnh sửa</a>
+            }
+        </div>
+    </div>
+</div>
