@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using THUD_TN408.Data;
 
@@ -11,9 +12,10 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    partial class TN408DbContextModelSnapshot : ModelSnapshot
+    [Migration("20221121165536_init1")]
+    partial class init1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,10 +171,14 @@ namespace THUD_TN408.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsCheckedOut")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
@@ -181,7 +187,9 @@ namespace THUD_TN408.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -230,7 +238,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 21, 17, 27, 2, 898, DateTimeKind.Utc).AddTicks(65))
+                        .HasDefaultValue(new DateTime(2022, 11, 21, 16, 55, 36, 568, DateTimeKind.Utc).AddTicks(7929))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
@@ -290,7 +298,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("DateApply")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 21, 17, 27, 2, 898, DateTimeKind.Utc).AddTicks(1338));
+                        .HasDefaultValue(new DateTime(2022, 11, 21, 16, 55, 36, 568, DateTimeKind.Utc).AddTicks(9598));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");

@@ -1,4 +1,6 @@
 ﻿using THUD_TN408.Data;
+using THUD_TN408.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace THUD_TN408.Areas.Admin.Service
 {
@@ -10,8 +12,15 @@ namespace THUD_TN408.Areas.Admin.Service
         //    this._context = _context;
         //}
 
-		public async Task<string> UploadImage(IFormFile image, string? path = null)
+		public async Task<string?> UploadImage(IFormFile image, string? path = null)
         {
+
+			string[] permittedExtensions = { ".jpg", ".png" };
+            var ext = Path.GetExtension("\\"+image.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+            {
+                return null;
+            }
 			string randomName = Path.GetRandomFileName();
             string fileName = randomName.Substring(0, randomName.Length - 4) + image.FileName;
 
@@ -27,5 +36,12 @@ namespace THUD_TN408.Areas.Admin.Service
 			}
             return fileName;
 		}
+
+        public void DeleteImage(string? fileName)
+        {
+            if(fileName != null)
+                File.Delete(Path.Combine("wwwroot\\images\\products", fileName));
+            return;
+        }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Areas.Admin.Service;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
+using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
@@ -24,11 +25,14 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // GET: Admin/ProductDetails
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var tN408DbContext = _context.Details.Include(p => p.Product);
+			page = (page < 1) ? 1 : page;
+			int size = 8;
+
+			var details = await _context.Details.Include(d => d.Product).ToPagedListAsync(page, size);
 			ViewData["page"] = "products";
-			return View(await tN408DbContext.ToListAsync());
+			return View(details);
         }
 
         // GET: Admin/ProductDetails/Details/5
@@ -46,7 +50,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["page"] = "products";
             return View(productDetail);
         }
 
@@ -84,13 +88,13 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
 				    _context.Add(productDetail);
                     await _context.SaveChangesAsync();
-				    return RedirectToAction(nameof(Index));
+				    return RedirectToAction("Details", "Products", new {id = productDetail.ProductId, page = 1});
 			    }
 				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
 				return View(productDetail);
 
 			}
-            catch(Exception ex)
+            catch
             {
                 ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
 				return View(productDetail);
@@ -131,16 +135,39 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(productDetail);
-                    if(Image1 != null && Image1.Length > 0)
+                    ProductDetail? details = await _context.Details.FindAsync(productDetail.Id);
+                    if(details != null)
                     {
-                        productDetail.Image1 = await _services.UploadImage(Image1);
+						_context.Details.Update(details);
+						if (Image1 != null && Image1.Length > 0)
+						{
+                            string? fname = await _services.UploadImage(Image1);
+                            if(fname != null)
+                            {
+								_services.DeleteImage(details.Image1);
+								details.Image1 = fname;
+							}
+                            
+						}
+						if (Image2 != null && Image2.Length > 0)
+						{
+							string? fname = await _services.UploadImage(Image2);
+							if (fname != null)
+							{
+								_services.DeleteImage(details.Image2);
+								details.Image2 = fname;
+                            }
+						}
+                        details.Size = productDetail.Size;
+                        details.Color = productDetail.Color;
+                        details.Gender = productDetail.Gender;
+                        details.ProductId = productDetail.ProductId;
+						await _context.SaveChangesAsync();
                     }
-					if (Image2 != null && Image2.Length > 0)
-					{
-						productDetail.Image2 = await _services.UploadImage(Image2);
+                    else
+                    {
+						return NotFound();
 					}
-					await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -153,8 +180,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
+				return RedirectToAction("Details", "ProductDetails", new { id = productDetail.Id });
+			}
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
 			ViewData["page"] = "products";
 			return View(productDetail);
@@ -169,7 +196,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
             }
 
             var productDetail = await _context.Details
-                .Include(p => p.Product)
+                .Include(d => d.Product)
+                .Include(d => d.Carts)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (productDetail == null)
             {
@@ -191,6 +219,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
             var productDetail = await _context.Details.FindAsync(id);
             if (productDetail != null)
             {
+                _services.DeleteImage(productDetail.Image1);
+                _services.DeleteImage(productDetail.Image2);
                 _context.Details.Remove(productDetail);
             }
             

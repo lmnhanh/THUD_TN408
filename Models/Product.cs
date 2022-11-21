@@ -15,7 +15,7 @@ namespace THUD_TN408.Models
 		[Required(AllowEmptyStrings = false, ErrorMessage = "Mô tả về sản phẩm không được trống!")]
 		[MaxLength(500,ErrorMessage = "Mô tả không quá 500 kí tự!")]
 		public string Description { get; set; } = null!;
-		public bool IsActive { get; set; }
+		public bool IsActive { get; set; } = true;
 
 		public virtual ICollection<ProductDetail>? Details { get; set; }
 		public int CategoryId { get; set; }

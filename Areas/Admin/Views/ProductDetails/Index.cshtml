@@ -1,66 +1,53 @@
-﻿@model IEnumerable<THUD_TN408.Models.ProductDetail>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.ProductDetail>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Size)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Color)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image1)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image2)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Size)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Color)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image1)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image2)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="pagetitle">
+    <h1>Danh sách các chi tiết sản phẩm</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ProductDetails/Index">Danh sách chi tiết sản phẩm</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                @if (Model != null && Model.Count > 0)
+                {
+                    <partial name="_ListProductDetails" model="Model"/>
+                    @if (!Model.IsFirstPage || !Model.IsLastPage)
+                    {
+                        <nav>
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions()
+                            {
+                                ActiveLiElementClass = "active",
+                                PageClasses = new[]{ "page-link"},
+                                LiElementClasses=new[] { "page-item" },
+                                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                                LinkToNextPageFormat = ">",
+                                LinkToPreviousPageFormat = "<",
+                                MaximumPageNumbersToDisplay = 4,
+                                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+                            })
+                        </nav>
+                    }
+                }
+                else
+                {
+                    <h6 class="card-title text-center">Danh sách chi tiết sản phẩm trống</h6>
+                    <div class="d-flex">
+                        <a asp-action="Create" asp-controller="ProductDetails" class="btn btn-sm btn-primary mx-auto">Thêm chi tiết mới</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

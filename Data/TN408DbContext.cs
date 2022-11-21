@@ -33,8 +33,8 @@ namespace THUD_TN408.Data
 				user.Property("LastName").HasMaxLength(20);
 				user.Property("Address").IsRequired(false).HasMaxLength(100);
 				user.Property("DateOfBirth").IsRequired(false).HasColumnName("DOB");
-				user.HasMany<Cart>(c => c.Carts).WithOne(c => c.User);
-				user.HasMany<Order>(c => c.Orders).WithOne(o => o.User);
+				user.HasMany<Cart>(c => c.Carts).WithOne(c => c.User).HasForeignKey(c => c.UserId);
+				user.HasMany<Order>(c => c.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId);
 			});
 
 			builder.Entity<Product>(product =>
@@ -44,7 +44,6 @@ namespace THUD_TN408.Data
 				product.Property("Name").HasMaxLength(30);
 				product.Property("Origin").HasMaxLength(15);
 				product.Property("Description").HasMaxLength(500);
-				product.Property("IsActive").HasDefaultValue(true);
 				product.HasMany<ProductDetail>(p => p.Details).WithOne(d => d.Product);
 			});
 
@@ -54,7 +53,6 @@ namespace THUD_TN408.Data
 				detail.HasKey(p => p.Id);
 				detail.Property("Id").ValueGeneratedOnAdd();
 				detail.Property("Size").HasMaxLength(6);
-				detail.Property("Gender").HasDefaultValue(true);
 				detail.Property("Color").HasMaxLength(20);
 				detail.Property("Image1").HasMaxLength(50);
 				detail.Property("Image2").HasMaxLength(50);
@@ -82,7 +80,6 @@ namespace THUD_TN408.Data
 				category.HasKey(category => category.Id);
 				category.Property("Id").ValueGeneratedOnAdd();
 				category.Property("Name").HasMaxLength(20);
-				category.Property("IsActive").HasDefaultValue(true);
 				category.HasMany<Product>(c => c.Products).WithOne(p => p.Category);
 			});
 
@@ -99,9 +96,6 @@ namespace THUD_TN408.Data
 				order.HasKey(o => o.Id);
 				order.Property("Id").ValueGeneratedOnAdd();
 				order.Property("CreatedDate").HasDefaultValue(DateTime.UtcNow).HasColumnName("Created_at");
-				order.Property("IsPaid").HasDefaultValue(false);
-				order.Property("IsTrans").HasDefaultValue(false);
-				order.Property("IsSuccess").HasDefaultValue(false);
 				order.HasMany<Cart>(o => o.Carts).WithOne(c => c.Order).OnDelete(DeleteBehavior.NoAction);
 			});
 
@@ -109,9 +103,9 @@ namespace THUD_TN408.Data
 			{
 				cart.HasKey(c => c.Id);
 				cart.Property("Id").ValueGeneratedOnAdd();
-				cart.Property("Quantity").HasDefaultValue(1);
 				cart.Property("IsDeleted").HasDefaultValue(false);
 				cart.Property("IsCheckedOut").HasDefaultValue(false);
+				cart.Property("OrderId").IsRequired(false);
 			});
 
 			builder.Entity<Price>(price =>

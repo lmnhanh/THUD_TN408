@@ -157,7 +157,7 @@ namespace THUD_TN408.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 20, 16, 18, 44, 2, DateTimeKind.Utc).AddTicks(5680)),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 21, 16, 50, 21, 938, DateTimeKind.Utc).AddTicks(6177)),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsTrans = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -286,7 +286,7 @@ namespace THUD_TN408.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Size = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
                     Color = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    Gender = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Gender = table.Column<bool>(type: "bit", nullable: false),
                     Image1 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Image2 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: false)
@@ -350,7 +350,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 20, 16, 18, 44, 2, DateTimeKind.Utc).AddTicks(7690)),
+                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 21, 16, 50, 21, 938, DateTimeKind.Utc).AddTicks(8274)),
                     ProductDetailId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

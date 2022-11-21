@@ -12,8 +12,8 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    [Migration("20221120161844_init")]
-    partial class init
+    [Migration("20221121172703_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -171,14 +171,10 @@ namespace THUD_TN408.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsCheckedOut")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
@@ -187,9 +183,7 @@ namespace THUD_TN408.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -215,9 +209,7 @@ namespace THUD_TN408.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -240,23 +232,17 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 20, 16, 18, 44, 2, DateTimeKind.Utc).AddTicks(5680))
+                        .HasDefaultValue(new DateTime(2022, 11, 21, 17, 27, 2, 898, DateTimeKind.Utc).AddTicks(65))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSuccess")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsTrans")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
@@ -306,7 +292,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("DateApply")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 20, 16, 18, 44, 2, DateTimeKind.Utc).AddTicks(7690));
+                        .HasDefaultValue(new DateTime(2022, 11, 21, 17, 27, 2, 898, DateTimeKind.Utc).AddTicks(1338));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");
@@ -335,9 +321,7 @@ namespace THUD_TN408.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -369,9 +353,7 @@ namespace THUD_TN408.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("Gender")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Image1")
                         .HasMaxLength(50)

@@ -12,8 +12,8 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    [Migration("20221121135518_init2")]
-    partial class init2
+    [Migration("20221121165022_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -240,7 +240,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 21, 13, 55, 17, 753, DateTimeKind.Utc).AddTicks(9378))
+                        .HasDefaultValue(new DateTime(2022, 11, 21, 16, 50, 21, 938, DateTimeKind.Utc).AddTicks(6177))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
@@ -306,7 +306,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("DateApply")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 21, 13, 55, 17, 754, DateTimeKind.Utc).AddTicks(2590));
+                        .HasDefaultValue(new DateTime(2022, 11, 21, 16, 50, 21, 938, DateTimeKind.Utc).AddTicks(8274));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");
@@ -369,9 +369,7 @@ namespace THUD_TN408.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("Gender")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Image1")
                         .HasMaxLength(50)

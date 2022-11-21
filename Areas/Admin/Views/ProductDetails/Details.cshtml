@@ -4,52 +4,115 @@
     ViewData["Title"] = "Details";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Details</h1>
-
-<div>
-    <h4>ProductDetail</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Color)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Color)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image2)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image2)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Product)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Product.Name)
-        </dd>
-    </dl>
+<div class="pagetitle">
+    <h1>Thông tin chi tiết sản phẩm</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Products/Index">Danh sách sản phẩm</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Products/Details/@Model.Product?.Id">@Model.Product?.Name</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ProductDetails/Details/@Model.Id">Chi tiết @Model.Id</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ProductDetails/Details/@Model.Id">Chi tiết</a></li>
+        </ol>
+    </nav>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-md-4 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center my-1">Hình ảnh</h5>
+                @{
+                    string? firstImage;
+                    firstImage = (Model.Image1 != null) ? Model.Image1 : (Model.Image2 != null) ? Model.Image2 : null;
+                }
+                @if(firstImage != null){
+                    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+
+                        <div class="carousel-inner" style="height: 300px">
+                            <div class="carousel-item active">
+                                <img src="/images/products/@firstImage" class="d-block w-100" alt="...">
+                            </div>
+                            @if(Model.Image1 == firstImage){
+                                <div class="carousel-item">
+                                    <img src="/images/products/@Model.Image2" class="d-block w-100" alt="...">
+                                </div>
+                            }else{
+                                <div class="carousel-item">
+                                    <img src="/images/products/@Model.Image1" class="d-block w-100" alt="...">
+                                </div>
+                            }
+                        </div>
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+
+                    </div>
+                }else{
+                    <h6 class="card-title text-center">Không có ảnh để hiển thị</h6>
+                    <div class="d-flex">
+                        <a asp-action="Edit" asp-controller="ProductDetails" asp-route-id="@Model.Id" class="btn btn-sm btn-primary mx-auto">Thêm ảnh</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7 col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin sản phẩm</h5>
+                <div class="collapse show" id="collapseInfo">
+                    <table class="table table-hover">
+                        <tr>
+                            <td class="fw-bold">ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tên sản phẩm</td>
+                            <td>@Model.Product?.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Kích cỡ</td>
+                            <td>@Model.Size</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Màu sắc</td>
+                            <td>@Model.Color</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Phái</td>
+                            @if (Model.Gender)
+                            {
+                                <td>
+                                    <span class="badge rounded-pill bg-info"><i class="fa fa-mars me-1"></i>Nam</span>
+                                </td>
+
+                            }
+                            else
+                            {
+                                <td>
+                                    <span class="badge rounded-pill bg-info"><i class="fa fa-venus me-1"></i>Nữ</span>
+                                </td>
+                            }
+                        </tr>
+                    </table>
+                    <div class="d-flex">
+                        <div class="mx-auto">
+                            <a class="btn btn-sm btn-info mx-auto" href="/Admin/ProductDetails/Index" title="Danh sách"><i class="fa fa-bars "></i></a>
+                            @if (Model.Product?.IsActive == true)
+                            {
+                                <a class="btn btn-sm btn-primary mx-auto" href="/Admin/ProductDetails/Edit/@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square"></i></a>
+                            }
+                            <a class="btn btn-sm btn-danger mx-auto" href="/Admin/ProductDetails/Delete/@Model.Id" title="Xóa"><i class="fa fa-trash-can"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

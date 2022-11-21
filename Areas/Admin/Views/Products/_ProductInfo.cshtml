@@ -41,9 +41,10 @@
     </table>
     <div class="d-flex">
         <div class="mx-auto">
+            <a class="btn btn-sm btn-info mx-auto" href="/Admin/Products/Index" title="Danh sách"><i class="fa fa-bars "></i></a>
             @if (Model.IsActive == true)
             {
-                <a class="btn btn-sm btn-primary mx-auto" href="/Admin/Products/Edit/@Model.Id">Chỉnh sửa</a>
+                <a class="btn btn-sm btn-primary mx-auto" href="/Admin/Products/Edit/@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square"></i></a>
             }
         </div>
     </div>

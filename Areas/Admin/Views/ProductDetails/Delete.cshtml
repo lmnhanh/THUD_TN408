@@ -4,55 +4,70 @@
     ViewData["Title"] = "Delete";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
+<div class="pagetitle">
+    <h1>Xác nhận xóa chi tiết sản phẩm</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Products/Index">Danh sách sản phẩm</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Products/Details/@Model.Product?.Id">@Model.Product?.Name</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ProductDetails/Details/@Model.Id">Chi tiết @Model.Id</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ProductDetails/Delete/@Model.Id">Xóa</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin sản phẩm</h5>
+                <div class="collapse show" id="collapseInfo">
+                    <table class="table table-hover">
+                        <tr>
+                            <td class="fw-bold">ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tên sản phẩm</td>
+                            <td>@Model.Product?.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Kích cỡ</td>
+                            <td>@Model.Size</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Màu sắc</td>
+                            <td>@Model.Color</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Phái</td>
+                            @if (Model.Gender)
+                            {
+                                <td>
+                                    <span class="badge rounded-pill bg-info"><i class="fa fa-mars me-1"></i>Nam</span>
+                                </td>
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>ProductDetail</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Color)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Color)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image2)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image2)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Product)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Product.Name)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+                            }
+                            else
+                            {
+                                <td>
+                                    <span class="badge rounded-pill bg-info"><i class="fa fa-venus me-1"></i>Nữ</span>
+                                </td>
+                            }
+                        </tr>
+                    </table>
+                    <div class="d-flex">
+                        <div class="mx-auto">
+                            @if (Model.Carts?.Any() == true)
+                            {
+                                <div class="fw-bold"><i class="fa fa-ban text-danger me-1"></i>Sản phẩm đã có đơn hàng hoặc nằm trong giỏ hàng!</div>
+                            }else{
+                                <a class="btn btn-sm btn-danger mx-auto" href="/Admin/ProductDetails/Delete/@Model.Id" title="Xóa"><i class="fa fa-trash-can me-1"></i>Xác nhận xóa</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
