@@ -1,20 +1,31 @@
-﻿<a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+﻿@model IEnumerable<THUD_TN408.Models.History>
+
+
+<a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
     <i class="fa fa-bell"></i>
-    <span class="badge bg-primary badge-number">4</span>
+    @{
+        int total = 0;
+        if (Model != null && Model.Any()) total = Model.Count();
+    }
+    <span class="badge bg-primary badge-number">@total</span>
 </a><!-- End Notification Icon -->
 
-<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" style="width: 350px">
     <li class="dropdown-header">
-        You have 4 new notifications
-        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+        Bạn có @total thông báo mới
     </li>
-    @for(int i = 0; i< 4; i++){
-        <partial name="_NotificationItem"/>
+    @if(Model != null){
+
+        foreach (var notif in (total > 4)? Model.Take(4) : Model)
+        {
+            <partial name="_NotificationItem" model="notif"/>
+        }
     }
+
     <li>
         <hr class="dropdown-divider">
     </li>
     <li class="dropdown-footer">
-        <a href="#">Show all notifications</a>
+        <a asp-action="Index" asp-controller="Histories" class="btn btn-sm btn-light text-decoration-none">Xem tất cả thông báo</a>
     </li>
 </ul>

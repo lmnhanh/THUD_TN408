@@ -1,0 +1,27 @@
+﻿@model IPagedList<THUD_TN408.Models.ProductPromotion>
+
+@{
+    ViewData["Title"] = "Danh sách khuyến mãi";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Danh sách khuyến mãi cho sản phẩm</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ProductPromotions/Index">Danh sách khuyến mãi</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body" id="promotionsTable">
+                <partial name="_ListProductPromotions" model="Model"/>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    
+}

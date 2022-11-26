@@ -24,58 +24,65 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index()
         {
-            page = (page < 1) ? 1 : page;
-            int size = 8;
-			var products = await _context.Products.ToPagedListAsync(page, size);
+            var products = await _context.Products.ToPagedListAsync(1, 8);
 			ViewData["page"] = "products";
 			return View(products);
         }
 
-        //GET product by category with paging
-        public async Task<IActionResult> GetProductByCate(int? id, int page = 1, int size = 5)
+        //GET products with paging
+        public async Task<IActionResult> Paging(int? categoryId, int page = 1, int size = 8)
         {
-            if (id == null || _context.Categories == null)
-            {
-                return NotFound();
-            }
             page = (page < 1) ? 1 : page;
-            size = (size < 2) ? 5 : size;
-            var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            size = (size < 2) ? 2 : size;
+            IPagedList<Product> products;
+            if(categoryId != null)
             {
-                return NotFound();
+                var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(m => m.Id == categoryId);
+                if(category != null)
+                {
+					products = await category.Products.ToPagedListAsync(page, size);
+					return PartialView("_ListProducts", products);
+				}
+                return PartialView("_ListProducts", null);
             }
-            var products = category.Products.ToPagedList(page, size);
-            return View("_ListProducts", products);
+            
+            products = await _context.Products.ToPagedListAsync(page, size);
+            return PartialView("_ListProducts", products);
         }
 
         // GET: Admin/Products/Details/5
-        public async Task<IActionResult> Details(int? id, int page = 1)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Products == null)
             {
                 return NotFound();
             }
 
-			page = (page < 1) ? 1 : page;
-			int size = 5;
-			var product = await _context.Products.Include(p => p.Details).Include(p => p.Category).FirstOrDefaultAsync(m => m.Id == id);
+			var product = await _context.Products.Include(p => p.Details).Include(p => p.Category).Include(p => p.Promotions).FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
 
-			ViewData["ListDetails"] = product.Details.ToPagedList(page, size);
+			ViewData["ListDetails"] = await product.Details.ToPagedListAsync(1, 8);
+            ViewData["ListPromotions"] = await product.Promotions.ToPagedListAsync(1, 8);
 			ViewData["page"] = "products";
 			return View(product);
         }
 
         // GET: Admin/Products/Create
-        public IActionResult Create()
+        public IActionResult Create(int? categoryId)
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            if(categoryId != null)
+            {
+				ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", categoryId);
+            }
+            else
+            {
+                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            }
 			ViewData["page"] = "products_create";
 			return View();
         }

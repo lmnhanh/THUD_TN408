@@ -11,12 +11,12 @@
     }
     function ModifyDetail(id) {
         event.preventDefault();
-        //var url = event.currentTarget.href.substr(location.origin.length, 99)
-        //$.ajax({
-        //    type: "POST",
-        //    url: url,
-        //}).done(response => {
-        //    document.querySelector("#product_" + id).innerHTML = response
-        //})
+        var url = event.currentTarget.href.substr(location.origin.length, 99)
+        $.ajax({
+            type: "POST",
+            url: url,
+        }).done(response => {
+            document.querySelector("#detail_" + id).innerHTML = response
+        })
     }
 </script>

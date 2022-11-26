@@ -20,5 +20,6 @@ namespace THUD_TN408.Models
 		public virtual ICollection<ProductDetail>? Details { get; set; }
 		public int CategoryId { get; set; }
 		public virtual Category? Category { get; set; } = null!;
+		public virtual ICollection<ProductPromotion>? Promotions { get; set; }
 	}
 }

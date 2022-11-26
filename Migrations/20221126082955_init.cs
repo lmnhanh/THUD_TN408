@@ -20,11 +20,32 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OPromotions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ApplyFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ValidTo = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
+                    MaxDiscount = table.Column<int>(type: "int", nullable: true),
+                    DiscountPercent = table.Column<int>(type: "int", nullable: false),
+                    ApplyCondition = table.Column<int>(type: "int", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OPromotions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,7 +133,7 @@ namespace THUD_TN408.Migrations
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Origin = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -151,36 +172,27 @@ namespace THUD_TN408.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "Histories",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 21, 16, 50, 21, 938, DateTimeKind.Utc).AddTicks(6177)),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    IsTrans = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Message = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TargetUrl = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 26, 15, 29, 55, 744, DateTimeKind.Local).AddTicks(8251)),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_Histories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Payments_PaymentId",
-                        column: x => x.PaymentId,
-                        principalSchema: "dbo",
-                        principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Orders_User_UserId",
+                        name: "FK_Histories_User_UserId",
                         column: x => x.UserId,
                         principalSchema: "dbo",
                         principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -278,6 +290,33 @@ namespace THUD_TN408.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PPromotions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ApplyFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ValidTo = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
+                    DiscountPercent = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PPromotions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PPromotions_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductDetails",
                 schema: "dbo",
                 columns: table => new
@@ -304,37 +343,45 @@ namespace THUD_TN408.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Carts",
+                name: "Orders",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Quantity = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    IsCheckedOut = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    ProductDetailId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(5924)),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsTrans = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    PaymentId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderPromotionId = table.Column<string>(type: "nvarchar(12)", nullable: true),
+                    ProductPromotionId = table.Column<string>(type: "nvarchar(12)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Carts_Orders_OrderId",
-                        column: x => x.OrderId,
+                        name: "FK_Orders_OPromotions_OrderPromotionId",
+                        column: x => x.OrderPromotionId,
                         principalSchema: "dbo",
-                        principalTable: "Orders",
+                        principalTable: "OPromotions",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Carts_ProductDetails_ProductDetailId",
-                        column: x => x.ProductDetailId,
+                        name: "FK_Orders_Payments_PaymentId",
+                        column: x => x.PaymentId,
                         principalSchema: "dbo",
-                        principalTable: "ProductDetails",
+                        principalTable: "Payments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Carts_User_UserId",
+                        name: "FK_Orders_PPromotions_ProductPromotionId",
+                        column: x => x.ProductPromotionId,
+                        principalSchema: "dbo",
+                        principalTable: "PPromotions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Orders_User_UserId",
                         column: x => x.UserId,
                         principalSchema: "dbo",
                         principalTable: "User",
@@ -350,7 +397,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    DateApply = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 21, 16, 50, 21, 938, DateTimeKind.Utc).AddTicks(8274)),
+                    ApplyFrom = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(8039)),
                     ProductDetailId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -393,6 +440,45 @@ namespace THUD_TN408.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsCheckedOut = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ProductDetailId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalSchema: "dbo",
+                        principalTable: "Orders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Carts_ProductDetails_ProductDetailId",
+                        column: x => x.ProductDetailId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Carts_User_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "dbo",
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_OrderId",
                 schema: "dbo",
@@ -412,16 +498,40 @@ namespace THUD_TN408.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Histories_UserId",
+                schema: "dbo",
+                table: "Histories",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_OrderPromotionId",
+                schema: "dbo",
+                table: "Orders",
+                column: "OrderPromotionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_PaymentId",
                 schema: "dbo",
                 table: "Orders",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_ProductPromotionId",
+                schema: "dbo",
+                table: "Orders",
+                column: "ProductPromotionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 schema: "dbo",
                 table: "Orders",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PPromotions_ProductId",
+                schema: "dbo",
+                table: "PPromotions",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prices_ProductDetailId",
@@ -501,6 +611,10 @@ namespace THUD_TN408.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "Histories",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "Prices",
                 schema: "dbo");
 
@@ -545,7 +659,15 @@ namespace THUD_TN408.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "OPromotions",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "Payments",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "PPromotions",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

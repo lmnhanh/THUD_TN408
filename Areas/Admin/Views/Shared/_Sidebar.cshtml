@@ -10,6 +10,24 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link @((((string?)ViewData["page"])?.Contains("orders") == true)?"":"collapsed")" data-bs-target="#order-nav" data-bs-toggle="collapse" href="#">
+                <i class="fa fa-basket-shopping"></i><span>Quản lí đơn hàng</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+            </a>
+            <ul id="order-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("orders") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="/Admin/Orders" class="@(((string?)ViewData["page"]=="orders")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Danh sách</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Orders/Statistic" class="@(((string?)ViewData["page"]=="orders_statistic")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Thống kê</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link @((((string?)ViewData["page"])?.Contains("products") == true)?"":"collapsed")" data-bs-target="#product-nav" data-bs-toggle="collapse" href="#">
                 <i class="fa fa-store"></i><span>Quản lí sản phẩm</span><i class="fa-solid fa-chevron-right ms-auto"></i>
             </a>
@@ -40,6 +58,60 @@
                 <li>
                     <a href="/Admin/Categories/Create" class="@(((string?)ViewData["page"]=="categories_create")? "active" : "")">
                         <i class="fa fa-circle"></i><span>Thêm mới</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"":"collapsed")" data-bs-target="#warehouse-nav" data-bs-toggle="collapse" href="#">
+                <i class="fa fa-warehouse"></i><span>Quản lí kho</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+            </a>
+            <ul id="warehouse-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="/Admin/Warehouses" class="@(((string?)ViewData["page"]=="warehouses")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Danh sách</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/WarehouseDetails" class="@(((string?)ViewData["page"]=="warehouses_create")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Chi tiết</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link @((((string?)ViewData["page"])?.Contains("promotions") == true)?"":"collapsed")" data-bs-target="#promotion-nav" data-bs-toggle="collapse" href="#">
+                <i class="fa fa-percent"></i><span>Quản lí khuyến mãi</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+            </a>
+            <ul id="promotion-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("promotions") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="/Admin/ProductPromotions" class="@(((string?)ViewData["page"]=="ppromotions")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Khuyến mãi cho sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/OrderPromotions" class="@(((string?)ViewData["page"]=="opromotions")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Khuyến mãi cho đơn hàng</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link @((((string?)ViewData["page"])?.Contains("payments") == true)?"":"collapsed")" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
+                <i class="fa fa-wallet"></i><span>Quản lí thanh toán</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+            </a>
+            <ul id="payment-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("payments") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="/Admin/Payments" class="@(((string?)ViewData["page"]=="payments")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Danh sách</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Payments/Create" class="@(((string?)ViewData["page"]=="payments_create")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Thống kê</span>
                     </a>
                 </li>
             </ul>

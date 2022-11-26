@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace THUD_TN408.Models
 {
@@ -12,6 +14,10 @@ namespace THUD_TN408.Models
 		[MaxLength(20, ErrorMessage = "Màu sắc không quá 20 kí tự!")]
 		public string? Color { set; get; }
 		public bool Gender { set; get; }
+		[NotMapped]
+		public int Stock { set; get; }
+		[NotMapped]
+		public string? FullName { set; get; } 
 		public string? Image1 { set; get; }
 		public string? Image2 { set; get; }
 

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,31 +14,57 @@ using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize]
     public class ProductDetailsController : Controller
     {
         private readonly TN408DbContext _context;
-        private Services _services;
+        private readonly Services _services;
 
-        public ProductDetailsController(TN408DbContext context, Services services)
+        public ProductDetailsController(TN408DbContext context, UserManager<User> userManager)
         {
             _context = context;
-            _services = services;
-        }
+			_services = new Services(context, userManager);
+		}
 
         // GET: Admin/ProductDetails
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int size = 8)
         {
 			page = (page < 1) ? 1 : page;
-			int size = 8;
+			size = (size < 2) ? 2 : size;
 
-			var details = await _context.Details.Include(d => d.Product).ToPagedListAsync(page, size);
+			var details = _context.Details.Include(d => d.Product).Include(d => d.StockDetails);
+            foreach(var detail in details)
+            {
+                if(detail.StockDetails != null) {
+					detail.Stock = detail.StockDetails.ToList().Sum(x => x.Stock);
+				}
+                
+            }
 			ViewData["page"] = "products";
-			return View(details);
+			return View(await details.ToPagedListAsync(page, size));
         }
 
-        // GET: Admin/ProductDetails/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+		public async Task<IActionResult> Paging(int page = 1, int size = 8)
+		{
+			page = (page < 1) ? 1 : page;
+            size = (size < 2) ? 2 : size;
+
+			var details = _context.Details.Include(d => d.Product).Include(d => d.StockDetails);
+			foreach (var detail in details)
+			{
+				if (detail.StockDetails != null)
+				{
+					detail.Stock = detail.StockDetails.ToList().Sum(x => x.Stock);
+				}
+
+			}
+			ViewData["page"] = "products";
+			return PartialView("_ListProductDetails", await details.ToPagedListAsync(page, size));
+		}
+
+		// GET: Admin/ProductDetails/Details/5
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Details == null)
             {
@@ -45,19 +73,28 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
             var productDetail = await _context.Details
                 .Include(p => p.Product)
+                .Include(p => p.StockDetails)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (productDetail == null)
             {
                 return NotFound();
             }
             ViewData["page"] = "products";
+            productDetail.Stock = productDetail.StockDetails!.Sum(p => p.Stock);
             return View(productDetail);
         }
 
         // GET: Admin/ProductDetails/Create
-        public IActionResult Create()
+        public IActionResult Create(int? productId)
         {
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+            if(productId != null)
+            {
+                ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productId);
+            }
+            else
+            {
+				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+			}
 			ViewData["page"] = "products";
 			return View();
         }
@@ -88,8 +125,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
 				    _context.Add(productDetail);
                     await _context.SaveChangesAsync();
-				    return RedirectToAction("Details", "Products", new {id = productDetail.ProductId, page = 1});
-			    }
+
+					return RedirectToAction("Details", "Products", new {id = productDetail.ProductId, page = 1});
+				}
 				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
 				return View(productDetail);
 
@@ -208,8 +246,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // POST: Admin/ProductDetails/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpGet, ActionName("DeleteConfirmed")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Details == null)
@@ -217,18 +254,48 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return Problem("Entity set 'TN408DbContext.Details'  is null.");
             }
             var productDetail = await _context.Details.FindAsync(id);
-            if (productDetail != null)
-            {
-                _services.DeleteImage(productDetail.Image1);
-                _services.DeleteImage(productDetail.Image2);
-                _context.Details.Remove(productDetail);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
-        private bool ProductDetailExists(int id)
+			if (productDetail != null)
+			{
+				if (productDetail.Carts == null)
+                {
+                    _services.DeleteImage(productDetail.Image1);
+				    _services.DeleteImage(productDetail.Image2);
+				    _context.Details.Remove(productDetail);
+				    await _context.SaveChangesAsync();
+                }
+			}
+			return RedirectToAction(nameof(Index));
+		}
+
+		[HttpPost, ActionName("DeleteAsync")]
+		public async Task<IActionResult> DeleteAsync(int id)
+		{
+			if (_context.Details == null)
+			{
+				return Problem("Entity set 'TN408DbContext.Details'  is null.");
+			}
+			var productDetail = await _context.Details.FindAsync(id);
+
+			int productId;
+			if (productDetail != null)
+			{
+				if (productDetail.Carts == null)
+				{
+					productId = productDetail.ProductId;
+					_services.DeleteImage(productDetail.Image1);
+					_services.DeleteImage(productDetail.Image2);
+					_context.Details.Remove(productDetail);
+					await _context.SaveChangesAsync();
+					return PartialView("_ProductDetail", null);
+				}
+				return PartialView("_ProductDetail", productDetail);
+
+			}
+			return PartialView("_ProductDetail", null);
+		}
+
+		private bool ProductDetailExists(int id)
         {
           return _context.Details.Any(e => e.Id == id);
         }

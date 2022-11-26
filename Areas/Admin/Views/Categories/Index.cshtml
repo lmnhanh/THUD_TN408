@@ -1,6 +1,4 @@
-﻿@using X.PagedList.Mvc.Core
-@using X.PagedList.Web.Common
-@model IPagedList<THUD_TN408.Models.Category>
+﻿@model IPagedList<THUD_TN408.Models.Category>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,52 +16,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card shadow">
-            <div class="card-body">
-                @if (Model != null && Model.Count > 0)
-                {
-                    <table class="table datatable table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>
-                                    Tên loại
-                                </th>
-                                <th>Trạng thái</th>
-                                <th>Tùy chọn</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                               <partial name="_Category" model="item" />
-                            }
-                        </tbody>
-                    </table>
-                    @if (!Model.IsFirstPage || !Model.IsLastPage)
-                    {
-                        <nav>
-                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions()
-                    {
-                    ActiveLiElementClass = "active",
-                    PageClasses = new[]{ "page-link"},
-                    LiElementClasses=new[] { "page-item" },
-                    UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
-                    LinkToNextPageFormat = ">",
-                    LinkToPreviousPageFormat = "<",
-                    MaximumPageNumbersToDisplay = 4,
-                    DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
-                    DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
-                    })
-                        </nav>
-                    }
-                }
-                else
-                {
-                    <h6 class="card-title text-center">Danh sách danh mục trống</h6>
-                    <div class="d-flex">
-                        <a asp-action="Create" asp-controller="Categories" class="btn btn-sm btn-primary mx-auto">Thêm danh mục mới</a>
-                    </div>
-                }
+            <div class="card-body" id="categoriesTable">
+                <partial name="_ListCategories" model="Model"/>
             </div>
         </div>
     </div>

@@ -18,35 +18,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card shadow">
-            <div class="card-body">
-                @if (Model != null && Model.Count > 0)
-                {
-                    <partial name="_ListProductDetails" model="Model"/>
-                    @if (!Model.IsFirstPage || !Model.IsLastPage)
-                    {
-                        <nav>
-                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions()
-                            {
-                                ActiveLiElementClass = "active",
-                                PageClasses = new[]{ "page-link"},
-                                LiElementClasses=new[] { "page-item" },
-                                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
-                                LinkToNextPageFormat = ">",
-                                LinkToPreviousPageFormat = "<",
-                                MaximumPageNumbersToDisplay = 4,
-                                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
-                                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
-                            })
-                        </nav>
-                    }
-                }
-                else
-                {
-                    <h6 class="card-title text-center">Danh sách chi tiết sản phẩm trống</h6>
-                    <div class="d-flex">
-                        <a asp-action="Create" asp-controller="ProductDetails" class="btn btn-sm btn-primary mx-auto">Thêm chi tiết mới</a>
-                    </div>
-                }
+            <div class="card-body" id="pagingDetail">
+                <partial name="_ListProductDetails" model="Model"/>
             </div>
         </div>
     </div>

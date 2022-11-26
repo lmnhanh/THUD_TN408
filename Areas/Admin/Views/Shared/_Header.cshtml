@@ -1,4 +1,7 @@
-﻿<header id="header" class="header fixed-top d-flex align-items-center">
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+
+<header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
         <a href="index.html" class="logo d-flex align-items-center">
@@ -10,15 +13,26 @@
 
     <nav class="header-nav ms-auto">
         <ul class="d-flex align-items-center">
-            <li class="nav-item dropdown">
-                <partial name="_Notifications"/>
+            <li class="nav-item dropdown" id="notificationContainer">
             </li>
-
+            @{
+                string? id = (await UserManager.GetUserAsync(User))?.Id;
+             }
             <li class="nav-item dropdown pe-3">
 				<partial name="_Profile" />
             </li>
 
         </ul>
     </nav>
-
 </header>
+@if(id != null){
+    <script>
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Histories/GetNotifications",
+            data: { id: "@id" }
+        }).then(response => {
+            $("#notificationContainer").html(response);
+        })
+    </script>
+}

@@ -1,11 +1,18 @@
-﻿<li>
+﻿@model THUD_TN408.Models.History
+<li>
     <hr class="dropdown-divider">
 </li>
 <li class="notification-item">
-    <i class="fa fa-circle-check text-success"></i>
     <div>
-        <h4>Lorem Ipsum</h4>
-        <p>Quae dolorem earum veritatis oditseno</p>
-        <p>30 min. ago</p>
+        <p>@Model.Message</p>
+        @{
+            TimeSpan span = DateTime.Now.Subtract(Model.CreatedAt);
+        }
+        <p>@span.Minutes phút trước</p>
+
+        @if(Model.TargetUrl != null){
+            <p><a href="@Model.TargetUrl" class="text-decoration-none text-primary">Xem chi tiết</a></p>
+        }
+		
     </div>
 </li>

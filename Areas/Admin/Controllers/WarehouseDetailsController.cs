@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
+using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
@@ -23,8 +24,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/WarehouseDetails
         public async Task<IActionResult> Index()
         {
-            var tN408DbContext = _context.WarehouseDetails.Include(w => w.ProductDetail).Include(w => w.Warehouse);
-            return View(await tN408DbContext.ToListAsync());
+            var warehouseDetails = _context.WarehouseDetails.Include(w => w.ProductDetail).Include(w => w.Warehouse);
+            return View(await warehouseDetails.ToPagedListAsync(1, 10));
         }
 
         // GET: Admin/WarehouseDetails/Details/5
@@ -50,8 +51,14 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/WarehouseDetails/Create
         public IActionResult Create()
         {
-            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "Id");
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Id");
+			var details = _context.Details.Include(x => x.Product);
+			foreach (var detail in details)
+			{
+				detail.FullName = detail.Product?.Name + ", " + ((detail.Gender == true) ? "Nam" : "Nữ") + ", " + detail.Size + ", " + detail.Color;
+			}
+
+			ViewData["ProductDetailId"] = new SelectList(details, "Id", "FullName");
+            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Name");
             return View();
         }
 
@@ -68,8 +75,15 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "Id", warehouseDetail.ProductDetailId);
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Id", warehouseDetail.WarehouseId);
+
+            var details = _context.Details.Include(x => x.Product);
+            foreach(var detail in details)
+            {
+                detail.FullName = detail.Product?.Name + ", " + ((detail.Gender == true)? "Nam" : "Nữ")+ ", " + detail.Size + ", " + detail.Color;
+            }
+
+			ViewData["ProductDetailId"] = new SelectList(details , "Id", "FullName", warehouseDetail.ProductDetailId);
+            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Name", warehouseDetail.WarehouseId);
             return View(warehouseDetail);
         }
 
@@ -86,8 +100,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "Id", warehouseDetail.ProductDetailId);
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Id", warehouseDetail.WarehouseId);
+            ViewData["ProductDetailId"] = new SelectList(_context.Details.Include(x => x.Product), "Id", "Product.Name", warehouseDetail.ProductDetailId);
+            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Name", warehouseDetail.WarehouseId);
             return View(warehouseDetail);
         }
 
@@ -123,8 +137,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "Id", warehouseDetail.ProductDetailId);
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Id", warehouseDetail.WarehouseId);
+            ViewData["ProductDetailId"] = new SelectList(_context.Details.Include(x => x.Product), "Id", "Product.Name", warehouseDetail.ProductDetailId);
+            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Name", warehouseDetail.WarehouseId);
             return View(warehouseDetail);
         }
 

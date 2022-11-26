@@ -26,10 +26,8 @@
     </tr>
 </table>
 <div class="d-flex">
-    <div class="mx-auto">
-        @if (Model.IsActive == true)
-        {
-            <a class="btn btn-sm btn-primary mx-auto" href="/Admin/Categories/Edit/@Model.Id">Chỉnh sửa</a>
-        }
+	<div class="mx-auto">
+		<a class="btn btn-sm btn-info mx-auto" asp-action="Index" asp-controller="Categories" title="Danh sách"><i class="fa fa-bars "></i></a>
+        <a class="btn btn-sm btn-primary mx-auto" asp-action="Edit" asp-controller="Categories" asp-route-id="@Model.Id" title="Chỉnh sửa" ti><i class="fa fa-pen-to-square"></i></a>
     </div>
 </div>

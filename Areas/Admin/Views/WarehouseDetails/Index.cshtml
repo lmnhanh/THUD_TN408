@@ -1,4 +1,4 @@
-﻿@model IEnumerable<THUD_TN408.Models.WarehouseDetail>
+﻿@model IPagedList<THUD_TN408.Models.WarehouseDetail>
 
 @{
     ViewData["Title"] = "Index";
@@ -10,39 +10,4 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Stock)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Warehouse)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductDetail)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Warehouse.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductDetail.Id)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<partial name="_ListWarehouseDetails" model="Model"/>

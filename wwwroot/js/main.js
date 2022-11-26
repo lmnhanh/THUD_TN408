@@ -4,8 +4,8 @@
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
-(function() {
-  "use strict";
+
+
 
   /**
    * Easy selector helper function
@@ -198,12 +198,5 @@
     /**
      * Initiate Datatables
      */
-    const datatables = select('.datatable', true)
-    datatables.forEach(datatable => {
-        new simpleDatatables.DataTable(datatable, {
-            searchable: false,
-            paging: false
-		});
-    })
 
-})();
+    makeDataTable()

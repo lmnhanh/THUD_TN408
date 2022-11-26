@@ -1,24 +1,70 @@
-﻿@model IPagedList<THUD_TN408.Models.Product>
-<table class="table table-hover datatable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>
-                Tên sản phẩm
-            </th>
-            <th>
-                Xuất xứ
-            </th>
-            <th>
-                Trạng thái
-            </th>
-            <th>Tùy chọn</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
-            <partial name="_Product" model="product" />
-        }
-    </tbody>
-</table>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.Product>
+
+@{int? categoryId = (int?)ViewData["categoryId"];}
+@if(Model?.Any() == true){
+    <a asp-action="Create" asp-controller="Products" asp-route-categoryId="@categoryId" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
+    <h5 class="card-title text-center">Danh sách sản phẩm</h5>
+    <table class="table table-hover datatable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>
+                    Tên sản phẩm
+                </th>
+                <th>
+                    Xuất xứ
+                </th>
+                <th>
+                    Trạng thái
+                </th>
+                <th>Tùy chọn</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <partial name="_Product" model="product" />
+            }
+        </tbody>
+    </table>
+    @if (!Model.IsFirstPage || !Model.IsLastPage)
+    {
+        <nav>
+            @Html.PagedListPager(Model, page => Url.ActionLink("Paging", "Products", new {page = page, categoryId = categoryId}), new PagedListRenderOptions()
+            {
+                ActiveLiElementClass = "active",
+                PageClasses = new[]{ "page-link"},
+                LiElementClasses=new[] { "page-item" },
+                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                LinkToNextPageFormat = ">",
+                LinkToPreviousPageFormat = "<",
+                MaximumPageNumbersToDisplay = 4,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+            })
+        </nav>
+    }
+}else{
+    <h6 class="card-title text-center">Chưa có sản phầm thuộc danh mục này</h6>
+    <div class="d-flex">
+        <a asp-action ="Create" asp-controller="Products" asp-route-categoryId="@categoryId" class="btn btn-sm btn-primary mx-auto">Thêm sản phẩm mới</a>
+    </div>
+}
+<script>
+    var links = document.querySelectorAll(".page-link");
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            event.preventDefault();
+            var url = link.href.substr(location.origin.length, 99)
+            $.ajax({
+                type: "GET",
+                url: url
+            }).done(response => {
+                $("#productsTable").html(response)
+            })
+        })
+    })
+    makeDataTable()
+</script>

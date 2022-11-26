@@ -11,15 +11,18 @@ namespace THUD_TN408.Data
 		public TN408DbContext(DbContextOptions<TN408DbContext> options) : base(options)
 		{ }
 
-		public DbSet<Product> Products { get; set; }
-		public DbSet<ProductDetail> Details { get; set; }
-		public DbSet<Category> Categories { get; set; }
-		public DbSet<Cart> Carts { get; set; }
-		public DbSet<Order> Orders { get; set; }
-		public DbSet<Payment> Payments { get; set; }
-		public DbSet<Price> Prices { get; set; }
-		public DbSet<Warehouse> Warehouses { get; set; }
-		public DbSet<WarehouseDetail> WarehouseDetails { get; set; }
+		public DbSet<Product> Products { get; set; } = null!;
+		public DbSet<ProductDetail> Details { get; set; } = null!;
+		public DbSet<Category> Categories { get; set; } = null!;
+		public DbSet<Cart> Carts { get; set; } = null!;
+		public DbSet<Order> Orders { get; set; } = null!;
+		public DbSet<Payment> Payments { get; set; } = null!;
+		public DbSet<Price> Prices { get; set; } = null!;
+		public DbSet<Warehouse> Warehouses { get; set; } = null!;
+		public DbSet<WarehouseDetail> WarehouseDetails { get; set; } = null!;
+		public DbSet<History> Histories { get; set; } = null!;
+		public DbSet<ProductPromotion> PPromotions { get; set; } = null!;
+		public DbSet<OrderPromotion> OPromotions { get; set; } = null!;
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -33,8 +36,9 @@ namespace THUD_TN408.Data
 				user.Property("LastName").HasMaxLength(20);
 				user.Property("Address").IsRequired(false).HasMaxLength(100);
 				user.Property("DateOfBirth").IsRequired(false).HasColumnName("DOB");
-				user.HasMany<Cart>(c => c.Carts).WithOne(c => c.User).HasForeignKey(c => c.UserId);
-				user.HasMany<Order>(c => c.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId);
+				user.HasMany<Cart>(u => u.Carts).WithOne(c => c.User).HasForeignKey(c => c.UserId);
+				user.HasMany<Order>(u => u.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId);
+				user.HasMany<History>(u => u.Histories).WithOne(h => h.User).HasForeignKey(h => h.UserId);
 			});
 
 			builder.Entity<Product>(product =>
@@ -45,6 +49,7 @@ namespace THUD_TN408.Data
 				product.Property("Origin").HasMaxLength(15);
 				product.Property("Description").HasMaxLength(500);
 				product.HasMany<ProductDetail>(p => p.Details).WithOne(d => d.Product);
+				product.HasMany<ProductPromotion>(d => d.Promotions).WithOne(p => p.Product).HasForeignKey(p => p.ProductId);
 			});
 
 			builder.Entity<ProductDetail>(detail =>
@@ -96,6 +101,9 @@ namespace THUD_TN408.Data
 				order.HasKey(o => o.Id);
 				order.Property("Id").ValueGeneratedOnAdd();
 				order.Property("CreatedDate").HasDefaultValue(DateTime.UtcNow).HasColumnName("Created_at");
+				order.Property("IsTrans").HasDefaultValue(false);
+				order.Property("IsPaid").HasDefaultValue(false);
+				order.Property("IsSuccess").HasDefaultValue(false);
 				order.HasMany<Cart>(o => o.Carts).WithOne(c => c.Order).OnDelete(DeleteBehavior.NoAction);
 			});
 
@@ -112,9 +120,37 @@ namespace THUD_TN408.Data
 			{
 				price.HasKey(p => p.Id);
 				price.Property("Id").ValueGeneratedOnAdd();
-				price.Property("DateApply").HasDefaultValue(DateTime.UtcNow);
+				price.Property("ApplyFrom").HasDefaultValue(DateTime.UtcNow);
 			});
 
+			builder.Entity<History>(history =>
+			{
+				history.HasKey(h => h.Id);
+				history.Property("Id").ValueGeneratedOnAdd();
+				history.Property("CreatedAt").HasDefaultValue(DateTime.Now);
+				history.Property("Message").HasMaxLength(100).IsRequired(true);
+				history.Property("TargetUrl").HasMaxLength(100).IsRequired(false);
+			});
+
+			builder.Entity<ProductPromotion>(ppromotion =>
+			{
+				ppromotion.HasKey(p => p.Id);
+				ppromotion.Property("Id").HasMaxLength(12).IsRequired(true);
+				ppromotion.Property("Name").HasMaxLength(30).IsRequired(true);
+				ppromotion.Property("Description").HasMaxLength(100).IsRequired(true);
+				ppromotion.HasMany<Order>(p => p.Orders).WithOne(o => o.ProductPromotion).HasForeignKey(o => o.ProductPromotionId);
+			});
+
+			builder.Entity<OrderPromotion>(opromotion =>
+			{
+				opromotion.HasKey(p => p.Id);
+				opromotion.Property("Id").HasMaxLength(12).IsRequired(true);
+				opromotion.Property("Name").HasMaxLength(30).IsRequired(true);
+				opromotion.Property("Description").HasMaxLength(100).IsRequired(true);
+				opromotion.Property("MaxDiscount").IsRequired(false);
+				opromotion.Property("ApplyCondition").IsRequired(false);
+				opromotion.HasMany<Order>(p => p.Orders).WithOne(o => o.Promotion).HasForeignKey(o => o.OrderPromotionId);
+			});
 
 			builder.Entity<IdentityRole>(entity =>
 			{

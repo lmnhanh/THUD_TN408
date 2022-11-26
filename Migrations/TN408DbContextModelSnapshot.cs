@@ -169,10 +169,14 @@ namespace THUD_TN408.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsCheckedOut")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
@@ -219,6 +223,41 @@ namespace THUD_TN408.Migrations
                     b.ToTable("Categories", "dbo");
                 });
 
+            modelBuilder.Entity("THUD_TN408.Models.History", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2022, 11, 26, 15, 29, 55, 744, DateTimeKind.Local).AddTicks(8251));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TargetUrl")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Histories", "dbo");
+                });
+
             modelBuilder.Entity("THUD_TN408.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -230,20 +269,32 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 21, 17, 27, 2, 898, DateTimeKind.Utc).AddTicks(65))
+                        .HasDefaultValue(new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(5924))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsSuccess")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsTrans")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("OrderPromotionId")
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProductPromotionId")
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -251,11 +302,57 @@ namespace THUD_TN408.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrderPromotionId");
+
                     b.HasIndex("PaymentId");
+
+                    b.HasIndex("ProductPromotionId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders", "dbo");
+                });
+
+            modelBuilder.Entity("THUD_TN408.Models.OrderPromotion", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int?>("ApplyCondition")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ApplyFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("DiscountPercent")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaxDiscount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OPromotions", "dbo");
                 });
 
             modelBuilder.Entity("THUD_TN408.Models.Payment", b =>
@@ -287,10 +384,10 @@ namespace THUD_TN408.Migrations
                     b.Property<long>("Amount")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("DateApply")
+                    b.Property<DateTime>("ApplyFrom")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 21, 17, 27, 2, 898, DateTimeKind.Utc).AddTicks(1338));
+                        .HasDefaultValue(new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(8039));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");
@@ -374,6 +471,47 @@ namespace THUD_TN408.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductDetails", "dbo");
+                });
+
+            modelBuilder.Entity("THUD_TN408.Models.ProductPromotion", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<DateTime>("ApplyFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("DiscountPercent")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PPromotions", "dbo");
                 });
 
             modelBuilder.Entity("THUD_TN408.Models.User", b =>
@@ -580,13 +718,30 @@ namespace THUD_TN408.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("THUD_TN408.Models.History", b =>
+                {
+                    b.HasOne("THUD_TN408.Models.User", "User")
+                        .WithMany("Histories")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("THUD_TN408.Models.Order", b =>
                 {
+                    b.HasOne("THUD_TN408.Models.OrderPromotion", "Promotion")
+                        .WithMany("Orders")
+                        .HasForeignKey("OrderPromotionId");
+
                     b.HasOne("THUD_TN408.Models.Payment", "Payment")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("THUD_TN408.Models.ProductPromotion", "ProductPromotion")
+                        .WithMany("Orders")
+                        .HasForeignKey("ProductPromotionId");
 
                     b.HasOne("THUD_TN408.Models.User", "User")
                         .WithMany("Orders")
@@ -595,6 +750,10 @@ namespace THUD_TN408.Migrations
                         .IsRequired();
 
                     b.Navigation("Payment");
+
+                    b.Navigation("ProductPromotion");
+
+                    b.Navigation("Promotion");
 
                     b.Navigation("User");
                 });
@@ -632,6 +791,17 @@ namespace THUD_TN408.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("THUD_TN408.Models.ProductPromotion", b =>
+                {
+                    b.HasOne("THUD_TN408.Models.Product", "Product")
+                        .WithMany("Promotions")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("THUD_TN408.Models.WarehouseDetail", b =>
                 {
                     b.HasOne("THUD_TN408.Models.ProductDetail", "ProductDetail")
@@ -661,6 +831,11 @@ namespace THUD_TN408.Migrations
                     b.Navigation("Carts");
                 });
 
+            modelBuilder.Entity("THUD_TN408.Models.OrderPromotion", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("THUD_TN408.Models.Payment", b =>
                 {
                     b.Navigation("Orders");
@@ -669,6 +844,8 @@ namespace THUD_TN408.Migrations
             modelBuilder.Entity("THUD_TN408.Models.Product", b =>
                 {
                     b.Navigation("Details");
+
+                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("THUD_TN408.Models.ProductDetail", b =>
@@ -680,9 +857,16 @@ namespace THUD_TN408.Migrations
                     b.Navigation("StockDetails");
                 });
 
+            modelBuilder.Entity("THUD_TN408.Models.ProductPromotion", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("THUD_TN408.Models.User", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("Histories");
 
                     b.Navigation("Orders");
                 });

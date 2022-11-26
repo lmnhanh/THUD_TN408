@@ -1,0 +1,84 @@
+﻿@model THUD_TN408.Models.ProductPromotion
+
+@{
+    ViewData["Title"] = "Chỉnh sửa khuyến mãi";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Chỉnh sửa thông tin khuyến mãi</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ProductPromotions/Index">Danh sách khuyến mãi</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ProductPromotions/Details/@Model.Id">@Model.Name</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ProductPromotions/Edit/@Model.Id">Chỉnh sửa</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin chỉnh sửa</h5>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                     <input asp-for="Id" type="hidden"/>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Name" class="col-4 col-form-label fw-bold">Tên khuyến mãi:</label>
+                        <div class="col-8">
+                            <input asp-for="Name" class="form-control" placeholder="Tên khuyến mãi" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="ProductId" class="col-4 col-form-label fw-bold">Tên sản phẩm:</label>
+                        <div class="col-8">
+                            <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Description" class="col-4 col-form-label fw-bold">Mô tả:</label>
+                        <div class="col-8">
+                            <input asp-for="Description" class="form-control" placeholder="Mô tả" />
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="ApplyFrom" class="col-4 col-form-label fw-bold">Ngày áp dụng:</label>
+                        <div class="col-8">
+                            <input asp-for="ApplyFrom" class="form-control" placeholder="Ngày áp dụng" />
+                            <span asp-validation-for="ApplyFrom" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="ValidTo" class="col-4 col-form-label fw-bold">Ngày kết thúc:</label>
+                        <div class="col-8">
+                            <input asp-for="ValidTo" class="form-control" placeholder="Ngày kết thúc" />
+                            <span asp-validation-for="ValidTo" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="DiscountPercent" class="col-4 col-form-label fw-bold">Tỉ lệ giảm:</label>
+                        <div class="col-8">
+                            <input asp-for="DiscountPercent" class="form-control" placeholder="Tỉ lệ giảm" />
+                            <span asp-validation-for="DiscountPercent" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Stock" class="col-4 col-form-label fw-bold">Số lượng:</label>
+                        <div class="col-8">
+                            <input asp-for="Stock" class="form-control" placeholder="Số lượng khuyến mãi" />
+                            <span asp-validation-for="Stock" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <input type="submit" value="Lưu chỉnh sửa" class="mx-auto mt-1 btn btn-sm btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

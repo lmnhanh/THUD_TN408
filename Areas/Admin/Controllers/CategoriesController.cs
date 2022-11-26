@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using THUD_TN408.Areas.Admin.Service;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
@@ -16,22 +19,32 @@ namespace THUD_TN408.Areas.Admin.Controllers
     public class CategoriesController : Controller
     {
         private readonly TN408DbContext _context;
+		private readonly Services _services;
 
-        public CategoriesController(TN408DbContext context)
+        public CategoriesController(TN408DbContext context, UserManager<User> userManager)
         {
             _context = context;
-        }
+			_services = new Services(context, userManager);
+		}
 
 		// GET: Admin/Categories
-		public async Task<IActionResult> Index(int page = 1)
+		public async Task<IActionResult> Index()
         {
             ViewData["page"] = "categories";
-            page = (page < 1) ? 1 : page;
-            int size = 8;
 
-			var categories = await _context.Categories.ToPagedListAsync(page, size);
+			var categories = await _services.PagingCategories(1, 8);
 			return View(categories);
         }
+
+		//GET categories with paging
+		public async Task<IActionResult> Paging(int page = 1, int size = 8)
+		{
+			page = (page < 1) ? 1 : page;
+			size = (size < 2) ? 2 : size;
+			IPagedList<Category> categories = await _services.PagingCategories(page, size);
+
+			return PartialView("_ListCategories", categories);
+		}
 
 		// GET: Admin/Categories/Details/5
 		public async Task<IActionResult> Details(int? id, int page= 1)
@@ -69,8 +82,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_context.Add(category);
+				_context.Categories.Add(category);
 				await _context.SaveChangesAsync();
+				await _services.addHistory(User, "Danh mục \"" + category.Name + "\" đã được thêm vào hệ thống!", "/Admin/Categories/Details/" + category.Id);
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["page"] = "categories_create";
@@ -124,7 +138,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
 						throw;
 					}
 				}
-				return RedirectToAction(nameof(Index));
+				await _services.addHistory(User, "Danh mục \"" + category.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/Categories/Details/" + category.Id);
+				return RedirectToAction("Details", "Categories", new {id = category.Id});
 			}
 			ViewData["page"] = "categories";
 			return View(category);
@@ -148,6 +163,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 				_context.Update(category);
 				category.IsActive = false;
 				await _context.SaveChangesAsync();
+				await _services.addHistory(User, "Danh mục \"" + category.Name + "\" đã bị xóa khỏi hệ thống!", null);
 				return PartialView("_Category", category);
 			}
 			_context.Categories.Remove(category);

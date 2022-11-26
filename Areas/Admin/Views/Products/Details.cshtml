@@ -18,7 +18,18 @@
     </nav>
 </div>
 <div class="row justify-content-center">
-    <div class="col-lg-7 col-md-8 col-12">
+    <div class="col-lg-4 col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Tùy chọn</h5>
+                <div class="list-group">
+                    <a asp-action="Create" asp-controller="ProductDetails" asp-route-productId="@Model.Id" class="list-group-item list-group-item-action"><i class="fa fa-plus text-success me-2"></i>Thêm chi tiết sản phẩm</a>
+                    <a asp-action="Create" asp-controller="ProductPromotions" asp-route-productId="@Model.Id" class="list-group-item list-group-item-action"><i class="fa fa-plus text-success me-2"></i>Thêm khuyến mãi</a>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-8 col-12">
         <div class="card shadow">
             <div class="card-body">
                 <partial name="_ProductInfo" model="Model"/>
@@ -27,38 +38,23 @@
     </div>
     <div class="col-12">
         <div class="card shadow">
-            <div class="card-body">
-                <a asp-action="Create" asp-controller="ProductDetails" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
-                @{IPagedList<ProductDetail>? details = (IPagedList<ProductDetail>?)ViewData["ListDetails"];}
-                @if(details?.Any() == true)
-                {
-                    <h5 class="card-title text-center">Danh sách chi tiết sản phẩm</h5>
-                    <partial name="_ListProductDetails" model="details"/>
-                    @if (!details.IsFirstPage || !details.IsLastPage)
-                    {
-                        <nav>
-                            @Html.PagedListPager(details, page => Url.ActionLink("Details","Products", new {id = Model.Id, page = page }), new PagedListRenderOptions()
-                            {
-                                ActiveLiElementClass = "active",
-                                PageClasses = new[]{ "page-link"},
-                                LiElementClasses=new[] { "page-item" },
-                                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
-                                LinkToNextPageFormat = ">",
-                                LinkToPreviousPageFormat = "<",
-                                MaximumPageNumbersToDisplay = 4,
-                                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
-                                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
-                            })
-                        </nav>
-                    }
+            <div class="card-body" id="pagingDetail">
+                @{
+                    IPagedList<ProductDetail>? details = (IPagedList<ProductDetail>?)ViewData["ListDetails"];
+                    ViewData["productId"] = Model.Id;
                 }
-                else
-                {
-                    <h6 class="card-title text-center">Chưa có chi tiết thuộc sản phẩm này!</h6>
-                    <div class="d-flex">
-                        <a asp-action="Create" asp-controller="ProductDetails" class="btn btn-sm btn-primary mx-auto">Thêm chi tiết mới!</a>
-                    </div>
+                <partial name="_ListProductDetails" model="details" view-Data="ViewData"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body" id="promotionsTable">
+                @{
+                    IPagedList<ProductPromotion>? promotions = (IPagedList<ProductPromotion>?)ViewData["ListPromotions"];
+                    ViewData["productId"] = Model.Id;
                 }
+                <partial name="_ListProductPromotions" model="promotions" view-data="ViewData"/>
             </div>
         </div>
     </div>

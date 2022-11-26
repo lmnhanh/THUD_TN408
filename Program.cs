@@ -8,7 +8,6 @@ using THUD_TN408.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<Services>();
 var connectionString = builder.Configuration.GetConnectionString("MyDatabase");
 builder.Services.AddDbContext<TN408DbContext>(options =>
 		options.UseSqlServer(connectionString));

@@ -468,9 +468,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 3px;
   color: #919191;
 }
-.header-nav .notifications .notification-item:hover {
-  background-color: #f6f9ff;
-}
+
 .header-nav .messages .message-item {
   padding: 15px 10px;
   transition: 0.3s;

@@ -20,7 +20,7 @@
         </tr>
         <tr>
             <td class="fw-bold">Danh mục</td>
-            <td> @Model.Category?.Name</td>
+            <td><a asp-action="Details" asp-controller="Categories" asp-route-id="@Model.CategoryId" class="text-decoration-none">@Model.Category?.Name</a></td>
         </tr>
         <tr>
             <td class="fw-bold">Trạng thái</td>

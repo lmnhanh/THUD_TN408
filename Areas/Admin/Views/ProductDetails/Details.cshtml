@@ -74,7 +74,7 @@
                         </tr>
                         <tr>
                             <td class="fw-bold">Tên sản phẩm</td>
-                            <td>@Model.Product?.Name</td>
+                            <td><a asp-action="Details" asp-controller="Products" asp-route-id="@Model.ProductId" class="text-decoration-none">@Model.Product?.Name</a></td>
                         </tr>
                         <tr>
                             <td class="fw-bold">Kích cỡ</td>
@@ -83,6 +83,10 @@
                         <tr>
                             <td class="fw-bold">Màu sắc</td>
                             <td>@Model.Color</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Số lượng</td>
+                            <td>@Model.Stock</td>
                         </tr>
                         <tr>
                             <td class="fw-bold">Phái</td>
