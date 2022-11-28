@@ -37,6 +37,13 @@
                             <span asp-validation-for="Color" class="text-danger small"></span>
                         </div>
                     </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Amount" class="col-3 col-form-label fw-bold">Giá bán:</label>
+                        <div class="col-9">
+                            <input asp-for="Amount" class="form-control" placeholder="Giá bán" />
+                            <span asp-validation-for="Amount" class="text-danger small"></span>
+                        </div>
+                    </div>
                     <div class="row mb-1 justify-content-center align-middle">
                         <label asp-for="Gender" class="col-3 col-form-label fw-bold">Phái:</label>
                         <div class="col-9 form-check ps-5 pt-1">

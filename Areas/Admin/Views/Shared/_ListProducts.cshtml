@@ -37,9 +37,11 @@
                 ActiveLiElementClass = "active",
                 PageClasses = new[]{ "page-link"},
                 LiElementClasses=new[] { "page-item" },
+                LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
+                LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
                 UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
-                LinkToNextPageFormat = ">",
-                LinkToPreviousPageFormat = "<",
+                LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
+                LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
                 MaximumPageNumbersToDisplay = 4,
                 DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
                 DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded

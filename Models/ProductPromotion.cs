@@ -13,6 +13,7 @@ namespace THUD_TN408.Models
 		[Required(AllowEmptyStrings = false, ErrorMessage = "Tên khuyến mãi không được trống!")]
 		[MaxLength(30, ErrorMessage = "Tên khuyến mãi không quá 30 kí tự")]
 		public string Name { get; set; } = null!;
+		[Required(AllowEmptyStrings = false, ErrorMessage = "Mô tả không được trống!")]
 		[MaxLength(100, ErrorMessage = "Mô tả không quá 100 kí tự")]
 		public string? Description { set; get; }
 		[Required(ErrorMessage = "Ngày áp dụng không được trống!")]

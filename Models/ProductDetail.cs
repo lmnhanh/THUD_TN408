@@ -15,6 +15,10 @@ namespace THUD_TN408.Models
 		public string? Color { set; get; }
 		public bool Gender { set; get; }
 		[NotMapped]
+		[Required(ErrorMessage = "Giá không được trống!")]
+		[Range(minimum:'1', maximum:long.MaxValue, ErrorMessage = "Giá phải lớn hơn 0!")]
+		public long Amount { set; get; }
+		[NotMapped]
 		public int Stock { set; get; }
 		[NotMapped]
 		public string? FullName { set; get; } 

@@ -8,7 +8,16 @@
         @{
             TimeSpan span = DateTime.Now.Subtract(Model.CreatedAt);
         }
-        <p>@span.Minutes phút trước</p>
+        @if(span.TotalMinutes <= 59.9){
+            <p>@((int)span.TotalMinutes) phút trước</p>
+        }else{
+            if(span.TotalHours <= 23.9){
+                <p>@((int)span.TotalHours) giờ trước</p>
+            }else{
+                <p>@((int)span.TotalDays) ngày trước</p>
+            }
+        }
+        
 
         @if(Model.TargetUrl != null){
             <p><a href="@Model.TargetUrl" class="text-decoration-none text-primary">Xem chi tiết</a></p>

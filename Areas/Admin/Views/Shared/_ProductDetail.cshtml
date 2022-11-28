@@ -19,6 +19,9 @@
         <td class="align-middle">
             @((Model.Gender)? "Nam" : "Nữ")
         </td>
+        <td class="align-middle">
+            @Model.Amount
+        </td>
         <td class="justify-content-center align-middle">
             @if(Model.Product?.IsActive == true){
                 <a asp-action="Edit" asp-controller="ProductDetails" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>

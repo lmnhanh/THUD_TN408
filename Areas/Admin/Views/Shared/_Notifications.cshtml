@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<THUD_TN408.Models.History>
-
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
 
 <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
     <i class="fa fa-bell"></i>
@@ -25,7 +26,10 @@
     <li>
         <hr class="dropdown-divider">
     </li>
+    @{
+        string? id = (await UserManager.GetUserAsync(User))?.Id;
+    }
     <li class="dropdown-footer">
-        <a asp-action="Index" asp-controller="Histories" class="btn btn-sm btn-light text-decoration-none">Xem tất cả thông báo</a>
+        <a asp-action="Index" asp-route-userId="@id" asp-controller="Histories" class="btn btn-sm btn-light text-decoration-none">Xem tất cả thông báo</a>
     </li>
 </ul>

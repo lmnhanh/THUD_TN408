@@ -17,31 +17,19 @@ namespace THUD_TN408.Areas.Admin.Controllers
     [Area("Admin"), Authorize]
     public class ProductDetailsController : Controller
     {
-        private readonly TN408DbContext _context;
         private readonly Services _services;
 
         public ProductDetailsController(TN408DbContext context, UserManager<User> userManager)
         {
-            _context = context;
 			_services = new Services(context, userManager);
 		}
 
         // GET: Admin/ProductDetails
-        public async Task<IActionResult> Index(int page = 1, int size = 8)
+        public async Task<IActionResult> Index()
         {
-			page = (page < 1) ? 1 : page;
-			size = (size < 2) ? 2 : size;
-
-			var details = _context.Details.Include(d => d.Product).Include(d => d.StockDetails);
-            foreach(var detail in details)
-            {
-                if(detail.StockDetails != null) {
-					detail.Stock = detail.StockDetails.ToList().Sum(x => x.Stock);
-				}
-                
-            }
+            var details = _services.GetListProductDetails(DateTime.Now);
 			ViewData["page"] = "products";
-			return View(await details.ToPagedListAsync(page, size));
+			return View(await details.ToPagedListAsync(1, 8));
         }
 
         [HttpGet]
@@ -50,15 +38,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			page = (page < 1) ? 1 : page;
             size = (size < 2) ? 2 : size;
 
-			var details = _context.Details.Include(d => d.Product).Include(d => d.StockDetails);
-			foreach (var detail in details)
-			{
-				if (detail.StockDetails != null)
-				{
-					detail.Stock = detail.StockDetails.ToList().Sum(x => x.Stock);
-				}
-
-			}
+			var details = _services.GetListProductDetails(DateTime.Now);
 			ViewData["page"] = "products";
 			return PartialView("_ListProductDetails", await details.ToPagedListAsync(page, size));
 		}
@@ -66,21 +46,17 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		// GET: Admin/ProductDetails/Details/5
 		public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Details == null)
+            if (id == null || !_services.HasAnyProductDetail())
             {
                 return NotFound();
             }
 
-            var productDetail = await _context.Details
-                .Include(p => p.Product)
-                .Include(p => p.StockDetails)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productDetail = await _services.GetProductDetail(id, DateTime.Now);
             if (productDetail == null)
             {
                 return NotFound();
             }
             ViewData["page"] = "products";
-            productDetail.Stock = productDetail.StockDetails!.Sum(p => p.Stock);
             return View(productDetail);
         }
 
@@ -89,11 +65,11 @@ namespace THUD_TN408.Areas.Admin.Controllers
         {
             if(productId != null)
             {
-                ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productId);
+                ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name", productId);
             }
             else
             {
-				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+				ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name");
 			}
 			ViewData["page"] = "products";
 			return View();
@@ -103,7 +79,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id,Size,Color,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
+        public async Task<IActionResult> Create([Bind("Id,Size,Color,Amount,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
         {
 			ViewData["page"] = "products";
 			try
@@ -123,18 +99,18 @@ namespace THUD_TN408.Areas.Admin.Controllers
                     }
 				    else productDetail.Image2 = null;
 
-				    _context.Add(productDetail);
-                    await _context.SaveChangesAsync();
-
-					return RedirectToAction("Details", "Products", new {id = productDetail.ProductId, page = 1});
+                    await _services.AddProductDetail(productDetail);
+                    await _services.AddPrice(productDetail.Id, productDetail.Amount, DateTime.Now);
+                    await _services.AddHistory(User, "Chi tiết \"" + productDetail.Id + "\" đã được lưu vào cơ sở dữ liệu!", "/Admin/ProductDetails/Details/" + productDetail.Id);
+					return RedirectToAction("Details", "Products", new {id = productDetail.ProductId});
 				}
-				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
+				ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name", productDetail.ProductId);
 				return View(productDetail);
 
 			}
             catch
             {
-                ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
+                ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name", productDetail.ProductId);
 				return View(productDetail);
 			}
         }
@@ -142,17 +118,17 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/ProductDetails/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Details == null)
+            if (id == null || !_services.HasAnyProductDetail())
             {
                 return NotFound();
             }
 
-            var productDetail = await _context.Details.FindAsync(id);
+            var productDetail = await _services.GetProductDetail(id, DateTime.Now);
             if (productDetail == null)
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
+            ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name", productDetail.ProductId);
 			ViewData["page"] = "products";
 			return View(productDetail);
         }
@@ -162,7 +138,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Size,Color,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Size,Color,Amount,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
         {
             if (id != productDetail.Id)
             {
@@ -173,35 +149,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 try
                 {
-                    ProductDetail? details = await _context.Details.FindAsync(productDetail.Id);
-                    if(details != null)
+                    ProductDetail? detail = await _services.GetProductDetail(id, DateTime.Now);
+					if (detail != null)
                     {
-						_context.Details.Update(details);
-						if (Image1 != null && Image1.Length > 0)
-						{
-                            string? fname = await _services.UploadImage(Image1);
-                            if(fname != null)
-                            {
-								_services.DeleteImage(details.Image1);
-								details.Image1 = fname;
-							}
-                            
-						}
-						if (Image2 != null && Image2.Length > 0)
-						{
-							string? fname = await _services.UploadImage(Image2);
-							if (fname != null)
-							{
-								_services.DeleteImage(details.Image2);
-								details.Image2 = fname;
-                            }
-						}
-                        details.Size = productDetail.Size;
-                        details.Color = productDetail.Color;
-                        details.Gender = productDetail.Gender;
-                        details.ProductId = productDetail.ProductId;
-						await _context.SaveChangesAsync();
-                    }
+                        await _services.UpdateProductDetail(detail, productDetail, Image1, Image2);
+						await _services.AddHistory(User, "Chi tiết \"" + productDetail.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/ProductDetails/Details/" + productDetail.Id);
+					}
                     else
                     {
 						return NotFound();
@@ -209,7 +162,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductDetailExists(productDetail.Id))
+                    if (!_services.ProductDetailExists(productDetail.Id))
                     {
                         return NotFound();
                     }
@@ -220,7 +173,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 }
 				return RedirectToAction("Details", "ProductDetails", new { id = productDetail.Id });
 			}
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productDetail.ProductId);
+            ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name", productDetail.ProductId);
 			ViewData["page"] = "products";
 			return View(productDetail);
         }
@@ -228,15 +181,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/ProductDetails/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Details == null)
+            if (id == null || !_services.HasAnyProductDetail())
             {
                 return NotFound();
             }
 
-            var productDetail = await _context.Details
-                .Include(d => d.Product)
-                .Include(d => d.Carts)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productDetail = await _services.GetProductDetail(id, DateTime.Now);
             if (productDetail == null)
             {
                 return NotFound();
@@ -249,11 +199,11 @@ namespace THUD_TN408.Areas.Admin.Controllers
         [HttpGet, ActionName("DeleteConfirmed")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Details == null)
+            if (!_services.HasAnyProductDetail())
             {
                 return Problem("Entity set 'TN408DbContext.Details'  is null.");
             }
-            var productDetail = await _context.Details.FindAsync(id);
+            var productDetail = await _services.GetProductDetail(id, DateTime.Now);
 
 			if (productDetail != null)
 			{
@@ -261,8 +211,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 {
                     _services.DeleteImage(productDetail.Image1);
 				    _services.DeleteImage(productDetail.Image2);
-				    _context.Details.Remove(productDetail);
-				    await _context.SaveChangesAsync();
+					await _services.AddHistory(User, "Chi tiết \"" + productDetail.Id + "\" đã được xóa khỏi cơ sở dữ liệu!", null);
+					await _services.RemoveProductDetail(productDetail);
                 }
 			}
 			return RedirectToAction(nameof(Index));
@@ -271,33 +221,23 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		[HttpPost, ActionName("DeleteAsync")]
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
-			if (_context.Details == null)
+			if (!_services.HasAnyProductDetail())
 			{
 				return Problem("Entity set 'TN408DbContext.Details'  is null.");
 			}
-			var productDetail = await _context.Details.FindAsync(id);
-
-			int productId;
+            var productDetail = await _services.GetProductDetail(id, DateTime.Now);
 			if (productDetail != null)
 			{
 				if (productDetail.Carts == null)
 				{
-					productId = productDetail.ProductId;
 					_services.DeleteImage(productDetail.Image1);
 					_services.DeleteImage(productDetail.Image2);
-					_context.Details.Remove(productDetail);
-					await _context.SaveChangesAsync();
-					return PartialView("_ProductDetail", null);
+					await _services.RemoveProductDetail(productDetail);
 				}
 				return PartialView("_ProductDetail", productDetail);
 
 			}
 			return PartialView("_ProductDetail", null);
 		}
-
-		private bool ProductDetailExists(int id)
-        {
-          return _context.Details.Any(e => e.Id == id);
-        }
     }
 }

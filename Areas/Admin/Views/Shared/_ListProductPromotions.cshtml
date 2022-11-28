@@ -42,9 +42,11 @@
                 ActiveLiElementClass = "active",
                 PageClasses = new[]{ "page-link"},
                 LiElementClasses=new[] { "page-item" },
+                LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
+                LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
                 UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
-                LinkToNextPageFormat = ">",
-                LinkToPreviousPageFormat = "<",
+                LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
+                LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
                 MaximumPageNumbersToDisplay = 4,
                 DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
                 DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
@@ -54,7 +56,7 @@
 }else{
     <h6 class="card-title text-center">Chưa có khuyến mãi cho sản phẩm này</h6>
     <div class="d-flex">
-        <a asp-action ="Create" asp-controller="Products" asp-route-productId="@productId" class="btn btn-sm btn-primary mx-auto">Thêm khuyến mãi mới</a>
+        <a asp-action ="Create" asp-controller="ProductPromotions" asp-route-productId="@productId" class="btn btn-sm btn-primary mx-auto">Thêm khuyến mãi mới</a>
     </div>
 }
 <script>

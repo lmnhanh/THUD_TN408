@@ -2,32 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using THUD_TN408.Areas.Admin.Service;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize]
     public class ProductPromotionsController : Controller
     {
-        private readonly TN408DbContext _context;
+		private readonly Services _services;
 
-        public ProductPromotionsController(TN408DbContext context)
+		public ProductPromotionsController(TN408DbContext context, UserManager<User> userManager)
         {
-            _context = context;
-        }
+			_services = new Services(context, userManager);
+		}
 
         // GET: Admin/ProductPromotions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? productId)
         {
-            var promotions = _context.PPromotions.Include(p => p.Product).ToPagedListAsync(1, 8);
 			ViewData["page"] = "ppromotions";
-			return View(await promotions);
-        }
+            if(productId != null)
+            {
+				return View(await _services.GetListPPromotion((int)productId).Result.ToPagedListAsync(1, 8));
+			}
+			return View(await _services.GetListPPromotion().ToPagedListAsync(1, 8));
+
+
+		}
 
 		[HttpGet]
 		public async Task<IActionResult> Paging(int? productId,int page = 1, int size = 8)
@@ -37,31 +46,24 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
 			IPagedList<ProductPromotion> promotions;
 			if (productId != null)
-			{
-				var product = await _context.Products.Include(c => c.Promotions).FirstOrDefaultAsync(m => m.Id == productId);
-				if (product != null)
-				{
-					promotions = await product.Promotions.ToPagedListAsync(page, size);
-					return PartialView("_ListProductPromotions", promotions);
-				}
-				return PartialView("_ListProductPromotions", null);
+            {			
+				promotions = await _services.GetListPPromotion((int)productId).Result.ToPagedListAsync(page, size);
+				return PartialView("_ListProductPromotions", promotions);
 			}
 
-			promotions = await _context.PPromotions.ToPagedListAsync(page, size);
+			promotions = await _services.GetListPPromotion().ToPagedListAsync(page, size);
 			return PartialView("_ListProductPromotions", promotions);
 		}
 
 		// GET: Admin/ProductPromotions/Details/5
 		public async Task<IActionResult> Details(string id)
         {
-            if (id == null || _context.PPromotions == null)
+            if (id == null || !_services.HasAnyPPromotion())
             {
                 return NotFound();
             }
 
-            var productPromotion = await _context.PPromotions
-                .Include(p => p.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productPromotion = await _services.GetProductPromotion(id);
             if (productPromotion == null)
             {
                 return NotFound();
@@ -75,53 +77,61 @@ namespace THUD_TN408.Areas.Admin.Controllers
         {
             if(productId != null)
             {
-				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productId);
+				ViewData["ProductId"] = new SelectList(_services.GetListProduct(), "Id", "Name", productId);
 			}
             else
             {
-				ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+				ViewData["ProductId"] = new SelectList(_services.GetListProduct(), "Id", "Name");
 			}
             ViewData["page"] = "ppromotions";
-			return View();
+			return View(new ProductPromotion());
         }
 
         // POST: Admin/ProductPromotions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,DiscountPercent,IsActive,ProductId")] ProductPromotion productPromotion)
         {
-            if (ModelState.IsValid)
+			if (_services.ProductPromotionExists(productPromotion.Id))
+			{
+				ModelState.AddModelError("Id", "Mã khuyến mãi đã được sử dụng!");
+			}
+			if (productPromotion.ApplyFrom.CompareTo(productPromotion.ValidTo) > 0)
+			{
+				ModelState.AddModelError("ValidTo", "Ngày hết hạn phải sau ngày bắt đầu áp dụng khuyến mãi!");
+			}
+			if (productPromotion.ValidTo.CompareTo(DateTime.Now) < 0)
+			{
+				ModelState.AddModelError("ValidTo", "Ngày hết hạn phải sau ngày hiện tại!");
+			}
+			if (ModelState.IsValid)
             {
-                _context.Add(productPromotion);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+				await _services.AddProductPromotion(productPromotion);
+                await _services.AddHistory(User, "Khuyến mãi \"" + productPromotion.Id + "\" đã được thêm thành vào hệ thống!", "/Admin/ProductPromotions/Details/" + productPromotion.Id);
+                return RedirectToAction("Details", "Products", new {id = productPromotion.ProductId});
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productPromotion.ProductId);
-            return View(productPromotion);
+			ViewData["ProductId"] = new SelectList(_services.GetListProduct(), "Id", "Name", productPromotion.ProductId);
+			return View(productPromotion);
         }
 
         // GET: Admin/ProductPromotions/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || _context.PPromotions == null)
+            if (id == null || !_services.HasAnyPPromotion())
             {
                 return NotFound();
             }
 
-            var productPromotion = await _context.PPromotions.FindAsync(id);
+            var productPromotion = await _services.GetProductPromotion(id);
             if (productPromotion == null)
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productPromotion.ProductId);
+            ViewData["ProductId"] = new SelectList(_services.GetListProduct(), "Id", "Name", productPromotion.ProductId);
             return View(productPromotion);
         }
 
         // POST: Admin/ProductPromotions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,DiscountPercent,IsActive,ProductId")] ProductPromotion productPromotion)
@@ -135,12 +145,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(productPromotion);
-                    await _context.SaveChangesAsync();
-                }
+                    await _services.UpdateProductPromotion(productPromotion);
+					await _services.AddHistory(User, "Khuyến mãi \"" + productPromotion.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/ProductPromotions/Details/" + productPromotion.Id);
+				}
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductPromotionExists(productPromotion.Id))
+                    if (!_services.ProductPromotionExists(productPromotion.Id))
                     {
                         return NotFound();
                     }
@@ -149,23 +159,21 @@ namespace THUD_TN408.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "ProductPromotions", new {id = productPromotion.Id});
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", productPromotion.ProductId);
+            ViewData["ProductId"] = new SelectList(_services.GetListProduct(), "Id", "Name", productPromotion.ProductId);
             return View(productPromotion);
         }
 
         // GET: Admin/ProductPromotions/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null || _context.PPromotions == null)
+            if (id == null || !_services.HasAnyPPromotion())
             {
                 return NotFound();
             }
 
-            var productPromotion = await _context.PPromotions
-                .Include(p => p.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productPromotion = await _services.GetProductPromotion(id);
             if (productPromotion == null)
             {
                 return NotFound();
@@ -179,23 +187,16 @@ namespace THUD_TN408.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            if (_context.PPromotions == null)
+            if (!_services.HasAnyPPromotion())
             {
                 return Problem("Entity set 'TN408DbContext.PPromotions'  is null.");
             }
-            var productPromotion = await _context.PPromotions.FindAsync(id);
-            if (productPromotion != null)
+            var productPromotion = await _services.GetProductPromotion(id);
+			if (productPromotion != null)
             {
-                _context.PPromotions.Remove(productPromotion);
+                await _services.RemoveProductPromotion(productPromotion);
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductPromotionExists(string id)
-        {
-          return _context.PPromotions.Any(e => e.Id == id);
         }
     }
 }

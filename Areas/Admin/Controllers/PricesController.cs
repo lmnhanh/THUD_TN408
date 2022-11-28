@@ -11,97 +11,94 @@ using THUD_TN408.Models;
 namespace THUD_TN408.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class HistoriesController : Controller
+    public class PricesController : Controller
     {
         private readonly TN408DbContext _context;
 
-        public HistoriesController(TN408DbContext context)
+        public PricesController(TN408DbContext context)
         {
             _context = context;
         }
 
-        // GET: Admin/Histories
-        public async Task<IActionResult> Index(string userID)
+        // GET: Admin/Prices
+        public async Task<IActionResult> Index(int? productDetailId)
         {
-            var tN408DbContext = _context.Histories.Include(h => h.User).Where(h => h.UserId == null || h.UserId == userID);
-            return View(await tN408DbContext.ToListAsync());
+            var prices = _context.Prices.Include(p => p.Detail);
+            if(productDetailId != null)
+            {
+				return View(await prices.Where(p => p.ProductDetailId == productDetailId).OrderByDescending(p => p.ApplyFrom).ToListAsync());
+			}
+            return View(await prices.OrderByDescending(p => p.ApplyFrom).ToListAsync());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetNotifications(string id)
-        {
-            return PartialView("_Notifications", await _context.Histories.Where(x => x.UserId == id)
-                .Where(x => x.Status == true).OrderByDescending(x => x.CreatedAt).ToListAsync());
-        }
-
-        // GET: Admin/Histories/Details/5
+        // GET: Admin/Prices/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Histories == null)
+            if (id == null || _context.Prices == null)
             {
                 return NotFound();
             }
 
-            var history = await _context.Histories
-                .Include(h => h.User)
+            var price = await _context.Prices
+                .Include(p => p.Detail)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (history == null)
+            if (price == null)
             {
                 return NotFound();
             }
 
-            return View(history);
+            return View(price);
         }
 
-        // GET: Admin/Histories/Create
+        // GET: Admin/Prices/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "ProductDetailId");
             return View();
         }
 
-        // POST: Admin/Histories/Create
+        // POST: Admin/Prices/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Message,TargetUrl,Status,CreatedAt,UserId")] History history)
+        public async Task<IActionResult> Create([Bind("Id,Amount,ApplyFrom,ProductDetailId")] Price price)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(history);
+                _context.Add(price);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", history.UserId);
-            return View(history);
+            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "ProductDetailId", price.ProductDetailId);
+            return View(price);
         }
 
-        // GET: Admin/Histories/Edit/5
+        // GET: Admin/Prices/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Histories == null)
+            if (id == null || _context.Prices == null)
             {
                 return NotFound();
             }
 
-            var history = await _context.Histories.FindAsync(id);
-            if (history == null)
+            var price = await _context.Prices.FindAsync(id);
+            if (price == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", history.UserId);
-            return View(history);
+            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "ProductDetailId", price.ProductDetailId);
+            return View(price);
         }
 
-        // POST: Admin/Histories/Edit/5
+        // POST: Admin/Prices/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Message,TargetUrl,Status,CreatedAt,UserId")] History history)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Amount,ApplyFrom,ProductDetailId")] Price price)
         {
-            if (id != history.Id)
+            if (id != price.Id)
             {
                 return NotFound();
             }
@@ -110,12 +107,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(history);
+                    _context.Update(price);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HistoryExists(history.Id))
+                    if (!PriceExists(price.Id))
                     {
                         return NotFound();
                     }
@@ -126,51 +123,51 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", history.UserId);
-            return View(history);
+            ViewData["ProductDetailId"] = new SelectList(_context.Details, "Id", "ProductDetailId", price.ProductDetailId);
+            return View(price);
         }
 
-        // GET: Admin/Histories/Delete/5
+        // GET: Admin/Prices/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Histories == null)
+            if (id == null || _context.Prices == null)
             {
                 return NotFound();
             }
 
-            var history = await _context.Histories
-                .Include(h => h.User)
+            var price = await _context.Prices
+                .Include(p => p.Detail)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (history == null)
+            if (price == null)
             {
                 return NotFound();
             }
 
-            return View(history);
+            return View(price);
         }
 
-        // POST: Admin/Histories/Delete/5
+        // POST: Admin/Prices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Histories == null)
+            if (_context.Prices == null)
             {
-                return Problem("Entity set 'TN408DbContext.Histories'  is null.");
+                return Problem("Entity set 'TN408DbContext.Prices'  is null.");
             }
-            var history = await _context.Histories.FindAsync(id);
-            if (history != null)
+            var price = await _context.Prices.FindAsync(id);
+            if (price != null)
             {
-                _context.Histories.Remove(history);
+                _context.Prices.Remove(price);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HistoryExists(int id)
+        private bool PriceExists(int id)
         {
-          return _context.Histories.Any(e => e.Id == id);
+          return _context.Prices.Any(e => e.Id == id);
         }
     }
 }

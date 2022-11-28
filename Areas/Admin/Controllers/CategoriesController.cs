@@ -18,12 +18,10 @@ namespace THUD_TN408.Areas.Admin.Controllers
     [Area("Admin"), Authorize]
     public class CategoriesController : Controller
     {
-        private readonly TN408DbContext _context;
 		private readonly Services _services;
 
         public CategoriesController(TN408DbContext context, UserManager<User> userManager)
         {
-            _context = context;
 			_services = new Services(context, userManager);
 		}
 
@@ -47,21 +45,18 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		}
 
 		// GET: Admin/Categories/Details/5
-		public async Task<IActionResult> Details(int? id, int page= 1)
+		public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null || !_services.HasAnyCategory())
             {
                 return NotFound();
             }
-			page = (page < 1) ? 1 : page;
-			int size = 5;
-			var category = await _context.Categories.Include(c => c.Products)
-                .FirstOrDefaultAsync(m => m.Id == id);
+			var category = await _services.GetCategory(id);
             if (category == null)
             {
                 return NotFound();
             }
-            ViewData["ListProducts"] = category.Products.ToPagedList(page, size);
+            ViewData["ListProducts"] = category.Products.ToPagedList(1, 8);
 			ViewData["page"] = "categories";
 			return View(category);
         }
@@ -74,17 +69,14 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // POST: Admin/Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([Bind("Id,Name,IsActive")] Category category)
 		{
 			if (ModelState.IsValid)
 			{
-				_context.Categories.Add(category);
-				await _context.SaveChangesAsync();
-				await _services.addHistory(User, "Danh mục \"" + category.Name + "\" đã được thêm vào hệ thống!", "/Admin/Categories/Details/" + category.Id);
+				await _services.AddCategory(category);
+				await _services.AddHistory(User ,"Danh mục \"" + category.Name + "\" đã được thêm vào cơ sở dữ liệu!", "/Admin/Categories/Details/" + category.Id);
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["page"] = "categories_create";
@@ -94,12 +86,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		// GET: Admin/Categories/Edit/5
 		public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null || !_services.HasAnyCategory())
             {
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _services.GetCategory(id);
             if (category == null)
             {
                 return NotFound();
@@ -109,8 +101,6 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // POST: Admin/Categories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsActive")] Category category)
@@ -124,12 +114,11 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			{
 				try
 				{
-					_context.Update(category);
-					await _context.SaveChangesAsync();
+					await _services.UpdateCategory(category);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!CategoryExists(category.Id))
+					if (!_services.CategoryExists(category.Id))
 					{
 						return NotFound();
 					}
@@ -138,7 +127,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 						throw;
 					}
 				}
-				await _services.addHistory(User, "Danh mục \"" + category.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/Categories/Details/" + category.Id);
+				await _services.AddHistory(User, "Danh mục \"" + category.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/Categories/Details/" + category.Id);
 				return RedirectToAction("Details", "Categories", new {id = category.Id});
 			}
 			ViewData["page"] = "categories";
@@ -148,52 +137,43 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Delete(int id)
 		{
-			if (_context.Categories == null)
+			if (!_services.HasAnyCategory())
 			{
 				return NotFound();
 			}
 
-			var category = await _context.Categories.Where(c => c.Id == id).Include(c => c.Products).FirstOrDefaultAsync();
+			var category = await _services.GetCategory(id);
 			if (category == null)
 			{
 				return NotFound();
 			}
 			if (category.Products!.Any())
 			{
-				_context.Update(category);
 				category.IsActive = false;
-				await _context.SaveChangesAsync();
-				await _services.addHistory(User, "Danh mục \"" + category.Name + "\" đã bị xóa khỏi hệ thống!", null);
+				await _services.UpdateCategory(category);
 				return PartialView("_Category", category);
 			}
-			_context.Categories.Remove(category);
-			await _context.SaveChangesAsync();
+			await _services.AddHistory(User, "Danh mục \"" + category.Name + "\" đã bị xóa khỏi cơ sở dữ liệu!", null);
+			await _services.RemoveCategory(category);
 			return PartialView("_Category", null);
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> Recovery(int id)
 		{
-			if (_context.Categories == null)
+			if (!_services.HasAnyCategory())
 			{
 				return NotFound();
 			}
 
-			var category = await _context.Categories.Where(c => c.Id == id).FirstOrDefaultAsync();
+			var category = await _services.GetCategory(id);
 			if (category == null)
 			{
 				return NotFound();
 			}
-		
-			_context.Update(category);
 			category.IsActive = true;
-			await _context.SaveChangesAsync();
+			await _services.UpdateCategory(category);
 			return PartialView("_Category", category);
 		}
-
-        private bool CategoryExists(int id)
-        {
-          return _context.Categories.Any(e => e.Id == id);
-        }
     }
 }

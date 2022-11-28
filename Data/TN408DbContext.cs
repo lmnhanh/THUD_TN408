@@ -102,7 +102,6 @@ namespace THUD_TN408.Data
 				order.Property("Id").ValueGeneratedOnAdd();
 				order.Property("CreatedDate").HasDefaultValue(DateTime.UtcNow).HasColumnName("Created_at");
 				order.Property("IsTrans").HasDefaultValue(false);
-				order.Property("IsPaid").HasDefaultValue(false);
 				order.Property("IsSuccess").HasDefaultValue(false);
 				order.HasMany<Cart>(o => o.Carts).WithOne(c => c.Order).OnDelete(DeleteBehavior.NoAction);
 			});

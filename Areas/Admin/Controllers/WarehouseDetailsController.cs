@@ -24,8 +24,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/WarehouseDetails
         public async Task<IActionResult> Index()
         {
-            var warehouseDetails = _context.WarehouseDetails.Include(w => w.ProductDetail).Include(w => w.Warehouse);
-            return View(await warehouseDetails.ToPagedListAsync(1, 10));
+            var warehouseDetails = _context.WarehouseDetails.Include(w => w.Warehouse).Include(w => w.ProductDetail);
+			return View(await warehouseDetails.ToPagedListAsync(1, 10));
         }
 
         // GET: Admin/WarehouseDetails/Details/5

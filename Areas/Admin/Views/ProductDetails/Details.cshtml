@@ -89,6 +89,10 @@
                             <td>@Model.Stock</td>
                         </tr>
                         <tr>
+                            <td class="fw-bold">Giá bán</td>
+                            <td><a asp-action="Index" asp-controller="Prices" asp-route-productDetailId="@Model.Id">@Model.Amount</a></td>
+                        </tr>
+                        <tr>
                             <td class="fw-bold">Phái</td>
                             @if (Model.Gender)
                             {

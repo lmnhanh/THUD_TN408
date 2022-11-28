@@ -21,10 +21,10 @@
                 @Html.DisplayFor(modelItem => item.Stock)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Warehouse!.Id)
+                @Html.DisplayFor(modelItem => item.Warehouse!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductDetail!.Id)
+                @Html.DisplayFor(modelItem => item.ProductDetail!.FullName)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
