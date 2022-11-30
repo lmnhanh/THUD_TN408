@@ -86,7 +86,7 @@ namespace THUD_TN408.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Gender = table.Column<bool>(type: "bit", nullable: false),
-                    DOB = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DOB = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -181,7 +181,7 @@ namespace THUD_TN408.Migrations
                     Message = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TargetUrl = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Status = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 26, 15, 29, 55, 744, DateTimeKind.Local).AddTicks(8251)),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 29, 23, 4, 13, 16, DateTimeKind.Local).AddTicks(7850)),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -349,8 +349,8 @@ namespace THUD_TN408.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(5924)),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 29, 16, 4, 13, 16, DateTimeKind.Utc).AddTicks(5924)),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     IsTrans = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     PaymentId = table.Column<int>(type: "int", nullable: false),
@@ -397,7 +397,7 @@ namespace THUD_TN408.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    ApplyFrom = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(8039)),
+                    ApplyFrom = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 11, 29, 16, 4, 13, 16, DateTimeKind.Utc).AddTicks(7656)),
                     ProductDetailId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

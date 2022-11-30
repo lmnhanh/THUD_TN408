@@ -454,13 +454,18 @@ namespace THUD_TN408.Areas.Admin.Service
 		}
 
 		/// <summary>
-		/// Remove a category
+		/// Remove a product promotion
 		/// </summary>
 		/// <param name="promotion"></param>
 		/// <returns></returns>
 		public async Task RemoveProductPromotion(ProductPromotion promotion)
 		{
-			_context.PPromotions.Remove(promotion);
+            if (promotion is null)
+            {
+                throw new ArgumentNullException(nameof(promotion));
+            }
+
+            _context.PPromotions.Remove(promotion);
 			await SaveChangesAsync();
 		}
 
@@ -473,6 +478,94 @@ namespace THUD_TN408.Areas.Admin.Service
 		{
 			return _context.PPromotions.Any(e => e.Id == id);
 		}
+
+
+		//======================OrderPromotion===============
+
+        /// <summary>
+        /// Check whether OrderPromotions exists or not
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+		public bool OrderPromotionExists(string id)
+		{
+			return _context.OPromotions.Any(e => e.Id == id);
+		}
+
+		/// <summary>
+		/// Check whether OrderPromotions is empty or not
+		/// </summary>
+		/// <returns></returns>
+		public bool HasAnyOrderPromotion()
+        {
+            return _context.OPromotions != null && _context.OPromotions.Any();
+        }
+
+        /// <summary>
+        /// Get an OrderPromotion of provided Id
+        /// </summary>
+        /// <param name="promotionId"></param>
+        /// <returns></returns>
+		public async Task<OrderPromotion?> GetOrderPromotion(string promotionId)
+		{
+			return await GetListOPromotion().FirstOrDefaultAsync(pp => pp.Id.Equals(promotionId));
+		}
+
+		/// <summary>
+		/// Get all OrderPromotions
+		/// </summary>
+		/// <returns></returns>
+		public IQueryable<OrderPromotion> GetListOPromotion()
+		{
+			return _context.OPromotions.Include(o => o.Orders);
+		}
+
+		/// <summary>
+		/// Add new order promotion
+		/// </summary>
+		/// <param name="promotion"></param>
+		/// <returns></returns>
+		public async Task AddOrderPromotion(OrderPromotion promotion)
+		{
+			_context.OPromotions.Add(promotion);
+			await SaveChangesAsync();
+		}
+
+		/// <summary>
+		/// Update an order promotion
+		/// </summary>
+		/// <param name="promotion"></param>
+		/// <returns></returns>
+		public async Task UpdateOrderPromotion(OrderPromotion promotion)
+		{
+			_context.OPromotions.Update(promotion);
+			await SaveChangesAsync();
+		}
+
+		/// <summary>
+		/// Remove an order promotion
+		/// </summary>
+		/// <param name="promotion"></param>
+		/// <returns></returns>
+		public async Task RemoveOrderPromotion(OrderPromotion promotion)
+		{
+			_context.OPromotions.Remove(promotion);
+			await SaveChangesAsync();
+		}
+
+		//======================WareHouse===============
+
+		public IQueryable<Warehouse> GetListWareHouse()
+		{
+            return _context.Warehouses.Include(w => w.Details);
+
+		}
+		public async Task<Warehouse?> GetWareHouse(int id)
+        {
+            return await GetListWareHouse().FirstOrDefaultAsync(w => w.Id == id);
+        }
+
+
 
 
 		//======================Price===============
@@ -511,8 +604,6 @@ namespace THUD_TN408.Areas.Admin.Service
             return null;
         }
 		
-
-
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

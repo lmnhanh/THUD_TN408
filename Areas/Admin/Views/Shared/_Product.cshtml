@@ -1,4 +1,7 @@
-﻿@model THUD_TN408.Models.Product
+﻿@using Microsoft.AspNetCore.Authorization
+@using THUD_TN408.Authorization
+@inject IAuthorizationService AuthorizationService
+@model THUD_TN408.Models.Product
 @if (Model != null)
 {
     <tr id="product_@Model.Id">
@@ -16,10 +19,34 @@
             <td>
                 <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Đang kinh doanh</span>
             </td>
-            <td class="justify-content-end">
-                <a asp-action="Edit" asp-controller="Products" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
-                <a asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
-                <a asp-action="Delete" asp-controller="Products" asp-route-id="@Model.Id" onclick="ModifyProduct(@Model.Id)" data-id="@Model.Id" title="Xóa"><i class="fa-solid fa-trash-can me-1 text-danger"></i></a>
+            <td>
+                <div class="btn-group dropdown text-black">
+                    <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tùy chọn
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Products.Edit)).Result.Succeeded)
+                        {
+                            <a class="dropdown-item" asp-action="Edit" asp-controller="Products" asp-route-id="@Model.Id"><i class="fa fa-pen-to-square me-2 text-primary"></i>Chỉnh sửa</a>
+                        }
+                        <a class="dropdown-item" asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
+                        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Products.Delete)).Result.Succeeded)
+                        {
+                            <a class="dropdown-item"asp-action="Delete" asp-controller="Products" asp-route-id="@Model.Id" onclick="ModifyProduct(@Model.Id)" data-id="@Model.Id"><i class="fa-solid fa-trash-can me-2 text-danger"></i>Xóa</a>
+                        }
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Products.Create)).Result.Succeeded)
+                        {
+                            <a class="dropdown-item" asp-action="Create" asp-controller="ProductDetails" asp-route-productId="@Model.Id"><i class="fa fa-plus text-success me-2"></i>Thêm chi tiết sản phẩm</a>
+                        }
+                        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Promotions.Create)).Result.Succeeded)
+                        {
+                            <a class="dropdown-item" asp-action="Create" asp-controller="ProductPromotions" asp-route-productId="@Model.Id"><i class="fa fa-plus text-success me-2"></i>Thêm khuyến mãi</a>
+                        }
+                    </ul>
+                </div>
             </td>
         }
         else
@@ -27,10 +54,17 @@
             <td>
                 <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Ngừng kinh doanh</span>
             </td>
-            <td class="justify-content-end">
-                <a asp-action="Edit" asp-controller="Products" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
-                <a asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
-                <a asp-action="Recovery" asp-controller="Products" asp-route-id="@Model.Id" onclick="ModifyProduct(@Model.Id)" data-id="@Model.Id" title="Xóa"><i class="fa-solid fa-rotate-left me-1 text-success"></i></a>
+            <td>
+                <div class="btn-group dropdown text-black">
+                    <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tùy chọn
+                    </button>
+                    <ul class="dropdown-menu">
+                        <a class="dropdown-item" asp-action="Edit" asp-controller="Products" asp-route-id="@Model.Id"><i class="fa fa-pen-to-square me-2 text-primary"></i>Chỉnh sửa</a>
+                        <a class="dropdown-item" asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
+                        <a class="dropdown-item" asp-action="Recovery" asp-controller="Products" asp-route-id="@Model.Id" onclick="ModifyProduct(@Model.Id)" data-id="@Model.Id"><i class="fa-solid fa-rotate-left me-2 text-success"></i>Khôi phục</a>
+                    </ul>
+                </div>
             </td>
         }
     </tr>

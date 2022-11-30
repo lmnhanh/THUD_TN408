@@ -1,0 +1,30 @@
+﻿<script>
+    $('#product').change(() => {
+        var productId = $('#product').val();
+        $.ajax({
+            type: 'GET',
+            data: { productId: productId },
+            url: '/Admin/Warehouses/GetSelectListDetails'
+        }).done(response => {
+            $('#detail').html(response)
+        })
+    })
+
+    $('#warehouse,#product,#detail').change(() => {
+        var productId = $('#product').val();
+        var warehouseId = $('#warehouse').val();
+        var detailId = $('#detail').val();
+        if (productId == -1) detailId = -1;
+        $.ajax({
+            type: 'GET',
+            data: {
+                warehouseId: warehouseId,
+                productId: productId,
+                detailId: detailId
+            },
+            url: '/Admin/Warehouses/FilterPaging'
+        }).done(response => {
+            $('#stockDetailTable').html(response)
+        })
+    })
+</script>

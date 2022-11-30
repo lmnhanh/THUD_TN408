@@ -1,0 +1,54 @@
+﻿@model THUD_TN408.Models.User
+
+<form action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="Email" type="hidden"/>
+    <input asp-for="Id" type="hidden" />
+    <div class="row mb-1">
+        <label asp-for="FirstName" class="col-md-4 col-lg-3 col-form-label fw-bold">Họ lót:</label>
+        <div class="col-md-8 col-lg-9">
+            <input asp-for="FirstName" class="form-control" placeholder="Họ lót"/>
+            <span asp-validation-for="FirstName" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label asp-for="LastName" class="col-md-4 col-lg-3 col-form-label fw-bold">Tên:</label>
+        <div class="col-md-8 col-lg-9">
+            <input asp-for="LastName" class="form-control" placeholder="Tên" />
+            <span asp-validation-for="LastName" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label asp-for="Gender" class="col-md-4 col-lg-3 col-form-label fw-bold">Phái:</label>
+        <div class="form-group form-check col-md-8 col-lg-9">
+            <label class="form-check-label ms-3">
+                <input class="form-check-input" asp-for="Gender" />
+                Nam
+            </label>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label asp-for="DateOfBirth" class="col-md-4 col-lg-3 col-form-label fw-bold">Ngày sinh:</label>
+        <div class="col-md-8 col-lg-9">
+            <input asp-for="DateOfBirth" class="form-control" placeholder="Ngày sinh" />
+            <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label asp-for="Address" class="col-md-4 col-lg-3 col-form-label fw-bold">Địa chỉ:</label>
+        <div class="col-md-8 col-lg-9">
+            <input asp-for="Address" class="form-control" placeholder="Địa chỉ" />
+            <span asp-validation-for="Address" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label asp-for="PhoneNumber" class="col-md-4 col-lg-3 col-form-label fw-bold">Số điện thoại:</label>
+        <div class="col-md-8 col-lg-9">
+            <input asp-for="PhoneNumber" class="form-control" placeholder="Số điện thoại" />
+            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="d-flex">
+        <input type="submit" value="Lưu" class="mx-auto mt-1 btn btn-sm btn-primary" />
+    </div>
+</form>

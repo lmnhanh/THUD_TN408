@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Areas.Admin.Service;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize]
+    [Area("Admin"), Authorize(policy: Permissions.Products.View)]
     public class ProductDetailsController : Controller
     {
         private readonly Services _services;
@@ -61,6 +62,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // GET: Admin/ProductDetails/Create
+        [Authorize(policy: Permissions.Products.Create)]
         public IActionResult Create(int? productId)
         {
             if(productId != null)
@@ -72,13 +74,13 @@ namespace THUD_TN408.Areas.Admin.Controllers
 				ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name");
 			}
 			ViewData["page"] = "products";
-			return View();
+			return View(new ProductDetail());
         }
 
         // POST: Admin/ProductDetails/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost,Authorize(policy: Permissions.Products.Create)]
         public async Task<IActionResult> Create([Bind("Id,Size,Color,Amount,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
         {
 			ViewData["page"] = "products";
@@ -115,8 +117,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			}
         }
 
-        // GET: Admin/ProductDetails/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Admin/ProductDetails/Edit/5
+		[Authorize(policy: Permissions.Products.Edit)]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || !_services.HasAnyProductDetail())
             {
@@ -136,7 +139,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/ProductDetails/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, Authorize(policy: Permissions.Products.Edit)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Size,Color,Amount,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
         {
@@ -178,8 +181,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(productDetail);
         }
 
-        // GET: Admin/ProductDetails/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Admin/ProductDetails/Delete/5
+		[Authorize(policy: Permissions.Products.Delete)]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || !_services.HasAnyProductDetail())
             {
@@ -197,7 +201,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
         // POST: Admin/ProductDetails/Delete/5
         [HttpGet, ActionName("DeleteConfirmed")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+		[Authorize(policy: Permissions.Products.Delete)]
+		public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!_services.HasAnyProductDetail())
             {
@@ -219,6 +224,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		}
 
 		[HttpPost, ActionName("DeleteAsync")]
+		[Authorize(policy: Permissions.Products.Delete)]
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
 			if (!_services.HasAnyProductDetail())
@@ -228,11 +234,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
             var productDetail = await _services.GetProductDetail(id, DateTime.Now);
 			if (productDetail != null)
 			{
-				if (productDetail.Carts == null)
+				if (productDetail.Carts?.Count == 0)
 				{
 					_services.DeleteImage(productDetail.Image1);
 					_services.DeleteImage(productDetail.Image2);
 					await _services.RemoveProductDetail(productDetail);
+					return PartialView("_ProductDetail", null);
 				}
 				return PartialView("_ProductDetail", productDetail);
 

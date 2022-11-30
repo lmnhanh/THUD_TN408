@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,13 @@ namespace THUD_TN408.Areas.Admin.Controllers
     public class WarehouseDetailsController : Controller
     {
         private readonly TN408DbContext _context;
+		private readonly INotyfService _notyf;
 
-        public WarehouseDetailsController(TN408DbContext context)
+		public WarehouseDetailsController(TN408DbContext context, INotyfService notyf)
         {
             _context = context;
-        }
+			_notyf = notyf;
+		}
 
         // GET: Admin/WarehouseDetails
         public async Task<IActionResult> Index()
@@ -57,23 +60,29 @@ namespace THUD_TN408.Areas.Admin.Controllers
 				detail.FullName = detail.Product?.Name + ", " + ((detail.Gender == true) ? "Nam" : "Nữ") + ", " + detail.Size + ", " + detail.Color;
 			}
 
-			ViewData["ProductDetailId"] = new SelectList(details, "Id", "FullName");
+			ViewData["ProductDetailId"] = new SelectList(details.ToList().OrderBy(d => d.FullName), "Id", "FullName");
             ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Name");
-            return View();
+            return View(new WarehouseDetail());
         }
 
         // POST: Admin/WarehouseDetails/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("WarehouseId,ProductDetailId,Stock")] WarehouseDetail warehouseDetail)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(warehouseDetail);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var oldDetail = await _context.WarehouseDetails.AsNoTracking().Include(w => w.Warehouse)
+                    .FirstOrDefaultAsync(w =>
+                    w.ProductDetailId == warehouseDetail.ProductDetailId &&
+                    w.WarehouseId == warehouseDetail.WarehouseId);
+                if(oldDetail == null)
+                {
+					 _context.Add(warehouseDetail);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("DetailStockIndex", "Warehouses");
+				}
+                _notyf.Error("Kho " + oldDetail.Warehouse?.Name + " đã chứa " + oldDetail.Stock +" sản phẩm này");
             }
 
             var details = _context.Details.Include(x => x.Product);
@@ -82,7 +91,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 detail.FullName = detail.Product?.Name + ", " + ((detail.Gender == true)? "Nam" : "Nữ")+ ", " + detail.Size + ", " + detail.Color;
             }
 
-			ViewData["ProductDetailId"] = new SelectList(details , "Id", "FullName", warehouseDetail.ProductDetailId);
+			ViewData["ProductDetailId"] = new SelectList(details.ToList().OrderBy(x => x.FullName), "Id", "FullName", warehouseDetail.ProductDetailId);
             ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Name", warehouseDetail.WarehouseId);
             return View(warehouseDetail);
         }

@@ -1,0 +1,13 @@
+﻿<script>
+    function ModifyOPromotion() {
+        event.preventDefault();
+        var id = event.currentTarget.dataset.id
+        var url = event.currentTarget.href.substr(location.origin.length, 99)
+        $.ajax({
+            type: "POST",
+            url: url,
+        }).done(response => {
+            document.querySelector("#opromotion_" + id).innerHTML = response
+        })
+    }
+</script>

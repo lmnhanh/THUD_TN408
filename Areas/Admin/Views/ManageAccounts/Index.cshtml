@@ -1,0 +1,88 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<User>
+@{
+    ViewData["title"] = "Quản lí tài khoản";
+    Layout = "/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Danh sách tài khoản đăng nhập</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ManageAccounts/Index">Danh sách tài khoản</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                @if (Model?.Any() == true)
+                {
+                    <a asp-action="Create" asp-controller="ManageAccounts" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
+                    <h5 class="card-title text-center">Danh sách tài khoản</h5>
+                    <table class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>Tùy chọn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @user.Id
+                                    </td>
+                                    <td>
+                                        @user.Email
+                                    </td>
+                                    <td>
+                                        <div class="btn-group dropdown text-black">
+                                            <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Tùy chọn
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <a class="dropdown-item" asp-action="Details" asp-controller="ManageAccounts" asp-route-userId="@user.Id"><i class="fa fa-user-shield text-primary me-2"></i>Quản lí role</a>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @*@if (!Model.IsFirstPage || !Model.IsLastPage)
+                {
+                <nav>
+                @Html.PagedListPager(Model, page => Url.ActionLink("Paging", "Products", new {page = page, categoryId = categoryId}), new PagedListRenderOptions()
+                {
+                ActiveLiElementClass = "active",
+                PageClasses = new[]{ "page-link"},
+                LiElementClasses=new[] { "page-item" },
+                LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
+                LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
+                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
+                LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
+                MaximumPageNumbersToDisplay = 4,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+                })
+                </nav>
+                }*@
+                }
+                else
+                {
+                    <h6 class="card-title text-center">Không có tài khoản nào khác để hiển thị!</h6>
+                    <div class="d-flex">
+                        <a asp-action="Create" asp-controller="ManageAcounts" class="btn btn-sm btn-primary mx-auto">Thêm tài khoản mới</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

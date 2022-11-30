@@ -23,7 +23,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/Histories
         public async Task<IActionResult> Index(string userID)
         {
-            var tN408DbContext = _context.Histories.Include(h => h.User).Where(h => h.UserId == null || h.UserId == userID);
+            var tN408DbContext = _context.Histories.Include(h => h.User).Where(h => h.UserId == null || h.UserId == userID).OrderByDescending(x => x.CreatedAt);
             return View(await tN408DbContext.ToListAsync());
         }
 

@@ -1,90 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using THUD_TN408.Areas.Admin.Service;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
+using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize]
     public class OrderPromotionsController : Controller
     {
-        private readonly TN408DbContext _context;
+		private readonly INotyfService _notyf;
+		private readonly Services _services;
 
-        public OrderPromotionsController(TN408DbContext context)
+		public OrderPromotionsController(TN408DbContext context, UserManager<User> userManager, INotyfService notyf)
         {
-            _context = context;
-        }
+			_services = new Services(context, userManager);
+			_notyf = notyf;
+		}
 
         // GET: Admin/OrderPromotions
         public async Task<IActionResult> Index()
         {
-              return View(await _context.OPromotions.ToListAsync());
+			ViewData["page"] = "opromotions";
+			var promotions = await _services.GetListOPromotion().ToPagedListAsync(1, 8);
+			return View(promotions);
         }
+
+        public async Task<IActionResult> Paging(int page = 1, int size = 8)
+        {
+			page = (page < 1) ? 1 : page;
+			size = (size < 2) ? 2 : size;
+			var promotions = await _services.GetListOPromotion().ToPagedListAsync(page, size);
+			return PartialView("_ListOrderPromotions", promotions);
+		}
 
         // GET: Admin/OrderPromotions/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null || _context.OPromotions == null)
+            if (id == null || !_services.HasAnyOrderPromotion())
             {
                 return NotFound();
             }
-
-            var orderPromotion = await _context.OPromotions
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var orderPromotion = await _services.GetOrderPromotion(id);
             if (orderPromotion == null)
             {
                 return NotFound();
             }
 
-            return View(orderPromotion);
+			ViewData["page"] = "opromotions";
+			return View(orderPromotion);
         }
 
         // GET: Admin/OrderPromotions/Create
         public IActionResult Create()
         {
-            return View();
+			ViewData["page"] = "opromotions";
+			return View(new OrderPromotion());
         }
 
         // POST: Admin/OrderPromotions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,MaxDiscount,DiscountPercent,ApplyCondition,IsActive")] OrderPromotion orderPromotion)
         {
+            if (_services.ProductPromotionExists(orderPromotion.Id))
+			{
+				ModelState.AddModelError("Id", "Mã khuyến mãi đã được sử dụng!");
+			}
+			if (orderPromotion.ApplyFrom.CompareTo(orderPromotion.ValidTo) > 0)
+			{
+				ModelState.AddModelError("ValidTo", "Ngày hết hạn phải sau ngày bắt đầu áp dụng khuyến mãi!");
+			}
+			if (orderPromotion.ValidTo.CompareTo(DateTime.Now) < 0)
+			{
+				ModelState.AddModelError("ValidTo", "Ngày hết hạn phải sau ngày hiện tại!");
+			}
             if (ModelState.IsValid)
             {
-                _context.Add(orderPromotion);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(orderPromotion);
+				await _services.AddOrderPromotion(orderPromotion);
+				await _services.AddHistory(User, "Thêm khuyến mãi \"" + orderPromotion.Id + "\"", "/Admin/OrderPromotions/Details/" + orderPromotion.Id);
+				_notyf.Success("Đã thêm khuyến mãi " + orderPromotion.Id);
+				return RedirectToAction("Details", "OrderPromotions", new { id = orderPromotion.Id });
+			}
+			ViewData["page"] = "opromotions";
+			return View(orderPromotion);
         }
 
         // GET: Admin/OrderPromotions/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || _context.OPromotions == null)
+            if (id == null || !_services.HasAnyOrderPromotion())
             {
                 return NotFound();
             }
 
-            var orderPromotion = await _context.OPromotions.FindAsync(id);
+            var orderPromotion = await _services.GetOrderPromotion(id);
             if (orderPromotion == null)
             {
                 return NotFound();
             }
-            return View(orderPromotion);
+			ViewData["page"] = "opromotions";
+			return View(orderPromotion);
         }
 
         // POST: Admin/OrderPromotions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,MaxDiscount,DiscountPercent,ApplyCondition,IsActive")] OrderPromotion orderPromotion)
@@ -94,69 +125,61 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var oldPromotion = _services.GetListOPromotion().Where(x => x.Id.Equals(orderPromotion.Id)).AsNoTracking().FirstOrDefault();
+            if(oldPromotion != null && oldPromotion.ValidTo.CompareTo(DateTime.Now) < 0)
+            {
+				_notyf.Warning("Không thể chỉnh sửa khuyến mãi đã kết thúc!");
+				return RedirectToAction("Details", "OrderPromotions", new { id = orderPromotion.Id });
+			}
+
+			if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(orderPromotion);
-                    await _context.SaveChangesAsync();
-                }
+					await _services.UpdateOrderPromotion(orderPromotion);
+					_notyf.Success("Đã lưu chỉnh sửa!");
+					await _services.AddHistory(User, "Chỉnh sửa khuyến mãi \"" + orderPromotion.Id + "\"", "/Admin/OrderPromotions/Details/" + orderPromotion.Id);
+
+				}
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderPromotionExists(orderPromotion.Id))
+                    if (!_services.OrderPromotionExists(orderPromotion.Id))
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
                 }
-                return RedirectToAction(nameof(Index));
-            }
+				return RedirectToAction("Details", "OrderPromotions", new { id = orderPromotion.Id });
+			}
             return View(orderPromotion);
         }
 
-        // GET: Admin/OrderPromotions/Delete/5
-        public async Task<IActionResult> Delete(string id)
+		// POST: Admin/OrderPromotions/DeleteAsync/5
+		[HttpPost, ActionName("DeleteAsync")]
+        public async Task<IActionResult> DeleteAsync(string id)
         {
-            if (id == null || _context.OPromotions == null)
+			if (!_services.HasAnyOrderPromotion())
             {
-                return NotFound();
-            }
-
-            var orderPromotion = await _context.OPromotions
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (orderPromotion == null)
+				_notyf.Error("Đã có lỗi xảy ra!");
+			}
+            var orderPromotion = await _services.GetOrderPromotion(id);
+			try
             {
-                return NotFound();
+                if (orderPromotion != null)
+                {
+                    _notyf.Success("Đã xóa khuyến mãi " + orderPromotion.Id);
+					await _services.AddHistory(User, "Xóa khuyến mãi \"" + orderPromotion.Id + "\"", null);
+					await _services.RemoveOrderPromotion(orderPromotion);
+                    return PartialView("_OrderPromotion", null);
+                }
             }
-
-            return View(orderPromotion);
-        }
-
-        // POST: Admin/OrderPromotions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            if (_context.OPromotions == null)
+            catch
             {
-                return Problem("Entity set 'TN408DbContext.OPromotions'  is null.");
+                _notyf.Error("Đã có lỗi xảy ra!");
+			    return PartialView("_OrderPromotion", orderPromotion);
             }
-            var orderPromotion = await _context.OPromotions.FindAsync(id);
-            if (orderPromotion != null)
-            {
-                _context.OPromotions.Remove(orderPromotion);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			return PartialView("_OrderPromotion", orderPromotion);
+		}
 
-        private bool OrderPromotionExists(string id)
-        {
-          return _context.OPromotions.Any(e => e.Id == id);
-        }
+        
     }
 }

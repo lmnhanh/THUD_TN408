@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,13 +10,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using THUD_TN408.Areas.Admin.Service;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Roles = "Saleman, SaleManager, WarehouseManager")]
     public class ProductsController : Controller
     {
 		private readonly Services _services;
@@ -26,6 +28,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products
+        //[Authorize(Roles ="Saleman")]
         public async Task<IActionResult> Index()
         {
             var products = await _services.GetListProduct().ToPagedListAsync(1, 8);
@@ -66,8 +69,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(product);
         }
 
-        // GET: Admin/Products/Create
-        public IActionResult Create(int? categoryId)
+		// GET: Admin/Products/Create
+		[Authorize(policy: Permissions.Products.Create)]
+		public IActionResult Create(int? categoryId)
         {
             if(categoryId != null)
             {
@@ -86,7 +90,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Origin,Description,IsActive,CategoryId")] Product product)
+		[Authorize(policy: Permissions.Products.Create)]
+		public async Task<IActionResult> Create([Bind("Id,Name,Origin,Description,IsActive,CategoryId")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -99,8 +104,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(product);
         }
 
-        // GET: Admin/Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Admin/Products/Edit/5
+		[Authorize(policy: Permissions.Products.Edit)]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || !_services.HasAnyProduct())
             {
@@ -122,7 +128,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Origin,Description,IsActive,CategoryId")] Product product)
+		[Authorize(policy: Permissions.Products.Edit)]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Origin,Description,IsActive,CategoryId")] Product product)
         {
             if (id != product.Id)
             {
@@ -157,7 +164,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
         // POST: Admin/Products/Delete/5
         [HttpPost]
-        public async Task<IActionResult> Delete(int? id)
+		[Authorize(policy: Permissions.Products.Delete)]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || !_services.HasAnyProduct())
             {
@@ -170,7 +178,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return NotFound();
             }
 
-			if (product.Details!.Any())
+			if (product.Details!.Any() == true || product.Promotions?.Any() == true)
 			{
 				product.IsActive = false;
                 await _services.UpdateProduct(product);
@@ -183,6 +191,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		}
 
         [HttpPost]
+		[Authorize(policy: Permissions.Products.Delete)]
 		public async Task<IActionResult> Recovery(int? id)
 		{
 			if (id == null || !_services.HasAnyProduct())

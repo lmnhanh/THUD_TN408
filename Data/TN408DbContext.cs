@@ -35,7 +35,7 @@ namespace THUD_TN408.Data
 				user.Property("FirstName").HasMaxLength(25);
 				user.Property("LastName").HasMaxLength(20);
 				user.Property("Address").IsRequired(false).HasMaxLength(100);
-				user.Property("DateOfBirth").IsRequired(false).HasColumnName("DOB");
+				user.Property("DateOfBirth").HasColumnName("DOB");
 				user.HasMany<Cart>(u => u.Carts).WithOne(c => c.User).HasForeignKey(c => c.UserId);
 				user.HasMany<Order>(u => u.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId);
 				user.HasMany<History>(u => u.Histories).WithOne(h => h.User).HasForeignKey(h => h.UserId);
@@ -176,7 +176,7 @@ namespace THUD_TN408.Data
 				entity.ToTable("UserTokens");
 			});
 
-			//builder.Seed();
+			builder.Seed();
 		}
 	}
 }

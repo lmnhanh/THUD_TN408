@@ -1,0 +1,61 @@
+﻿@model THUD_TN408.Areas.Admin.Models.UserRole;
+@{
+    ViewData["title"] = "Quản lí role";
+    Layout = "/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Danh sách role</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ManageAccounts/Index">Danh sách tài khoản</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ManageAccounts/Details?userId=@Model.UserId">@Model.UserId</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ManageAccounts/Details?userId=@Model.UserId">Quản lí role</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Cập nhật role</h5>
+                <form asp-controller="ManageAccounts" method="POST" asp-action="Update" asp-route-id="@Model.UserId" class="d-inline">
+                    <input asp-for="@Model.UserId" type="hidden" />
+                    <table class="table table-hover" id="userRolesTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Role
+                                </th>
+                                <th>
+                                    Trạng thái
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Roles.Count(); i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input asp-for="@Model.Roles[i].Name" type="hidden" />
+                                        @Model.Roles[i].Name
+                                    </td>
+                                    <td>
+                                        <div class="form-check m-1">
+                                            <input asp-for="@Model.Roles[i].Selected" class="form-check-input" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="d-flex">
+                        <button type="submit" id="save" class="btn btn-primary btn-sm mx-auto">
+                            Lưu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -23,13 +23,22 @@
             @Model.Amount
         </td>
         <td class="justify-content-center align-middle">
-            @if(Model.Product?.IsActive == true){
-                <a asp-action="Edit" asp-controller="ProductDetails" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square me-1 text-primary"></i></a>
-            }
-            <a asp-action="Details" asp-controller="ProductDetails" asp-route-id="@Model.Id" title="Chi tiết"><i class="fa fa-circle-info me-1 text-info"></i></a>
-            @if(Model.Product?.IsActive == true){
-                <a asp-action="DeleteAsync" asp-controller="ProductDetails" asp-route-id="@Model.Id" onclick="ModifyDetail(@Model.Id)" data-id="@Model.Id" title="Xóa"><i class="fa-solid fa-trash-can me-1 text-danger"></i></a>
-            }
+            <div class="btn-group dropdown text-black">
+                    <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tùy chọn
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if (Model.Product?.IsActive == true)
+                        {
+                            <a class="dropdown-item" asp-action="Edit" asp-controller="ProductDetails" asp-route-id="@Model.Id"><i class="fa fa-pen-to-square me-2 text-primary"></i>Chỉnh sửa</a>
+                        }
+					        <a class="dropdown-item" asp-action="Details" asp-controller="ProductDetails" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
+                        @if (Model.Product?.IsActive == true)
+                        {
+						    <a class="dropdown-item" asp-action="DeleteAsync" asp-controller="ProductDetails" asp-route-id="@Model.Id" onclick="ModifyDetail(@Model.Id)" data-id="@Model.Id"><i class="fa-solid fa-trash-can me-2 text-danger"></i>Xóa</a>
+                        }
+                    </ul>
+                </div>
         </td>
     </tr>
 }

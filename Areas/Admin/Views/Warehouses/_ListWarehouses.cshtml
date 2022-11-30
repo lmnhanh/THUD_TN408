@@ -1,0 +1,93 @@
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.Warehouse>
+
+@if (Model?.Any() == true)
+{
+    <a asp-action="Create" asp-controller="Warehouses" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
+    <h5 class="card-title text-center">Danh sách kho</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Tên kho
+                </th>
+                <th>
+                    Địa chỉ
+                </th>
+                <th>Tùy chọn</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Address
+                    </td>
+                    <td>
+                        <div class="btn-group dropdown text-black">
+                            <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Tùy chọn
+                            </button>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" asp-action="Edit" asp-controller="Warehouses" asp-route-id="@item.Id"><i class="fa fa-pen-to-square me-2 text-primary"></i>Chỉnh sửa</a>
+                                @*<a class="dropdown-item" asp-action="Details" asp-controller="Warehouses" asp-route-id="@item.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>*@
+                            </ul>
+                        </div>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.IsFirstPage || !Model.IsLastPage)
+    {
+        <nav>
+            @Html.PagedListPager(Model, page => Url.ActionLink("Paging", "Warehouses", new {page = page}), new PagedListRenderOptions()
+            {
+                ActiveLiElementClass = "active",
+                PageClasses = new[]{ "page-link"},
+                LiElementClasses=new[] { "page-item" },
+                LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
+                LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
+                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
+                LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
+                MaximumPageNumbersToDisplay = 4,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+            })
+        </nav>
+    }
+}
+else
+{
+    <h6 class="card-title text-center">Danh sách kho trống!</h6>
+    <div class="d-flex">
+        <a asp-action="Create" asp-controller="Warehouses" class="btn btn-sm btn-primary mx-auto">Thêm kho mới!</a>
+    </div>
+}
+<script>
+    var links = document.querySelectorAll(".page-link");
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            event.preventDefault();
+            var url = link.href.substr(location.origin.length, 99)
+            $.ajax({
+                type: "GET",
+                url: url
+            }).done(response => {
+                $("#warehousesTable").html(response)
+            })
+        })
+    })
+    makeDataTable()
+</script>

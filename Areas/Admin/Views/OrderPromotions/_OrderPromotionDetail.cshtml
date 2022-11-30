@@ -1,0 +1,105 @@
+﻿@model THUD_TN408.Models.OrderPromotion
+
+<h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin khuyến mãi</h5>
+<div class="collapse show" id="collapseInfo">
+    <table class="table table-hover">
+        <tr>
+            <td class="fw-bold">Mã khuyến mãi</td>
+            <td>@Model.Id</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Tên khuyến mãi</td>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Mô tả</td>
+            <td>@Model.Description</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Ngày áp dụng</td>
+            <td>@Model.ApplyFrom</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Ngày kết thúc</td>
+            <td>@Model.ValidTo</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Tỉ lệ giảm</td>
+            <td>@String.Format("{0}%", @Model.DiscountPercent)</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Điều kiện áp dụng</td>
+            @if(Model.ApplyCondition == null || Model.ApplyCondition == 0){
+                <td>Tất cả đơn hàng</td>
+            }else{
+                <td>Tổng giá trị đơn hàng trên @String.Format("{0:# ### ### ###} VND", @Model.ApplyCondition)</td>
+            }
+        </tr>
+        <tr>
+            <td class="fw-bold">Giảm tối đa</td>
+            @if (Model.MaxDiscount == null || Model.MaxDiscount == 0)
+            {
+                <td>Không giới hạn</td>
+            }else{
+                <td>@String.Format("{0:# ### ### ###} VND", @Model.MaxDiscount)</td>
+            }
+            
+        </tr>
+        <tr>
+            <td class="fw-bold">Số lượng</td>
+            <td>@Model.Stock</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">Trạng thái</td>
+            @if (Model.IsActive == true)
+            {
+                if (Model.ApplyFrom.CompareTo(DateTime.Now) > 0)
+                {
+                    <td>
+                        <span class="badge rounded-pill bg-info"><i class="fa fa-clock me-1"></i>Sắp diễn ra</span>
+                    </td>
+                }
+                else
+                {
+                    if (Model.ValidTo.CompareTo(DateTime.Now) >= 0)
+                    {
+                        if (Model.Stock > 0)
+                        {
+                            <td>
+                                <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Đang diễn ra</span>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <span class="badge rounded-pill bg-danger"><i class="fa fa-close me-1"></i>Hết lượt sử dụng</span>
+                            </td>
+                        }
+
+                    }
+                    else
+                    {
+                        <td>
+                            <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Đã kết thúc</span>
+                        </td>
+                    }
+                }
+            }
+            else
+            {
+                <td>
+                    <span class="badge rounded-pill bg-dark"><i class="fa fa-close me-1"></i>Ngừng áp dụng</span>
+                </td>
+            }
+        </tr>
+    </table>
+    <div class="d-flex">
+        <div class="mx-auto">
+            <a class="btn btn-sm btn-info mx-auto" asp-action="Index" asp-controller="OrderPromotions" title="Danh sách"><i class="fa fa-bars "></i></a>
+            @if (Model.ApplyFrom.CompareTo(DateTime.Now) >= 0 || Model.ValidTo.CompareTo(DateTime.Now) >= 0)
+            {
+                <a class="btn btn-sm btn-primary mx-auto" asp-action="Edit" asp-controller="OrderPromotions" asp-route-id="@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square"></i></a>
+            }
+        </div>
+    </div>
+</div>

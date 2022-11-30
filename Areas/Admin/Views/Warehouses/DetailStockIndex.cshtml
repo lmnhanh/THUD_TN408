@@ -1,0 +1,75 @@
+﻿@model IPagedList<THUD_TN408.Models.WarehouseDetail>
+
+@{
+    ViewData["Title"] = "Chi tiết tồn kho";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Chi tiết tồn kho</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Warehouses/Index">Danh sách kho</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Warehouses/DetailStockIndex">Chi tiết tồn kho</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body" >
+                <div class="row col-8 me-auto mt-3">
+                    <div class="col-4 me-auto fw-bold">
+                        <select class="form-select-sm form-select" id="warehouse">
+                            <option value="-1" selected>--Kho--</option>
+                            @{
+                                var warehouses = (IEnumerable<Warehouse>?)ViewData["Warehouse"];
+                                if(warehouses != null){
+                                    foreach (var warehouse in warehouses!)
+                                    {
+                                                        <option value="@warehouse.Id">@warehouse.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-4 me-auto fw-bold">
+                        <select class="form-select-sm form-select" id="product">
+                            <option value="-1" selected>--Sản phẩm--</option>
+                            @{
+                                var products = (IEnumerable<Product>?)ViewData["Product"];
+                                if(products != null){
+                                    foreach (var product in products!)
+                                    {
+                                                        <option value="@product.Id">@product.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-4 me-auto fw-bold">
+                        @{
+                            var details = (IEnumerable<ProductDetail>?)ViewData["Detail"];
+                        }
+                        <select class="form-select-sm form-select" id="detail">
+                            <partial name="_SelectListDetails" model="details"/>
+                        </select>
+                    </div>
+                </div>
+                <div id="stockDetailTable">
+					@if (Model != null)
+					{
+						<partial name="_ListWarehouseDetails" model="Model" />
+					}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_WarehouseScriptsPartial");
+    }
+}
+
+

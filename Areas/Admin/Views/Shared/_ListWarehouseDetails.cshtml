@@ -1,37 +1,89 @@
-﻿@model IEnumerable<THUD_TN408.Models.WarehouseDetail>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Stock)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Warehouse)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductDetail)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Warehouse!.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductDetail!.FullName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.WarehouseDetail>
+@if (Model?.Any() == true)
+{
+    <a asp-action="Create" asp-controller="WarehouseDetails" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
+    <h5 class="card-title text-center">Danh sách tồn kho</h5>
+    <table class="table table-hover datatable">
+        <thead>
+            <tr>
+                <th>
+                    Sản phẩm
+                </th>
+                <th>
+                    Kho
+                </th>
+                <th>
+                    Số lượng
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductDetail!.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Warehouse!.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stock)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.IsFirstPage || !Model.IsLastPage)
+    {
+        <nav>
+            @Html.PagedListPager(Model, page => Url.ActionLink("FilterPaging", "Warehouses", new {page = page}), new PagedListRenderOptions()
+            {
+                ActiveLiElementClass = "active",
+                PageClasses = new[]{ "page-link"},
+                LiElementClasses=new[] { "page-item" },
+                LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
+                LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
+                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
+                LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
+                MaximumPageNumbersToDisplay = 4,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+            })
+        </nav>
+    }
 }
-    </tbody>
-</table>
+else
+{
+    <h6 class="card-title text-center">Danh sách tồn kho trống!</h6>
+    <div class="d-flex">
+        <a asp-action="Create" asp-controller="WarehouseDetails" class="btn btn-sm btn-primary mx-auto">Thêm chi tiết tồn kho!</a>
+    </div>
+}
+<script>
+    var links = document.querySelectorAll(".page-link");
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            event.preventDefault();
+            var url = link.href.substr(location.origin.length, 99)
+            var warehouseId = $('#warehouse').val();
+            var productId = $('#product').val();
+            var detailId = $('#detail').val();
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {
+                    warehouseId : warehouseId,
+                    productId : productId,
+                    detailId : detailId
+                }
+            }).done(response => {
+                $("#stockDetailTable").html(response)
+            })
+        })
+    })
+    makeDataTable()
+</script>

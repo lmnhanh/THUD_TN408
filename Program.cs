@@ -1,22 +1,35 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using THUD_TN408.Areas.Admin.Service;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
 var connectionString = builder.Configuration.GetConnectionString("MyDatabase");
 builder.Services.AddDbContext<TN408DbContext>(options =>
 		options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<TN408DbContext>();
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<TN408DbContext>()
+	.AddDefaultTokenProviders();
+
+builder.Services.AddNotyf(config => { 
+	config.DurationInSeconds = 3;
+	config.IsDismissable = true;
+	config.Position = NotyfPosition.TopCenter;
+	config.HasRippleEffect = true;
+
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
@@ -38,6 +51,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseNotyf();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -53,7 +67,5 @@ app.UseEndpoints(endpoints =>
 		pattern: "{area:exists}/{controller:exists}/{action=Index}/{id?}"
 	);
 });
-
 app.MapRazorPages();
-
 app.Run();

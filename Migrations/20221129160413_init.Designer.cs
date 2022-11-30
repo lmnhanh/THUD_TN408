@@ -12,7 +12,7 @@ using THUD_TN408.Data;
 namespace THUD_TN408.Migrations
 {
     [DbContext(typeof(TN408DbContext))]
-    [Migration("20221126082955_init")]
+    [Migration("20221129160413_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,7 +236,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 26, 15, 29, 55, 744, DateTimeKind.Local).AddTicks(8251));
+                        .HasDefaultValue(new DateTime(2022, 11, 29, 23, 4, 13, 16, DateTimeKind.Local).AddTicks(7850));
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -271,13 +271,11 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(5924))
+                        .HasDefaultValue(new DateTime(2022, 11, 29, 16, 4, 13, 16, DateTimeKind.Utc).AddTicks(5924))
                         .HasColumnName("Created_at");
 
                     b.Property<bool>("IsPaid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSuccess")
                         .ValueGeneratedOnAdd()
@@ -389,7 +387,7 @@ namespace THUD_TN408.Migrations
                     b.Property<DateTime>("ApplyFrom")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 26, 8, 29, 55, 744, DateTimeKind.Utc).AddTicks(8039));
+                        .HasDefaultValue(new DateTime(2022, 11, 29, 16, 4, 13, 16, DateTimeKind.Utc).AddTicks(7656));
 
                     b.Property<int>("ProductDetailId")
                         .HasColumnType("int");
@@ -532,8 +530,8 @@ namespace THUD_TN408.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DateOfBirth")
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2")
                         .HasColumnName("DOB");
 
                     b.Property<string>("Email")

@@ -1,67 +1,90 @@
-﻿<aside id="sidebar" class="sidebar">
+﻿@using Microsoft.AspNetCore.Authorization
+@using THUD_TN408.Authorization
+@inject IAuthorizationService AuthorizationService
 
+<aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
             <a class="nav-link @(((string?)ViewData["page"]!="dashboard")?"collapsed" : "")" href="/">
-                <i class="fa fa-home"></i>
+                <i class="fa fa-house"></i>
                 <span>Dashboard</span>
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link @((((string?)ViewData["page"])?.Contains("orders") == true)?"":"collapsed")" data-bs-target="#order-nav" data-bs-toggle="collapse" href="#">
-                <i class="fa fa-basket-shopping"></i><span>Quản lí đơn hàng</span><i class="fa-solid fa-chevron-right ms-auto"></i>
-            </a>
-            <ul id="order-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("orders") == true)?"show":"")" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/Admin/Orders" class="@(((string?)ViewData["page"]=="orders")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Danh sách</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Admin/Orders/Statistic" class="@(((string?)ViewData["page"]=="orders_statistic")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.StaffAccounts.View)).Result.Succeeded){
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("accounts") == true)?"":"collapsed")" asp-action="Index" asp-controller="ManageAccounts">
+                    <i class="fa fa-user-gear"></i><span>Quản lí tài khoản</span>
+                </a>
+            </li>
+        }
+        
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Orders.View)).Result.Succeeded) {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("orders") == true)?"":"collapsed")" data-bs-target="#order-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fa fa-basket-shopping"></i><span>Quản lí đơn hàng</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="order-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("orders") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Orders" class="@(((string?)ViewData["page"]=="orders")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Orders/Statistic" class="@(((string?)ViewData["page"]=="orders_statistic")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Thống kê</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        }
+        
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Products.View)).Result.Succeeded) {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("products") == true)?"":"collapsed")" data-bs-target="#product-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fa fa-store"></i><span>Quản lí sản phẩm</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="product-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("products") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Products" class="@(((string?)ViewData["page"]=="products")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách</span>
+                        </a>
+                    </li>
+                    @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Products.Create)).Result.Succeeded)
+                    {
+                        <li>
+                            <a href="/Admin/Products/Create" class="@(((string?)ViewData["page"]=="products_create")? "active" : "")">
+                                <i class="fa fa-circle"></i><span>Thêm mới</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
 
-        <li class="nav-item">
-            <a class="nav-link @((((string?)ViewData["page"])?.Contains("products") == true)?"":"collapsed")" data-bs-target="#product-nav" data-bs-toggle="collapse" href="#">
-                <i class="fa fa-store"></i><span>Quản lí sản phẩm</span><i class="fa-solid fa-chevron-right ms-auto"></i>
-            </a>
-            <ul id="product-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("products") == true)?"show":"")" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/Admin/Products" class="@(((string?)ViewData["page"]=="products")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Danh sách</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Admin/Products/Create" class="@(((string?)ViewData["page"]=="products_create")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Thêm mới</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link @((((string?)ViewData["page"])?.Contains("categories") == true)?"":"collapsed")" data-bs-target="#category-nav" data-bs-toggle="collapse" href="#">
-                <i class="fa fa-bars-staggered"></i><span>Quản lí danh mục</span><i class="fa-solid fa-chevron-right ms-auto"></i>
-            </a>
-            <ul id="category-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("categories") == true)?"show":"")" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/Admin/Categories" class="@(((string?)ViewData["page"]=="categories")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Danh sách</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Admin/Categories/Create" class="@(((string?)ViewData["page"]=="categories_create")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Thêm mới</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Categories.View)).Result.Succeeded) {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("categories") == true)?"":"collapsed")" data-bs-target="#category-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fa fa-bars-staggered"></i><span>Quản lí danh mục</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="category-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("categories") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Categories" class="@(((string?)ViewData["page"]=="categories")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách</span>
+                        </a>
+                    </li>
+                    @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Categories.Create)).Result.Succeeded)
+                    {
+                        <li>
+                            <a href="/Admin/Categories/Create" class="@(((string?)ViewData["page"]=="categories_create")? "active" : "")">
+                                <i class="fa fa-circle"></i><span>Thêm mới</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
 
         <li class="nav-item">
             <a class="nav-link @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"":"collapsed")" data-bs-target="#warehouse-nav" data-bs-toggle="collapse" href="#">
@@ -70,34 +93,36 @@
             <ul id="warehouse-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"show":"")" data-bs-parent="#sidebar-nav">
                 <li>
                     <a href="/Admin/Warehouses" class="@(((string?)ViewData["page"]=="warehouses")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Danh sách</span>
+                        <i class="fa fa-circle"></i><span>Danh sách kho</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/Admin/WarehouseDetails" class="@(((string?)ViewData["page"]=="warehouses_create")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Chi tiết</span>
+                    <a href="/Admin/Warehouses/DetailStockIndex" class="@(((string?)ViewData["page"]=="warehouses_create")? "active" : "")">
+                        <i class="fa fa-circle"></i><span>Chi tiết tồn kho</span>
                     </a>
                 </li>
             </ul>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link @((((string?)ViewData["page"])?.Contains("promotions") == true)?"":"collapsed")" data-bs-target="#promotion-nav" data-bs-toggle="collapse" href="#">
-                <i class="fa fa-percent"></i><span>Quản lí khuyến mãi</span><i class="fa-solid fa-chevron-right ms-auto"></i>
-            </a>
-            <ul id="promotion-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("promotions") == true)?"show":"")" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/Admin/ProductPromotions" class="@(((string?)ViewData["page"]=="ppromotions")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Khuyến mãi cho sản phẩm</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Admin/OrderPromotions" class="@(((string?)ViewData["page"]=="opromotions")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Khuyến mãi cho đơn hàng</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Promotions.View)).Result.Succeeded) {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("promotions") == true)?"":"collapsed")" data-bs-target="#promotion-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fa fa-percent"></i><span>Quản lí khuyến mãi</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="promotion-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("promotions") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/OrderPromotions" class="@(((string?)ViewData["page"]=="opromotions")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Khuyến mãi cho đơn hàng</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/ProductPromotions" class="@(((string?)ViewData["page"]=="ppromotions")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Khuyến mãi cho sản phẩm</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        }
 
         <li class="nav-item">
             <a class="nav-link @((((string?)ViewData["page"])?.Contains("payments") == true)?"":"collapsed")" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
@@ -117,106 +142,7 @@
             </ul>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="tables-general.html">
-                        <i class="bi bi-circle"></i><span>General Tables</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="tables-data.html">
-                        <i class="bi bi-circle"></i><span>Data Tables</span>
-                    </a>
-                </li>
-            </ul>
-        </li><!-- End Tables Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-bar-chart"></i><span>Charts</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="charts-chartjs.html">
-                        <i class="bi bi-circle"></i><span>Chart.js</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="charts-apexcharts.html">
-                        <i class="bi bi-circle"></i><span>ApexCharts</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="charts-echarts.html">
-                        <i class="bi bi-circle"></i><span>ECharts</span>
-                    </a>
-                </li>
-            </ul>
-        </li><!-- End Charts Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-gem"></i><span>Icons</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="icons-bootstrap.html">
-                        <i class="bi bi-circle"></i><span>Bootstrap Icons</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="icons-remix.html">
-                        <i class="bi bi-circle"></i><span>Remix Icons</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="icons-boxicons.html">
-                        <i class="bi bi-circle"></i><span>Boxicons</span>
-                    </a>
-                </li>
-            </ul>
-        </li><!-- End Icons Nav -->
-
         <li class="nav-heading">Pages</li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>Profile</span>
-            </a>
-        </li><!-- End Profile Page Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="pages-faq.html">
-                <i class="bi bi-question-circle"></i>
-                <span>F.A.Q</span>
-            </a>
-        </li><!-- End F.A.Q Page Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="pages-contact.html">
-                <i class="bi bi-envelope"></i>
-                <span>Contact</span>
-            </a>
-        </li><!-- End Contact Page Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="pages-register.html">
-                <i class="bi bi-card-list"></i>
-                <span>Register</span>
-            </a>
-        </li><!-- End Register Page Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="pages-login.html">
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span>Login</span>
-            </a>
-        </li><!-- End Login Page Nav -->
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="pages-error-404.html">

@@ -13,11 +13,11 @@ namespace THUD_TN408.Models
 
 		[MaxLength(20, ErrorMessage = "Màu sắc không quá 20 kí tự!")]
 		public string? Color { set; get; }
-		public bool Gender { set; get; }
+		public bool Gender { set; get; } = true;
 		[NotMapped]
 		[Required(ErrorMessage = "Giá không được trống!")]
-		[Range(minimum:'1', maximum:long.MaxValue, ErrorMessage = "Giá phải lớn hơn 0!")]
-		public long Amount { set; get; }
+		[Range(minimum: '1', maximum: long.MaxValue, ErrorMessage = "Giá phải lớn hơn 0!")]
+		public long Amount { set; get; } = 100000;
 		[NotMapped]
 		public int Stock { set; get; }
 		[NotMapped]

@@ -4,37 +4,49 @@
     ViewData["Title"] = "Create";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Create</h1>
-
-<h4>WarehouseDetail</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="WarehouseId" class="control-label"></label>
-                <select asp-for="WarehouseId" class ="form-control" asp-items="ViewBag.WarehouseId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProductDetailId" class="control-label"></label>
-                <select asp-for="ProductDetailId" class ="form-control" asp-items="ViewBag.ProductDetailId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Stock" class="control-label"></label>
-                <input asp-for="Stock" class="form-control" />
-                <span asp-validation-for="Stock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="pagetitle">
+    <h1>Thêm nhà kho</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Warehouses/Index">Danh sách kho</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/WarehouseDetails/Create">Thêm chi tiết tồn kho</a></li>
+        </ol>
+    </nav>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center">
+    <div class="col-md-7 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin tồn kho</h5>
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="WarehouseId" class="col-3 col-form-label fw-bold">Tên nhà kho</label>
+                        <div class="col-9">
+                            <select asp-for="WarehouseId" class="form-control" asp-items="ViewBag.WarehouseId"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="ProductDetailId" class="col-3 col-form-label fw-bold">Sản phẩm</label>
+                        <div class="col-9">
+                            <select asp-for="ProductDetailId" class="form-control" asp-items="ViewBag.ProductDetailId"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Stock" class="col-3 col-form-label fw-bold">Số lượng</label>
+                        <div class="col-9">
+                            <input asp-for="Stock" class="form-control" placeholder="Sản phẩm" />
+                            <span asp-validation-for="Stock" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <input type="submit" value="Thêm" class="mx-auto mt-2 btn btn-sm btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

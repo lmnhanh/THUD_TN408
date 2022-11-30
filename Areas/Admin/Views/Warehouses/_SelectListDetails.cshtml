@@ -1,0 +1,11 @@
+﻿@model IEnumerable<ProductDetail>
+<option value="-1" selected>--Chi tiết sản phẩm--</option>
+@{
+    if (Model != null)
+    {
+        foreach (var warehouse in Model)
+        {
+            <option value="@warehouse.Id">@warehouse.FullName</option>
+        }
+    }
+}

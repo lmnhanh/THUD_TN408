@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,12 @@ namespace THUD_TN408.Areas.Admin.Controllers
     public class ProductPromotionsController : Controller
     {
 		private readonly Services _services;
+		private readonly INotyfService _notyf;
 
-		public ProductPromotionsController(TN408DbContext context, UserManager<User> userManager)
+		public ProductPromotionsController(TN408DbContext context, UserManager<User> userManager, INotyfService notyf)
         {
 			_services = new Services(context, userManager);
+			_notyf = notyf;
 		}
 
         // GET: Admin/ProductPromotions
@@ -34,8 +37,6 @@ namespace THUD_TN408.Areas.Admin.Controllers
 				return View(await _services.GetListPPromotion((int)productId).Result.ToPagedListAsync(1, 8));
 			}
 			return View(await _services.GetListPPromotion().ToPagedListAsync(1, 8));
-
-
 		}
 
 		[HttpGet]
@@ -107,8 +108,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			if (ModelState.IsValid)
             {
 				await _services.AddProductPromotion(productPromotion);
-                await _services.AddHistory(User, "Khuyến mãi \"" + productPromotion.Id + "\" đã được thêm thành vào hệ thống!", "/Admin/ProductPromotions/Details/" + productPromotion.Id);
-                return RedirectToAction("Details", "Products", new {id = productPromotion.ProductId});
+                await _services.AddHistory(User, "Thêm khuyến mãi \"" + productPromotion.Id + "\"", "/Admin/ProductPromotions/Details/" + productPromotion.Id);
+				_notyf.Success("Đã thêm khuyến mãi " + productPromotion.Id);
+				return RedirectToAction("Details", "Products", new {id = productPromotion.ProductId});
             }
 			ViewData["ProductId"] = new SelectList(_services.GetListProduct(), "Id", "Name", productPromotion.ProductId);
 			return View(productPromotion);
@@ -141,22 +143,26 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+			var oldPromotion = _services.GetListPPromotion().Where(x => x.Id.Equals(productPromotion.Id)).AsNoTracking().FirstOrDefault();
+			if (oldPromotion != null && oldPromotion.ValidTo.CompareTo(DateTime.Now) < 0)
+			{
+				_notyf.Warning("Không thể chỉnh sửa khuyến mãi đã kết thúc!");
+				return RedirectToAction("Details", "ProductPromotions", new { id = productPromotion.Id });
+			}
+
+			if (ModelState.IsValid)
             {
                 try
                 {
                     await _services.UpdateProductPromotion(productPromotion);
-					await _services.AddHistory(User, "Khuyến mãi \"" + productPromotion.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/ProductPromotions/Details/" + productPromotion.Id);
+					_notyf.Success("Đã lưu chỉnh sửa!");
+					await _services.AddHistory(User, "Chỉnh sửa khuyến mãi \"" + productPromotion.Id + "\"", "/Admin/ProductPromotions/Details/" + productPromotion.Id);
 				}
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!_services.ProductPromotionExists(productPromotion.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction("Details", "ProductPromotions", new {id = productPromotion.Id});
@@ -165,38 +171,30 @@ namespace THUD_TN408.Areas.Admin.Controllers
             return View(productPromotion);
         }
 
-        // GET: Admin/ProductPromotions/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null || !_services.HasAnyPPromotion())
-            {
-                return NotFound();
-            }
-
-            var productPromotion = await _services.GetProductPromotion(id);
-            if (productPromotion == null)
-            {
-                return NotFound();
-            }
-
-            return View(productPromotion);
-        }
-
-        // POST: Admin/ProductPromotions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            if (!_services.HasAnyPPromotion())
-            {
-                return Problem("Entity set 'TN408DbContext.PPromotions'  is null.");
-            }
-            var productPromotion = await _services.GetProductPromotion(id);
+		[HttpPost, ActionName("DeleteAsync")]
+		public async Task<IActionResult> DeleteAsync(string id)
+		{
+			if (!_services.HasAnyPPromotion())
+			{
+                _notyf.Error("Đã có lỗi xảy ra!");
+			}
+			var productPromotion = await _services.GetProductPromotion(id);
 			if (productPromotion != null)
-            {
-                await _services.RemoveProductPromotion(productPromotion);
-            }
-            return RedirectToAction(nameof(Index));
-        }
-    }
+			{
+                try
+                {
+                    _notyf.Success("Đã xóa khuyến mãi " + productPromotion.Id);
+					await _services.AddHistory(User, "Xóa khuyến mãi \"" + productPromotion.Id + "\"", null);
+					await _services.RemoveProductPromotion(productPromotion);
+					return PartialView("_ProductPromotion", null);
+				}
+                catch
+                {
+					_notyf.Error("Đã có lỗi xảy ra!");
+					return PartialView("_ProductPromotion", productPromotion);
+				}
+			}
+			return PartialView("_ProductPromotion", productPromotion);
+		}
+	}
 }
