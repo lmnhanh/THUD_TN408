@@ -1,0 +1,14 @@
+﻿@model THUD_TN408.Models.ProductDetail
+@{
+    var currentPPromotion = @Model.Product?.Promotions?.Where(x => x.ValidTo.CompareTo(DateTime.Now) >= 0 && x.ApplyFrom.CompareTo(DateTime.Now) <= 0).OrderByDescending(x => x.DiscountPercent).FirstOrDefault();
+}
+@if (currentPPromotion != null)
+{
+    <span class="small fw-bold">@String.Format("{0:#,##0 VND}", Model.Amount *(1- (double)currentPPromotion.DiscountPercent / 100))</span>
+    <span>&nbsp;</span>
+    <span class="small text-muted text-decoration-line-through">@String.Format("{0:#,##0 VND}", Model.Amount)</span>
+}
+else
+{
+    <p class="small text-muted">@String.Format("{0:#,##0 VND}", Model.Amount)</p>
+}

@@ -1,0 +1,64 @@
+﻿@model THUD_TN408.Areas.Admin.Models.Create
+
+@{
+    ViewData["Title"] = "Thêm tài khoản nhân viên";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Thêm tài khoản đăng nhập</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ManageAccounts">Danh sách tài khoản</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Users/Create">Thêm</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin tài khoản</h5>
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="FirstName" class="col-3 col-form-label fw-bold">Họ lót:</label>
+                        <div class="col-9">
+                            <input asp-for="FirstName" class="form-control" placeholder="Họ lót" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="LastName" class="col-3 col-form-label fw-bold">Tên:</label>
+                        <div class="col-9">
+                            <input asp-for="LastName" class="form-control" placeholder="Tên" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Email" class="col-3 col-form-label fw-bold">Email:</label>
+                        <div class="col-9">
+                            <input asp-for="Email" class="form-control" placeholder="Email" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Password" class="col-3 col-form-label fw-bold">Mật khẩu:</label>
+                        <div class="col-9">
+                            <input asp-for="Password" class="form-control" placeholder="Mật khẩu" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex">
+                        <input type="submit" value="Thêm" class="mx-auto mt-2 btn btn-sm btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

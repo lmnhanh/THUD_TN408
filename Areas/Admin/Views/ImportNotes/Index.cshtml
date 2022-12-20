@@ -1,0 +1,27 @@
+﻿@model IEnumerable<THUD_TN408.Models.ImportNote>
+
+@{
+    ViewData["Title"] = "Danh sách phiếu nhập";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Danh sách phiếu nhập hàng</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">
+                <a href="/Admin/ImportNotes/Index">Danh sách phiếu nhập hàng</a>
+            </li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <partial name="_ListImportNotes" model="Model" />
+            </div>
+        </div>
+    </div>
+</div>

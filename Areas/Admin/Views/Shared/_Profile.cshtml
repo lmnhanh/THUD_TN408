@@ -4,7 +4,7 @@
 
 @{
     string username = "", useremail = "";
-    if(User.Identity != null){
+    if(User.Identity != null && User.Identity.Name != null){
         User user = await UserManager.FindByEmailAsync(User.Identity.Name);
         if(user != null){
             username = user.FirstName +" "+ user.LastName;
@@ -31,6 +31,18 @@
         <a class="dropdown-item d-flex align-items-center" href="/Admin/Users/Info">
             <i class="bi bi-person"></i>
             <span>Thông tin tài khoản</span>
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item d-flex align-items-center" href="/Admin/Schedules/Index">
+            <i class="bi bi-person"></i>
+            <span>Lịch làm việc</span>
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item d-flex align-items-center" href="/Admin/Users/ChangePassword">
+            <i class="bi bi-person"></i>
+            <span>Đổi mật khẩu</span>
         </a>
     </li>
     <li>

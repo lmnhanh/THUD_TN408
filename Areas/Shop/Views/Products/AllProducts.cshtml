@@ -1,0 +1,52 @@
+﻿@model IEnumerable<THUD_TN408.Models.ProductDetail>
+@{
+    ViewData["Title"] = "Tất cả sản phẩm";
+    Layout = "/Areas/Shop/Views/Shared/_Layout.cshtml";
+}
+<div class="container p-0">
+    <div class="row">
+        <div class="col-lg-3 order-2 order-lg-1">
+        <h5 class="text-uppercase mb-4">Danh sách sản phẩm</h5>
+        <div class="py-2 px-4 bg-dark text-white mb-3"><strong class="small text-uppercase fw-bold">Danh mục</strong></div>
+        <ul class="list-unstyled small text-muted ps-lg-4 font-weight-normal">
+                @{
+                    List<Category> categories = (List<Category>)ViewData["categories"];
+                    if(categories.Any()){
+                        foreach(var category in categories){
+                            <li class="mb-2">
+                                <a class="reset-anchor category" href="/Shop/Products/All?category=@category.Id" >@category.Name</a>
+                            </li>
+                        }
+                    }
+                }
+        </ul>
+       
+        </div>
+
+        <div class="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
+            <div class="row" id="productContainer">
+                <partial name="_ListProducts" model="Model"/>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_CartScriptPartial");
+    }   
+    <script>
+        var links = document.querySelectorAll('.reset-anchor.category')
+        links.forEach(link =>{
+            link.addEventListener('click', ()=>{
+                event.preventDefault();
+                var turl = link.href.substr(location.origin.length, 99)
+                $.ajax({
+                    type: 'GET',
+                    url: turl
+                }).then(response =>{
+                    $('#productContainer').html(response)
+                })
+            })
+        })
+    </script>
+}

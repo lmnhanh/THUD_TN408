@@ -1,0 +1,45 @@
+﻿@model THUD_TN408.Models.Shipment
+
+@{
+    ViewData["Title"] = "Chi tiết đơn vị vận chuyển";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Thông tin chi tiết đơn vị vận chuyển</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Shipments/Index">Danh sách đơn vị vận chuyển</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Shipments/Details/@Model.Id">Chi tiết</a></li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-9 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin đơn vị vận chuyển</h5>
+                <div class="collapse show" id="collapseInfo">
+                    <table class="table table-hover">
+                        <tr>
+                            <td class="fw-bold">ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tên</td>
+                            <td>@Model.Name</td>
+                        </tr>
+                    </table>
+                    <div class="d-flex">
+                        <div class="mx-auto">
+                            <a class="btn btn-sm btn-info mx-auto" href="/Admin/Shipments/Index" title="Danh sách"><i class="fa fa-bars "></i></a>
+                            <a class="btn btn-sm btn-primary mx-auto" href="/Admin/Shipments/Edit/@Model.Id" title="Chỉnh sửa"><i class="fa fa-pen-to-square "></i></a>
+                            <a class="btn btn-sm btn-danger mx-auto" href="/Admin/Shipments/Delete/@Model.Id" title="Xóa"><i class="fas fa-trash-can"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

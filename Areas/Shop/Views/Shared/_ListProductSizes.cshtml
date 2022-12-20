@@ -1,0 +1,8 @@
+﻿@model IEnumerable<THUD_TN408.Models.ProductDetail>
+@{
+	int? id = (int?)ViewData["currentId"];
+	foreach (var detail in Model)
+	{
+		<a class="size-select btn btn-m me-1 @((id==detail.Id)? "btn-primary":"")" href="/Shop/Products/Details/@detail.Id">@detail.Size</a>
+	}
+}

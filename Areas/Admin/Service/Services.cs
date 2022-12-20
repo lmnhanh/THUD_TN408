@@ -8,6 +8,7 @@ using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 using static System.Net.Mime.MediaTypeNames;
+using static THUD_TN408.Authorization.Permissions;
 
 namespace THUD_TN408.Areas.Admin.Service
 {
@@ -20,6 +21,21 @@ namespace THUD_TN408.Areas.Admin.Service
             _context = context;
             _userManager = userManager;
         }
+
+		public async Task<User> GetUser(string id)
+		{
+			return await _userManager.FindByIdAsync(id);
+		}
+
+		public async Task<User> GetUser(ClaimsPrincipal user)
+		{
+			return await _userManager.GetUserAsync(user);
+		}
+
+		public IQueryable<User> GetListUser()
+		{
+			return _context.Users;
+		}
 
         public async Task<String> GetUserId(ClaimsPrincipal user)
         {
@@ -173,15 +189,18 @@ namespace THUD_TN408.Areas.Admin.Service
         }
 
         public ProductDetail GetFullInfo(ProductDetail detail, DateTime? time)
-        {			
-            detail.FullName = detail.Product?.Name + ", " + ((detail.Gender == true) ? "Nam" : "Nữ") + ", " + detail.Size + ", " + detail.Color;
+        {
+			var category = GetCategory(detail.Product?.CategoryId).Result?.Name;
+            detail.FullName = detail.Id +"."+ category + " "+ detail.Product?.Name + " " + ((detail.Gender == true) ? "Nam " : "Nữ ") + detail.Size + " (" + detail.Color + ")";
+            detail.Name = category + " "+ detail.Product?.Name + " " + ((detail.Gender == true) ? "Nam " : "Nữ ") + " (" + detail.Color + ")";
 			if (detail.StockDetails != null)
 			{
 				detail.Stock = detail.StockDetails.ToList().Sum(x => x.Stock);
 			}
-			if (detail.Prices != null)
+			var prices = _context.Prices.Where(pr => pr.ProductDetailId == detail.Id).ToList();
+			if (prices.Any())
 			{
-				detail.Amount = GetPriceAt(detail.Prices, time ?? DateTime.Now) ?? 0L;
+				detail.Amount = GetPriceAt(prices, time ?? DateTime.Now) ?? 0L;
 			}
 			return detail;
 		}
@@ -194,9 +213,7 @@ namespace THUD_TN408.Areas.Admin.Service
         /// <returns></returns>
         public async Task<ProductDetail?> GetProductDetail(int? id, DateTime? time)
         {
-			var detail = await _context.Details.Include(p => p.Product).Include(d => d.Prices)
-                .Include(p => p.StockDetails).Include(p => p.Carts)
-			   .FirstOrDefaultAsync(m => m.Id == id);
+			var detail = await _context.Details.Include(p=> p.StockDetails).Include(p => p.Product).FirstOrDefaultAsync(d => d.Id == id);
 			if(detail != null)
             {
                 return GetFullInfo(detail, time ?? DateTime.Now);
@@ -204,15 +221,26 @@ namespace THUD_TN408.Areas.Admin.Service
             return null;
 		}
 
-        /// <summary>
-        /// Get IQueryable of ProductDetail with full name
-        /// </summary>
-        /// <returns></returns>
-        public IQueryable<ProductDetail> GetListProductDetails(DateTime? time)
+		public async Task<ProductDetail?> GetProductDetail(int? id)
+		{
+			var detail = await _context.Details.Include(p => p.Prices).Include(p => p.StockDetails).FirstOrDefaultAsync(d => d.Id == id);
+			if (detail != null)
+			{
+				return detail;
+			}
+			return null;
+		}
+
+
+		/// <summary>
+		/// Get IQueryable of ProductDetail with full name
+		/// </summary>
+		/// <returns></returns>
+		public IQueryable<ProductDetail> GetListProductDetails(DateTime? time)
         {
-            var details = _context.Details.Include(d => d.Product).Include(d => d.Prices)
-                .Include(d => d.StockDetails);
-			foreach (var detail in details)
+            var details = _context.Details.Include(d => d.Prices)
+                .Include(d => d.StockDetails).Include(d => d.Product).ThenInclude(p => p.Promotions);
+			foreach (var detail in details.ToList())
 			{
 				GetFullInfo(detail, time ?? DateTime.Now);
 			}
@@ -231,12 +259,12 @@ namespace THUD_TN408.Areas.Admin.Service
 			return details;
 		}
 
-        /// <summary>
-        /// Add a ProductDetail
-        /// </summary>
-        /// <param name="detail"></param>
-        /// <returns></returns>
-        public async Task AddProductDetail(ProductDetail detail)
+		/// <summary>
+		/// Add a ProductDetail
+		/// </summary>
+		/// <param name="detail"></param>
+		/// <returns></returns>
+		public async Task AddProductDetail(ProductDetail detail)
         {
             _context.Details.Add(detail);
             await SaveChangesAsync();
@@ -517,7 +545,7 @@ namespace THUD_TN408.Areas.Admin.Service
 		/// <returns></returns>
 		public IQueryable<OrderPromotion> GetListOPromotion()
 		{
-			return _context.OPromotions.Include(o => o.Orders);
+			return _context.OPromotions;
 		}
 
 		/// <summary>
@@ -567,6 +595,72 @@ namespace THUD_TN408.Areas.Admin.Service
 
 
 
+		//======================Order===============
+
+		public bool HasAnyOrder()
+		{
+			return _context.Orders != null && _context.Orders.Any();
+		}
+
+		public bool OrderExists(int id)
+		{
+			return _context.Orders.Any(o => o.Id == id);
+		}
+
+		public async Task<Order?> GetOrder(int? id)
+		{
+			var order = await GetListOrder().Result.FirstOrDefaultAsync(w => w.Id == id);
+			return order;
+		}
+
+		public async Task<IQueryable<Order>> GetListOrder()
+		{
+			var orders = _context.Orders.Include(o => o.Payment).Include(o => o.User).OrderByDescending(o => o.CreatedDate);
+			return orders;
+		}
+
+		public IQueryable<Order> GetListOrder(string userId)
+		{
+			return GetListOrder().Result.Where(c => c.UserId.Equals(userId));
+		}
+
+		public async Task SetOrderProcessed(Order order)
+		{
+			_context.Orders.Update(order);
+			order.IsTrans = true;
+			order.IsSuccess = false;
+			await SaveChangesAsync();
+		}
+
+		public async Task AddOrder(Order order)
+		{
+			order.CreatedDate = DateTime.Now;
+			_context.Orders.Add(order);
+			await SaveChangesAsync();
+		}
+
+		//======================Cart===============
+		public async Task<Cart?> GetCart(int id)
+		{
+			return await GetListCart().FirstOrDefaultAsync(w => w.Id == id);
+		}
+
+		public IQueryable<Cart> GetListCart()
+		{
+            return _context.Carts.Include(c => c.User).Include(c => c.Detail);
+		}
+
+		public IQueryable<Cart> GetListCart(string userId)
+		{
+			return GetListCart().Where(c => c.UserId.Equals(userId));
+
+		}
+		public IQueryable<Cart> GetListCart(int orderId)
+		{
+			return GetListCart().Where(c => c.OrderId.Equals(orderId));
+
+		}
+
 
 		//======================Price===============
 
@@ -603,10 +697,43 @@ namespace THUD_TN408.Areas.Admin.Service
             }
             return null;
         }
-		
-        public async Task SaveChangesAsync()
+
+		//======================Payment===============
+		public IQueryable<Payment> GetListPayment()
+		{
+			return _context.Payments;
+
+		}
+
+		public async Task<Payment?> GetPayment(int id)
+		{
+			return await _context.Payments.FirstOrDefaultAsync(x => x.Id == id);
+
+		}
+
+		public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }
-    }
+
+		public List<Producer> GetListProducers()
+		{
+			return _context.Producers.ToList();
+		}
+
+		public async Task<Producer?> GetProducer(int id)
+		{
+			return await _context.Producers.FirstOrDefaultAsync(x => x.Id == id);
+		}
+
+		public async Task<Shipment?> GetShipment(int id)
+		{
+			return await _context.Shipments.FirstOrDefaultAsync(x => x.Id == id);
+		}
+
+		public List<Shipment> GetListShipments()
+		{
+			return _context.Shipments.ToList();
+		}
+	}
 }

@@ -1,0 +1,86 @@
+﻿@model THUD_TN408.Areas.Shop.Models.CartsModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "~/Areas/Shop/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="h5 text-uppercase mb-4">Giỏ hàng</h2>
+<div class="row justify-content-center">
+    <div class="col-lg-8 mb-4 mb-lg-0 col-md-12">
+        @if (Model.Carts.Any())
+        {
+            <div class="table-responsive mb-4">
+                <table class="table text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Sản phẩm</strong></th>
+                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Giá</strong></th>
+                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Số lượng</strong></th>
+                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Tổng</strong></th>
+                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase"></strong></th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-0">
+                        @foreach (var cart in Model.Carts)
+                        {
+                            <tr class="listCarts" id="cart_@cart.Id">
+                                <partial name="_Cart" model="cart" />
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="h5 text-uppercase text-center">Giỏ hàng trống</div>
+        }
+        <!-- CART NAV-->
+        <div class="bg-light px-4 py-3">
+            <div class="row align-items-center text-center">
+                <div class="col-md-6 mb-3 mb-md-0 text-md-start"><a class="btn btn-outline-dark btn-sm" href="/Shop/HomePage"><i class="fas fa-long-arrow-alt-left me-2"> </i>Về trang mua hàng</a></div>
+                @if(Model.Carts.Any()){
+                    <div class="col-md-6 text-md-end"><a class="btn btn-outline-dark btn-sm" href="/Shop/Orders/CheckOut">Thanh toán<i class="fas fa-long-arrow-alt-right ms-2"></i></a></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        function SetQuantityUp(id){
+            var input = event.currentTarget.parentElement.querySelector('input')
+            var quantity = parseInt(input.value) + 1;
+            console.log(quantity);
+            $.ajax({
+                type: "POST",
+                url: '/Shop/Carts/GetCart',
+                data: {cartId : id, quantity : quantity}
+            }).then(response =>{
+                $('#cart_' +  id).html(response);
+            })
+        }
+        function SetQuantityDown(id) {
+            var input = event.currentTarget.parentElement.querySelector('input')
+            var quantity = parseInt(input.value) - 1;
+            console.log(quantity);
+            $.ajax({
+                type: "POST",
+                url: '/Shop/Carts/GetCart',
+                data: {cartId : id, quantity : quantity}
+            }).then(response =>{
+                $('#cart_' + id).html(response);
+            })
+        }
+        function RemoveCart(id) {
+		    event.preventDefault()
+            $.ajax({
+                type: "POST",
+                url: '/Shop/Carts/RemoveCart',
+                data: { cartId: id}
+            }).then(response => {
+                $('#cart_' + id).html(response);
+            })
+	}
+    </script>
+}

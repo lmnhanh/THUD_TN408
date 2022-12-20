@@ -1,0 +1,45 @@
+﻿@model THUD_TN408.Models.Shipment
+
+@{
+    ViewData["Title"] = "Chỉnh sửa đơn vị vận chuyển";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Chỉnh sửa đơn vị vận chuyển</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Shipments/Index">Danh sách đơn vị vận chuyển</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Shipments/Details/@Model.Id">@Model.Name</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Shipments/Edit/@Model.Id">Chỉnh sửa</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin chỉnh sửa</h5>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Name" class="col-3 col-form-label fw-bold">Tên:</label>
+                        <div class="col-9">
+                            <input asp-for="Name" class="form-control" placeholder="Kích cỡ" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <input type="submit" value="Lưu chỉnh sửa" class="mx-auto mt-1 btn btn-sm btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

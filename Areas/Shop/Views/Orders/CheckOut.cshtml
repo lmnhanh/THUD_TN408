@@ -1,0 +1,54 @@
+﻿@model THUD_TN408.Areas.Shop.Models.CartsModel
+@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Areas/Shop/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="h5 text-uppercase mb-4">Thông tin đơn hàng</h2>
+<div class="row">
+<div class="col-md-4">
+    <div class="row gy-3">
+        @{
+            User user = (User)ViewData["user"];
+        }
+        <div class="col-12">
+            <label class="form-label text-sm text-uppercase" for="Name">Họ tên</label>
+            <input class="form-control form-control-lg" disabled type="text" id="Name" value="@user.FirstName @user.LastName">
+        </div>
+        <div class="col-12">
+            <label class="form-label text-sm text-uppercase" for="PhoneNumber">Số điện thoại</label>
+            <input class="form-control form-control-lg" disabled type="text" id="PhoneNumber" value="@user.PhoneNumber">
+        </div>
+        <div class="col-12">
+            <label class="form-label text-sm text-uppercase" for="Email">Email</label>
+            <input class="form-control form-control-lg" disabled type="text" id="Email" value="@user.Email">
+        </div>
+        <div class="col-12">
+            <label class="form-label text-sm text-uppercase" for="Email">Địa chỉ</label>
+            <input class="form-control form-control-lg" disabled type="text" id="Email" value="@user.Address">
+        </div>
+    </div>
+</div>
+<div class="col-lg-8 col-md-12">
+    <div class="card border-0 rounded-0 bg-light">
+        <div class="card-body" id="promotionContainer">
+            <partial name="_ApplyPromotion" model="Model" />
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        function ApplyPromotion(){
+            event.preventDefault();
+            var promotion = $('#promotion').val();
+            $.ajax({
+                type: 'GET',
+                data: {id : promotion},
+                url: '/Shop/Orders/GetPromotion'
+            }).then(response=>{
+                console.log(response)
+                $('#promotionContainer').html(response)
+            })
+        }
+    </script>
+}

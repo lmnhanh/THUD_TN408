@@ -11,7 +11,6 @@ namespace THUD_TN408.Authorization
 			await roleManager.CreateAsync(new IdentityRole(Roles.Saleman.ToString()));
 			await roleManager.CreateAsync(new IdentityRole(Roles.WarehouseManager.ToString()));
 			await roleManager.CreateAsync(new IdentityRole(Roles.Customer.ToString()));
-			await roleManager.CreateAsync(new IdentityRole(Roles.SaleManager.ToString()));
 		}
 	}
 }

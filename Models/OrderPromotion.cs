@@ -29,7 +29,5 @@ namespace THUD_TN408.Models
 		[Range(minimum: 0, maximum: int.MaxValue, ErrorMessage = "Điều kiện áp dụng không hợp lệ!")]
 		public int? ApplyCondition { get; set; }
 		public bool IsActive { get; set; } = true;
-
-		public virtual ICollection<Order>? Orders { get; set; }
 	}
 }

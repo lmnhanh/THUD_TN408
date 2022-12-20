@@ -5,7 +5,6 @@
 		SuperAdmin,
 		Saleman,
 		WarehouseManager,
-		SaleManager,
 		Customer
 	}
 }

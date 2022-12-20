@@ -1,0 +1,117 @@
+﻿@model THUD_TN408.Models.ImportNote
+
+@{
+    ViewData["Title"] = "Chi tiết phiếu nhập hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Thông tin chi tiết phiếu nhập hàng</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ImportNotes/Index">Danh sách phiếu nhập hàng</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ImportNotes/Details/@Model.Id">Chi tiết</a></li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-9 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin phiếu nhập hàng</h5>
+                <div class="collapse show" id="collapseInfo">
+                    <table class="table table-hover">
+                        <tr>
+                            <td class="fw-bold">ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Nhân viên nhập</td>
+                            <td><a asp-action="Info" asp-controller="Users" asp-route-id="@Model.UserId">@Model.User?.Email</a></td>
+                        </tr>
+                          <tr>
+                            <td class="fw-bold">Ngày nhập</td>
+                            <td>@Model.CreatedDate</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Kho</td>
+                            <td>@Model.Warehouse?.Name  @Model.Warehouse?.Address</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tổng giá trị</td>
+                            <td>@string.Format("{0:#,##0}",Model.Total)</td>
+                        </tr>
+                    </table>
+                    <div class="d-flex">
+                        <div class="mx-auto">
+                            <a class="btn btn-sm btn-info mx-auto" href="/Admin/ImportNotes/Index" title="Danh sách"><i class="fa fa-bars "></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                @{
+                    List<ImportDetail>? details = (List<ImportDetail>?)ViewData["ListImportDetails"];
+                }
+                <h5 class="card-title text-center">Danh sách sản phẩm</h5>
+                @if(details != null){
+                    <table class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Hình ảnh
+                                </th>
+                                <th>
+                                    Kích cỡ
+                                </th>
+                                <th>
+                                    Màu sắc
+                                </th>
+                                <th>
+                                    Phái
+                                </th>
+                                <th>
+                                    Số lượng
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in details)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (detail.ProductDetail.Image1 != null)
+                                        {
+                                            <img src="/images/products/@detail.ProductDetail.Image1" height="50" width="50" />
+                                        }
+                                        @if (detail.ProductDetail.Image2 != null)
+                                        {
+                                            <img src="/images/products/@detail.ProductDetail.Image2" height="50" width="50" />
+                                        }
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelModel => detail.ProductDetail.Size)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelModel => detail.ProductDetail.Color)
+                                    </td>
+                                    <td class="align-middle">
+                                        @((detail.ProductDetail.Gender) ? "Nam" : "Nữ")
+                                    </td>
+                                    <td class="align-middle">
+                                        @detail.Quantity
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

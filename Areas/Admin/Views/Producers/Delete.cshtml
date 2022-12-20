@@ -1,0 +1,55 @@
+﻿@model THUD_TN408.Models.Producer
+
+@{
+    ViewData["Title"] = "Xóa nhà cung cấp";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Thông tin chi tiết nhà cung cấp</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Producers/Index">Danh sách nhà cung cấp</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Producers/Details/@Model.Id">@Model.Name</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Producers/Delete/@Model.Id">Xóa</a></li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-6 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin phương thức thanh toán</h5>
+                <div class="collapse show" id="collapseInfo">
+                    <table class="table table-hover">
+                        <tr>
+                            <td class="fw-bold">ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tên</td>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Số điện thoại</td>
+                            <td>@Model.PhoneNumber</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Email</td>
+                            <td>@Model.Email</td>
+                        </tr>
+                    </table>
+                    <div class="d-flex">
+                        <div class="mx-auto">
+                            <form asp-action="Delete">
+                                <input type="hidden" asp-for="Id" />
+                                <input class="btn btn-sm btn-danger" type="submit" value="Xác nhận xóa"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

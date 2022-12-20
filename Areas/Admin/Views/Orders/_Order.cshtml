@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using THUD_TN408.Authorization
+@inject IAuthorizationService AuthorizationService
+@model THUD_TN408.Models.Order
+
+@if (Model != null)
+{
+    <tr id="order_@Model.Id">
+        <td>
+            @Html.DisplayFor(modelModel => Model.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelModel => Model.CreatedDate)
+        </td>
+        <td>
+            @string.Format("{0:#,##0 VND}", Model.Total)
+        </td>
+        @if (Model.IsSuccess)
+        {
+            @if(Model.IsPaid){
+                <td>
+                    <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Thành công</span>
+                </td>
+            }else{
+                <td>
+                    <span class="badge rounded-pill bg-danger"><i class="fa fa-xmark me-1"></i>Thất bại</span>
+                </td>
+            }
+            
+        }
+        else
+        {
+            @if(Model.IsTrans){
+                <td>
+                    <span class="badge rounded-pill bg-primary"><i class="fa fa-truck-fast me-1"></i>Đang vận chuyển</span>
+                </td>
+            }else{
+                <td>
+                    <span class="badge rounded-pill bg-warning"><i class="fa fa-clock me-1"></i>Đang xử lí</span>
+                </td>
+            }
+        }
+        <td>
+            <div class="btn-group dropdown text-black">
+                <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Tùy chọn
+                </button>
+                <ul class="dropdown-menu">
+                    @if(!Model.IsTrans){
+                        <a class="dropdown-item" asp-action="SetProcessed" asp-controller="Orders" asp-route-id="@Model.Id" onclick="ModifyOrder(@Model.Id)"><i class="fa fa-check me-2 text-success"></i>Đã xử lí</a>
+                    }
+                    <a class="dropdown-item" asp-action="Details" asp-controller="Orders" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
+                </ul>
+            </div>
+        </td>
+    </tr>
+}

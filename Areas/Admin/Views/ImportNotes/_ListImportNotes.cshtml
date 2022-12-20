@@ -1,0 +1,29 @@
+﻿@model IEnumerable<THUD_TN408.Models.ImportNote>
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Nhân viên
+            </th>
+            <th>
+                Kho
+            </th>
+            <th>
+                Ngày nhập
+            </th>
+            <th>
+                Tổng giá trị
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+           <partial name="_ImportNote" model="item"/>
+        }
+    </tbody>
+</table>

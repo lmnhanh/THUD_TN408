@@ -9,7 +9,7 @@
             @Html.DisplayFor(modelModel => Model.Id)
         </td>
         <td>
-            @Html.DisplayFor(modelModel => Model.Name)
+            <a asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id">@Model.Name</a>
         </td>
         <td>
             @Html.DisplayFor(modelModel => Model.Origin)

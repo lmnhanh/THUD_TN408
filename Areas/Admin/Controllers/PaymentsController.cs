@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin")]
     public class PaymentsController : Controller
     {
         private readonly TN408DbContext _context;
@@ -23,7 +25,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // GET: Admin/Payments
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Payments.ToListAsync());
+            ViewData["page"] = "payments";
+            return View(await _context.Payments.ToListAsync());
         }
 
         // GET: Admin/Payments/Details/5
@@ -40,14 +43,16 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
-            return View(payment);
+			ViewData["page"] = "payments";
+			return View(payment);
         }
 
-        // GET: Admin/Payments/Create
-        public IActionResult Create()
+		// GET: Admin/Payments/Creates
+		[Authorize(policy: Permissions.Payments.Create)]
+		public IActionResult Create()
         {
-            return View();
+			ViewData["page"] = "payment_create";
+			return View();
         }
 
         // POST: Admin/Payments/Create
@@ -55,7 +60,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Payment payment)
+		[Authorize(policy: Permissions.Payments.Create)]
+		public async Task<IActionResult> Create([Bind("Id,Name")] Payment payment)
         {
             if (ModelState.IsValid)
             {
@@ -63,11 +69,13 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(payment);
+			ViewData["page"] = "payments)_create";
+			return View(payment);
         }
 
-        // GET: Admin/Payments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Admin/Payments/Edit/5
+		[Authorize(policy: Permissions.Payments.Edit)]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Payments == null)
             {
@@ -79,7 +87,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View(payment);
+			ViewData["page"] = "payments";
+			return View(payment);
         }
 
         // POST: Admin/Payments/Edit/5
@@ -87,7 +96,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Payment payment)
+		[Authorize(policy: Permissions.Payments.Edit)]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Payment payment)
         {
             if (id != payment.Id)
             {
@@ -114,11 +124,13 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(payment);
+			ViewData["page"] = "payments";
+			return View(payment);
         }
 
-        // GET: Admin/Payments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Admin/Payments/Delete/5
+		[Authorize(policy: Permissions.Payments.Delete)]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Payments == null)
             {
@@ -131,14 +143,15 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
-            return View(payment);
+			ViewData["page"] = "payments";
+			return View(payment);
         }
 
         // POST: Admin/Payments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+		[Authorize(policy: Permissions.Payments.Delete)]
+		public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Payments == null)
             {

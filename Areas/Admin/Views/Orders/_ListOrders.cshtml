@@ -1,0 +1,70 @@
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<THUD_TN408.Models.Order>
+
+@if (Model?.Any() == true)
+{
+    <h5 class="card-title text-center">Danh sách đơn hàng</h5>
+    <table class="table table-hover datatable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>
+                    Ngày tạo
+                </th>
+                <th>
+                    Tổng giá trị
+                </th>
+                <th>
+                    Trạng thái
+                </th>
+                <th>Tùy chọn</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <partial name="_Order" model="product" />
+            }
+        </tbody>
+    </table>
+    @if (!Model.IsFirstPage || !Model.IsLastPage)
+    {
+        <nav>
+            @Html.PagedListPager(Model, page => Url.ActionLink("Paging", "Orders", new {page = page}), new PagedListRenderOptions()
+            {
+                ActiveLiElementClass = "active",
+                PageClasses = new[]{ "page-link"},
+                LiElementClasses=new[] { "page-item" },
+                LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
+                LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
+                UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
+                LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
+                LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
+                MaximumPageNumbersToDisplay = 4,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+            })
+        </nav>
+    }
+}
+else
+{
+    <h6 class="card-title text-center">Danh sách đơn hàng trống!</h6>
+}
+<script>
+    var links = document.querySelectorAll(".page-link");
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            event.preventDefault();
+            var url = link.href.substr(location.origin.length, 99)
+            $.ajax({
+                type: "GET",
+                url: url
+            }).done(response => {
+                $("#ordersTable").html(response)
+            })
+        })
+    })
+    makeDataTable()
+</script>

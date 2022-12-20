@@ -6,7 +6,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <a class="nav-link @(((string?)ViewData["page"]!="dashboard")?"collapsed" : "")" href="/">
+            <a class="nav-link @(((string?)ViewData["page"]!="dashboard")?"collapsed" : "")" href="/Admin/HomePage/Index">
                 <i class="fa fa-house"></i>
                 <span>Dashboard</span>
             </a>
@@ -86,23 +86,31 @@
             </li>
         }
 
-        <li class="nav-item">
-            <a class="nav-link @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"":"collapsed")" data-bs-target="#warehouse-nav" data-bs-toggle="collapse" href="#">
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Warehouses.View)).Result.Succeeded)
+        {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"":"collapsed")" data-bs-target="#warehouse-nav" data-bs-toggle="collapse" href="#">
                 <i class="fa fa-warehouse"></i><span>Quản lí kho</span><i class="fa-solid fa-chevron-right ms-auto"></i>
-            </a>
-            <ul id="warehouse-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"show":"")" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/Admin/Warehouses" class="@(((string?)ViewData["page"]=="warehouses")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Danh sách kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Admin/Warehouses/DetailStockIndex" class="@(((string?)ViewData["page"]=="warehouses_create")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Chi tiết tồn kho</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+                </a>
+                <ul id="warehouse-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("warehouses") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Warehouses" class="@(((string?)ViewData["page"]=="warehouses")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách kho</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Warehouses/DetailStockIndex" class="@(((string?)ViewData["page"]=="warehouses_details")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Chi tiết tồn kho</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/ImportNotes" class="@(((string?)ViewData["page"]=="warehouses_imports")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách phiếu nhập</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        }
 
         @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Promotions.View)).Result.Succeeded) {
             <li class="nav-item">
@@ -124,39 +132,72 @@
             </li>
         }
 
-        <li class="nav-item">
-            <a class="nav-link @((((string?)ViewData["page"])?.Contains("payments") == true)?"":"collapsed")" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
-                <i class="fa fa-wallet"></i><span>Quản lí thanh toán</span><i class="fa-solid fa-chevron-right ms-auto"></i>
-            </a>
-            <ul id="payment-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("payments") == true)?"show":"")" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/Admin/Payments" class="@(((string?)ViewData["page"]=="payments")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Danh sách</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Admin/Payments/Create" class="@(((string?)ViewData["page"]=="payments_create")? "active" : "")">
-                        <i class="fa fa-circle"></i><span>Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Payments.View)).Result.Succeeded) {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("payments") == true)?"":"collapsed")" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fa fa-wallet"></i><span>Quản lí thanh toán</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="payment-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("payments") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Payments" class="@(((string?)ViewData["page"]=="payments")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Payments/Create" class="@(((string?)ViewData["page"]=="payments_create")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Thống kê</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        }
 
-        <li class="nav-heading">Pages</li>
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Producers.View)).Result.Succeeded)
+        {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("producers") == true)?"":"collapsed")" data-bs-target="#producer-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fas fa-database"></i><span>Quản lí nhà cung cấp</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="producer-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("producers") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Producers" class="@(((string?)ViewData["page"]=="producers")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách</span>
+                        </a>
+                    </li>
+                    @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Producers.Create)).Result.Succeeded)
+                    {
+                        <li>
+                            <a href="/Admin/Producers/Create" class="@(((string?)ViewData["page"]=="producers_create")? "active" : "")">
+                                <i class="fa fa-circle"></i><span>Thêm mới</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
 
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="pages-error-404.html">
-                <i class="bi bi-dash-circle"></i>
-                <span>Error 404</span>
-            </a>
-        </li><!-- End Error 404 Page Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="pages-blank.html">
-                <i class="bi bi-file-earmark"></i>
-                <span>Blank</span>
-            </a>
-        </li><!-- End Blank Page Nav -->
-
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Shipments.View)).Result.Succeeded)
+        {
+            <li class="nav-item">
+                <a class="nav-link @((((string?)ViewData["page"])?.Contains("shipments") == true)?"":"collapsed")" data-bs-target="#shipment-nav" data-bs-toggle="collapse" href="#">
+                    <i class="fas fa-truck"></i><span>Quản lí nhà vận chuyển</span><i class="fa-solid fa-chevron-right ms-auto"></i>
+                </a>
+                <ul id="shipment-nav" class="nav-content collapse @((((string?)ViewData["page"])?.Contains("shipments") == true)?"show":"")" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/Admin/Shipments" class="@(((string?)ViewData["page"]=="shipments")? "active" : "")">
+                            <i class="fa fa-circle"></i><span>Danh sách</span>
+                        </a>
+                    </li>
+                    @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Shipments.Create)).Result.Succeeded)
+                    {
+                        <li>
+                            <a href="/Admin/Shipments/Create" class="@(((string?)ViewData["page"]=="shipments_create")? "active" : "")">
+                                <i class="fa fa-circle"></i><span>Thêm mới</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
     </ul>
 </aside>

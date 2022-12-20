@@ -1,78 +1,36 @@
 ﻿@model IEnumerable<THUD_TN408.Models.Order>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách đơn hàng";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPaid)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsTrans)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsSuccess)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Payment)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Promotion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductPromotion)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPaid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsTrans)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsSuccess)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Payment.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Promotion.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductPromotion.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="pagetitle">
+    <h1>Danh sách đơn hàng</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            @{
+                var user = (User?)ViewData["user"];
+                var productName = (string?)ViewData["productName"];
+            }
+            <li class="breadcrumb-item active"><a href="/Admin/Orders/Index">Danh sách đơn hàng 
+                @((user != null) ? (": " + user.Id) : "")
+                @((productName != null) ? (": " + productName) : "")</a>
+            </li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body" id="ordersTable">
+                <partial name="_ListOrders" model="Model" />
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_OrderScriptsPartial");
+    }
 }
-    </tbody>
-</table>

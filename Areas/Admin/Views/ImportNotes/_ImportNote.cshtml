@@ -1,0 +1,29 @@
+﻿@model THUD_TN408.Models.ImportNote
+
+<tr>
+    <td>@Model.Id</td>
+    <td>
+        <a asp-action="Info" asp-controller="Users" asp-route-id="@Model.UserId">@Model.User?.Email</a>
+    </td>
+    <td>
+        @Model.Warehouse.Name
+    </td>
+    <td>
+        @Model.CreatedDate
+    </td>
+    <td>
+        @String.Format("{0:# ### ### ###}", Model.Total)
+    </td>
+    
+    <td>
+        <div class="btn-group dropdown text-black">
+            <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Tùy chọn
+            </button>
+            <ul class="dropdown-menu">
+                <a class="dropdown-item" asp-action="Create" asp-controller="ImportDetails" asp-route-importNoteId="@Model.Id"><i class="fas fa-plus me-2 text-success"></i>Thêm chi tiết nhập</a>
+                <a class="dropdown-item" asp-action="Details" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
+            </ul>
+        </div>
+    </td>
+</tr>

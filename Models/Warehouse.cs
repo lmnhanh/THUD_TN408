@@ -11,7 +11,7 @@ namespace THUD_TN408.Models
 		[Required(AllowEmptyStrings = false, ErrorMessage = "Địa chỉ kho không được trống!")]
 		[MaxLength(100, ErrorMessage = "Địa chỉ không quá 100 kí tự!")]
 		public string Address { get; set; } = null!;
-
 		public virtual ICollection<WarehouseDetail>? Details { set; get; }
+		public virtual ICollection<ImportNote>? ImportNotes { set; get; }
 	}
 }

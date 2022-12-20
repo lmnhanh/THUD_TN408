@@ -1,0 +1,10 @@
+﻿@model THUD_TN408.Models.ImportDetail
+
+<tr>
+    <td>
+        <a asp-action="Details" asp-controller="ProductDetails" asp-route-id="@Model.ProductDetailId">@Model.ProductDetail.Id</a>
+    </td>
+    <td>
+        @Model.Quantity
+    </td>
+</tr>

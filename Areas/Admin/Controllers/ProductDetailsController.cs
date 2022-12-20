@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +16,16 @@ using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize(policy: Permissions.Products.View)]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin,WarehouseManager")]
     public class ProductDetailsController : Controller
     {
         private readonly Services _services;
+		private readonly INotyfService _notyf;
 
-        public ProductDetailsController(TN408DbContext context, UserManager<User> userManager)
+		public ProductDetailsController(TN408DbContext context, UserManager<User> userManager, INotyfService notyf)
         {
 			_services = new Services(context, userManager);
+            _notyf = notyf;
 		}
 
         // GET: Admin/ProductDetails
@@ -34,13 +37,19 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         [HttpGet]
-		public async Task<IActionResult> Paging(int page = 1, int size = 8)
+		public async Task<IActionResult> Paging(int? productId, int page = 1, int size = 8)
 		{
 			page = (page < 1) ? 1 : page;
             size = (size < 2) ? 2 : size;
 
-			var details = _services.GetListProductDetails(DateTime.Now);
 			ViewData["page"] = "products";
+            if (productId != null)
+            {
+				var d = _services.GetListProductDetails((int)productId,DateTime.Now);
+				ViewData["productId"] = productId;
+				return PartialView("_ListProductDetails", await d.ToPagedListAsync(page, size));
+			}
+			var details = _services.GetListProductDetails(DateTime.Now);
 			return PartialView("_ListProductDetails", await details.ToPagedListAsync(page, size));
 		}
 
@@ -78,8 +87,6 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
         // POST: Admin/ProductDetails/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost,Authorize(policy: Permissions.Products.Create)]
         public async Task<IActionResult> Create([Bind("Id,Size,Color,Amount,Gender,ProductId")] ProductDetail productDetail, IFormFile? Image1, IFormFile? Image2)
         {
@@ -103,7 +110,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
 
                     await _services.AddProductDetail(productDetail);
                     await _services.AddPrice(productDetail.Id, productDetail.Amount, DateTime.Now);
-                    await _services.AddHistory(User, "Chi tiết \"" + productDetail.Id + "\" đã được lưu vào cơ sở dữ liệu!", "/Admin/ProductDetails/Details/" + productDetail.Id);
+                    await _services.AddHistory(User, "Thêm chi tiết \"" + productDetail.Id + "\" cho sản phẩm \""+ productDetail.ProductId +"\"", "/Admin/ProductDetails/Details/" + productDetail.Id);
+					_notyf.Success("Đã thêm chi tiết sản phẩm " + productDetail.Id);
 					return RedirectToAction("Details", "Products", new {id = productDetail.ProductId});
 				}
 				ViewData["ProductId"] = new SelectList(_services.GetListProduct().ToList(), "Id", "Name", productDetail.ProductId);
@@ -156,7 +164,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
 					if (detail != null)
                     {
                         await _services.UpdateProductDetail(detail, productDetail, Image1, Image2);
-						await _services.AddHistory(User, "Chi tiết \"" + productDetail.Id + "\" đã được chỉnh sửa thông tin!", "/Admin/ProductDetails/Details/" + productDetail.Id);
+						await _services.AddHistory(User, "Chỉnh sửa chi tiết sản phẩm \"" + productDetail.Id + "\"", "/Admin/ProductDetails/Details/" + productDetail.Id);
+						_notyf.Success("Đã lưu chỉnh sửa!");
 					}
                     else
                     {
@@ -206,8 +215,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         {
             if (!_services.HasAnyProductDetail())
             {
-                return Problem("Entity set 'TN408DbContext.Details'  is null.");
-            }
+				_notyf.Error("Đã có lỗi xảy ra!");
+			}
             var productDetail = await _services.GetProductDetail(id, DateTime.Now);
 
 			if (productDetail != null)
@@ -216,7 +225,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 {
                     _services.DeleteImage(productDetail.Image1);
 				    _services.DeleteImage(productDetail.Image2);
-					await _services.AddHistory(User, "Chi tiết \"" + productDetail.Id + "\" đã được xóa khỏi cơ sở dữ liệu!", null);
+					_notyf.Success("Đã xóa chi tiết sản phẩm " + productDetail.Id);
+					await _services.AddHistory(User, "Xóa chi tiết sản phẩm \"" + productDetail.Id + "\"", null);
 					await _services.RemoveProductDetail(productDetail);
                 }
 			}
@@ -232,15 +242,17 @@ namespace THUD_TN408.Areas.Admin.Controllers
 				return Problem("Entity set 'TN408DbContext.Details'  is null.");
 			}
             var productDetail = await _services.GetProductDetail(id, DateTime.Now);
-			if (productDetail != null)
-			{
-				if (productDetail.Carts?.Count == 0)
+            if (productDetail != null)
+            {
+                if (productDetail.Carts == null || productDetail.Carts.Any() == false)
 				{
 					_services.DeleteImage(productDetail.Image1);
 					_services.DeleteImage(productDetail.Image2);
 					await _services.RemoveProductDetail(productDetail);
+					_notyf.Success("Đã xóa chi tiết sản phẩm " + productDetail.Id);
 					return PartialView("_ProductDetail", null);
 				}
+				_notyf.Error("Không thể xóa chi tiết sản phẩm " + productDetail.Id);
 				return PartialView("_ProductDetail", productDetail);
 
 			}

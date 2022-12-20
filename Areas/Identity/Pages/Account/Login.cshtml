@@ -18,20 +18,20 @@
 </head>
 <body>
     <div class="row justify-content-center">
-        <div class="col-lg-5 col-md-6 col-10">
-            <div class="card shadow-lg border-0 rounded-lg mt-5">
-                <div class="card-header"><h3 class="text-center font-weight-light my-4">Đăng nhập hệ thống</h3></div>
+        <div class="col-lg-4 col-md-5 col-10">
+            <div class="card shadow mt-5">
+                <h5 class="card-title text-center mt-3">Đăng nhập hệ thống</h5>
                 <div class="card-body">
                     <form id="account" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger list-style-none"></div>
                         <div class="form-floating mt-1">
                             <input asp-for="Input.Email" class="form-control" placeholder="Email" aria-required="true" />
-                            <label asp-for="Input.Email" class="form-label"></label>
+                            <label asp-for="Input.Email" class="form-label">Email</label>
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
                         <div class="form-floating mt-1">
-                            <input asp-for="Input.Password" class="form-control" placeholder="Password" aria-required="true" />
-                            <label asp-for="Input.Password" class="form-label"></label>
+                            <input asp-for="Input.Password" class="form-control" placeholder="Mật khẩu" aria-required="true" />
+                            <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                         </div>
                         <div>
@@ -42,19 +42,17 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center justify-content-between mt-1 mb-0">
-                            <button id="login-submit" type="submit" class="btn btn-primary mx-auto">Log in</button>
+                        <div class="d-flex mt-1 mb-0">
+                            <button id="login-submit" type="submit" class="btn btn-primary btn-sm mx-auto">Đăng nhập</button>
                         </div>
-                        <div>
-                            <p>
-                                <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                            </p>
-                            <p>
+                        <div class ="text-center mt-2">
+                                <a class="text-decoration-none" id="forgot-password" asp-page="./ForgotPassword">Quên mật khẩu?</a>
+                            @*<p>
                                 <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
                             </p>
                             <p>
                                 <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                            </p>
+                            </p>*@
                         </div>
                     </form>
                 </div>

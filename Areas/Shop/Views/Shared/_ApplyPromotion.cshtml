@@ -1,0 +1,44 @@
+﻿@model THUD_TN408.Areas.Shop.Models.CartsModel
+<h5 class="text-uppercase mb-4">Chi tiết</h5>
+<ul class="list-unstyled mb-0">
+    @foreach (var cart in Model.Carts)
+    {
+        <li class="d-flex align-items-center justify-content-between">
+            <strong class="text-uppercase small font-weight-bold">@cart.Detail?.Name x @cart.Quantity</strong>
+            <span class="text-muted small">@string.Format("{0:#,##0}", cart.Total)</span>
+        </li>
+    }
+    @if (Model.Promotion != null)
+    {
+        Model.TotalFinal = Model.Total - Model.Discount;
+
+        <li class="d-flex align-items-center justify-content-between">
+            <strong class="text-uppercase small font-weight-bold">Khuyến mãi</strong>
+            <span class="text-muted small">@string.Format("{0:-#,##0}", Model.Discount)</span>
+        </li>
+        <li>
+            <small class="text-danger">@Model.Promotion.Name</small>
+        </li>
+        <li>
+            <small class="text-danger">@Model.Promotion.Description</small>
+        </li>
+    }
+    <li class="border-bottom my-2"></li>
+    <li class="d-flex align-items-center justify-content-between mb-4">
+        <strong class="text-uppercase small font-weight-bold">Tổng đơn hàng</strong>
+        <span class="fw-bold">@string.Format("{0:#,##0}", Model.TotalFinal)</span>
+    </li>
+    <li>
+        <div class="input-group mb-0">
+            <input class="form-control" id="promotion" type="text" placeholder="Nhập mã khuyến mãi">
+            <button class="btn btn-dark btn-sm" onclick="ApplyPromotion()"> <i class="fas fa-gift me-2"></i>Áp dụng</button>
+        </div>
+    </li>
+</ul>
+<form id="checkoutForm" action="Confirm" method="post">
+    <input type="hidden" name="promotionId" value="@Model.Promotion?.Id">
+    <input type="hidden" name="total" value="@Model.TotalFinal">
+</form>
+<div class="d-flex">
+    <button type="submit" form="checkoutForm" class="btn btn-dark btn-sm mx-auto mt-2">Thanh toán</button>
+</div>

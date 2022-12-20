@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Areas.Admin.Service;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
@@ -15,7 +17,7 @@ using static THUD_TN408.Authorization.Permissions;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin,WarehouseManager")]
     public class WarehousesController : Controller
     {
         private readonly TN408DbContext _context;
@@ -53,8 +55,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
             ViewData["ProductDetail"] = null;
 			ViewData["Product"] = products;
 			ViewData["Warehouse"] = warehouses;
-            ViewData["page"] = "warehouses";
-			return View(await _context.WarehouseDetails.Include(w => w.ProductDetail).OrderBy(x => x.ProductDetailId).ToPagedListAsync(1,8));
+            ViewData["page"] = "warehouses_details";
+			return View(await _context.WarehouseDetails.Include(w => w.ProductDetail).OrderBy(x => x.ProductDetailId).ToPagedListAsync(1,6));
         }
 
         [HttpGet]     
@@ -107,7 +109,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
             return PartialView("_ListWarehouseDetails", await result
                 .Include(w => w.ProductDetail)
                 .OrderBy(x => x.ProductDetailId)
-                .ToPagedListAsync(page, 8));
+                .ToPagedListAsync(page, 6));
 		}
 
         [HttpGet]
@@ -135,8 +137,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(warehouse);
         }
 
-        // GET: Admin/Warehouses/Create
-        public IActionResult Create()
+		// GET: Admin/Warehouses/Create
+		[Authorize(policy: Permissions.Warehouses.Create)]
+		public IActionResult Create()
         {
 			ViewData["page"] = "warehouses";
 			return View();
@@ -145,7 +148,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/Warehouses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address")] Warehouse warehouse)
+		[Authorize(policy: Permissions.Warehouses.Create)]
+		public async Task<IActionResult> Create([Bind("Id,Name,Address")] Warehouse warehouse)
         {
             if (ModelState.IsValid)
             {
@@ -159,8 +163,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(warehouse);
         }
 
-        // GET: Admin/Warehouses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Admin/Warehouses/Edit/5
+		[Authorize(policy: Permissions.Warehouses.Edit)]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Warehouses == null)
             {
@@ -179,7 +184,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/Warehouses/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address")] Warehouse warehouse)
+		[Authorize(policy: Permissions.Warehouses.Edit)]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address")] Warehouse warehouse)
         {
             if (id != warehouse.Id)
             {
@@ -211,8 +217,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
             return View(warehouse);
         }
 
-        // GET: Admin/Warehouses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Admin/Warehouses/Delete/5
+		[Authorize(policy: Permissions.Warehouses.Delete)]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Warehouses == null)
             {
@@ -233,7 +240,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/Warehouses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+		[Authorize(policy: Permissions.Warehouses.Delete)]
+		public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Warehouses == null)
             {

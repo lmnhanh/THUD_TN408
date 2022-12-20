@@ -11,10 +11,10 @@ namespace THUD_TN408.Authorization
 		{
 			var defaultUser = new User
 			{
-				UserName = "anhle184561@gmail.com",
+				UserName = "saleman@gmail.com",
 				FirstName = "Le Minh",
 				LastName = "Anh",
-				Email = "anhle184561@gmail.com",
+				Email = "saleman@gmail.com",
 				EmailConfirmed = true
 			};
 			if (userManager.Users.All(u => u.Id != defaultUser.Id))
@@ -23,13 +23,31 @@ namespace THUD_TN408.Authorization
 				if (user == null)
 				{
 					await userManager.CreateAsync(defaultUser, "LMAlmaht2st@");
-					await userManager.AddToRoleAsync(defaultUser, Roles.SaleManager.ToString());
-
+					await userManager.AddToRoleAsync(defaultUser, Roles.Saleman.ToString());
 
 					await roleManager.AddPermissionAsCustomer();
-					await roleManager.AddPermissionAsSaleManager();
 					await roleManager.AddPermissionAsWarehouseManager();
 					await roleManager.AddPermissionAsSaleman();
+				}
+			}
+		}
+		public static async Task SeedWarehouseUserAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+		{
+			var defaultUser = new User
+			{
+				UserName = "warehouse@gmail.com",
+				FirstName = "Le Minh",
+				LastName = "Anh",
+				Email = "warehouse@gmail.com",
+				EmailConfirmed = true
+			};
+			if (userManager.Users.All(u => u.Id != defaultUser.Id))
+			{
+				var user = await userManager.FindByEmailAsync(defaultUser.Email);
+				if (user == null)
+				{
+					await userManager.CreateAsync(defaultUser, "LMAlmaht2st@");
+					await userManager.AddToRoleAsync(defaultUser, Roles.WarehouseManager.ToString());
 				}
 			}
 		}
@@ -52,50 +70,29 @@ namespace THUD_TN408.Authorization
 		{
 			var warehouseRole = await roleManager.FindByNameAsync("WarehouseManager");
 			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Products.View));
+			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Producers.View));
 			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Products.Create));
 			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Categories.View));
 			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Categories.Create));
 			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Warehouses.View));
-			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Warehouses.Create));
-			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Warehouses.Delete));
-			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.Warehouses.Edit));
-			//Còn phieu nha va xuat
+			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.ImportNotes.View));
+			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.ImportNotes.Create));
+			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.ImportNotes.Delete));
+			await roleManager.AddClaimAsync(warehouseRole, new Claim("Permission", Permissions.ImportNotes.Edit));
 		}
 
 		public static async Task AddPermissionAsSaleman(this RoleManager<IdentityRole> roleManager)
 		{
 			var managerRole = await roleManager.FindByNameAsync("Saleman");
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Products.View));
+			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Shipments.View));
+			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Producers.View));
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Orders.View));
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Warehouses.View));
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Payments.View));
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Promotions.View));
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.CustomerAccounts.View));
 			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Categories.View));
-		}
-
-		public static async Task AddPermissionAsSaleManager(this RoleManager<IdentityRole> roleManager)
-		{
-			var managerRole = await roleManager.FindByNameAsync("SaleManager");
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Products.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Products.Create));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Products.Delete));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Products.Edit));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Orders.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Warehouses.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Payments.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Payments.Create));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Payments.Edit));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Payments.Delete));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Promotions.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Promotions.Create));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Promotions.Delete));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Promotions.Edit));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.CustomerAccounts.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Categories.View));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Categories.Create));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Categories.Edit));
-			await roleManager.AddClaimAsync(managerRole, new Claim("Permission", Permissions.Categories.Delete));
 		}
 
 		public static async Task SeedSuperAdminAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
@@ -122,7 +119,16 @@ namespace THUD_TN408.Authorization
 		private async static Task SeedClaimsForSuperAdmin(this RoleManager<IdentityRole> roleManager)
 		{
 			var adminRole = await roleManager.FindByNameAsync("SuperAdmin");
-			await roleManager.AddPermissionClaim(adminRole, "Accounts");
+			await roleManager.AddPermissionClaim(adminRole, "StaffAccounts");
+			await roleManager.AddPermissionClaim(adminRole, "Products");
+			await roleManager.AddPermissionClaim(adminRole, "Producers");
+			await roleManager.AddPermissionClaim(adminRole, "Categories");
+			await roleManager.AddPermissionClaim(adminRole, "Promotions");
+			await roleManager.AddPermissionClaim(adminRole, "Orders");
+			await roleManager.AddPermissionClaim(adminRole, "Warehouses");
+			await roleManager.AddPermissionClaim(adminRole, "Payments");
+			await roleManager.AddPermissionClaim(adminRole, "Shipments");
+			await roleManager.AddPermissionClaim(adminRole, "ImportNotes");
 		}
 		public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module)
 		{

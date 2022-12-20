@@ -17,7 +17,7 @@ using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize(Roles = "Saleman, SaleManager, WarehouseManager")]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin,WarehouseManager")]
     public class ProductsController : Controller
     {
 		private readonly Services _services;
@@ -27,8 +27,6 @@ namespace THUD_TN408.Areas.Admin.Controllers
             _services = new Services(context, userManager);
         }
 
-        // GET: Admin/Products
-        //[Authorize(Roles ="Saleman")]
         public async Task<IActionResult> Index()
         {
             var products = await _services.GetListProduct().ToPagedListAsync(1, 8);
@@ -81,6 +79,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
             {
                 ViewData["CategoryId"] = new SelectList(_services.GetListCategory(), "Id", "Name");
             }
+			ViewData["ProducerId"] = new SelectList(_services.GetListProducers(), "Id", "Name");
 			ViewData["page"] = "products_create";
 			return View();
         }
@@ -91,7 +90,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 		[Authorize(policy: Permissions.Products.Create)]
-		public async Task<IActionResult> Create([Bind("Id,Name,Origin,Description,IsActive,CategoryId")] Product product)
+		public async Task<IActionResult> Create([Bind("Id,Name,Origin,Description,IsActive,CategoryId,ProducerId")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -100,6 +99,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_services.GetListCategory(), "Id", "Name", product.CategoryId);
+			ViewData["ProducerId"] = new SelectList(_services.GetListProducers(), "Id", "Name");
 			ViewData["page"] = "products";
 			return View(product);
         }
@@ -129,7 +129,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 		[Authorize(policy: Permissions.Products.Edit)]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Origin,Description,IsActive,CategoryId")] Product product)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Origin,Description,IsActive,CategoryId,ProducerId")] Product product)
         {
             if (id != product.Id)
             {
@@ -157,7 +157,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
                 return RedirectToAction("Details", "Products", new {id = product.Id});
             }
             ViewData["CategoryId"] = new SelectList(_services.GetListCategory(), "Id", "Name", product.CategoryId);
-			
+			ViewData["ProducerId"] = new SelectList(_services.GetListProducers(), "Id", "Name");
+
 			ViewData["page"] = "products";
 			return View(product);
         }

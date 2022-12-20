@@ -1,0 +1,48 @@
+﻿@model IEnumerable<THUD_TN408.Models.Shipment>
+@{
+    ViewData["Title"] = "Danh sách đơn vị vận chuyển";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Danh sách đơn vị vận chuyển</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">
+                <a href="/Admin/Shipments/Index">Danh sách đơn vị vận chuyển</a>
+            </li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <a asp-action="Create" asp-controller="Shipments" class="btn btn-sm btn-outline-primary fw-bold position-absolute top-0 end-0 m-3">Thêm &nbsp;<i class="fa fa-plus"></i></a>
+                <h5 class="card-title text-center">Danh sách đơn vị vận chuyển</h5>
+                <table class="table table-hover datatable">
+                    <thead>
+                        <tr>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                Tên
+                            </th>
+                            <th>
+                                Tùy chọn
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <partial name="_Shipment" model="item" />
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

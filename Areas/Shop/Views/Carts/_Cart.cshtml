@@ -1,0 +1,33 @@
+﻿@model THUD_TN408.Models.Cart
+@if(Model != null){
+    <th class="ps-0 py-3 border-light" scope="row">
+        <div class="d-flex align-items-center">
+            <a class="reset-anchor d-block animsition-link" asp-action="Details" asp-controller="Products" asp-route-id="@Model.ProductDetailId">
+                <img src="~/images/products/@Model.Detail?.Image1" alt="..." width="70" />
+            </a>
+            <div class="ms-3">
+                <strong class="h6">
+                    <a class="reset-anchor animsition-link" asp-action="Details" asp-controller="Products" asp-route-id="@Model.ProductDetailId">
+                        @Model.Detail?.Name @Model.Detail?.Size
+                    </a>
+                </strong>
+            </div>
+        </div>
+    </th>
+    <td class="p-3 align-middle border-light">
+        <p class="mb-0 small">@string.Format("{0:#,##0}", Model.Total / Model.Quantity)</p>
+    </td>
+    <td class="p-3 align-middle border-light">
+        <div class="border d-flex align-items-center justify-content-between px-3">
+            <div class="quantity">
+                <button class="dec-btn p-0" onclick="SetQuantityDown(@Model.Id)"><i class="fas fa-caret-left"></i></button>
+                <input class="form-control form-control-sm border-0 shadow-0 p-0" type="text" data-max="@Model.Detail?.Stock" disabled style="background-color: white" value="@Model.Quantity" />
+                <button class="inc-btn p-0" onclick="SetQuantityUp(@Model.Id)"><i class="fas fa-caret-right"></i></button>
+            </div>
+        </div>
+    </td>
+    <td class="p-3 align-middle border-light">
+        <p class="mb-0 small">@string.Format("{0:#,##0}", Model.Total)</p>
+    </td>
+    <td class="p-3 align-middle border-light"><a class="reset-anchor" href="#" onclick="RemoveCart(@Model.Id)"><i class="fas fa-trash-alt small text-muted"></i></a></td>
+}

@@ -29,6 +29,5 @@ namespace THUD_TN408.Models
 		public bool IsActive { set; get; } = true;
 		public int ProductId { set; get; }
 		public virtual Product? Product { get; set; }
-		public virtual ICollection<Order>? Orders { get; set; }
 	}
 }

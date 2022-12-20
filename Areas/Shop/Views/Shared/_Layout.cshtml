@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewData["title"]</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+
+    <link rel="stylesheet" href="~/lib/glightbox/css/glightbox.min.css">
+    <link rel="stylesheet" href="~/lib/nouislider/nouislider.min.css">
+    <link rel="stylesheet" href="~/lib/choices.js/public/assets/styles/choices.min.css">
+    <link rel="stylesheet" href="~/lib/swiper/swiper-bundle.min.css">
+    <!-- Google fonts-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;700&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@300;400;800&amp;display=swap">
+    <link rel="stylesheet" href="~/css/style.default.css" id="theme-stylesheet">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <script src="https://kit.fontawesome.com/83326fc41a.js" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+  </head>
+  <body>
+    <div class="page-holder">
+      <!-- navbar-->
+      <partial name="_Header"/>
+      <!-- HERO SECTION-->
+      <div class="container">
+       @* <section class="hero pb-3 bg-cover bg-center d-flex align-items-center" style="background: url(img/hero-banner-alt.jpg)">
+          <div class="container py-5">
+            <div class="row px-4 px-lg-5">
+              <div class="col-lg-6">
+                <p class="text-muted small text-uppercase mb-2">New Inspiration 2020</p>
+                <h1 class="h2 text-uppercase mb-3">20% off on new season</h1><a class="btn btn-dark" href="shop.html">Browse collections</a>
+              </div>
+            </div>
+          </div>
+        </section>*@
+        <!-- CATEGORIES SECTION-->
+        @*<section class="pt-5">
+          <header class="text-center">
+            <p class="small text-muted small text-uppercase mb-1">Carefully created collections</p>
+            <h2 class="h5 text-uppercase mb-4">Browse our categories</h2>
+          </header>
+          <div class="row">
+            <div class="col-md-4"><a class="category-item" href="shop.html"><img class="img-fluid" src="img/cat-img-1.jpg" alt=""/><strong class="category-item-title">Clothes</strong></a>
+            </div>
+            <div class="col-md-4"><a class="category-item mb-4" href="shop.html"><img class="img-fluid" src="img/cat-img-2.jpg" alt=""/><strong class="category-item-title">Shoes</strong></a><a class="category-item" href="shop.html"><img class="img-fluid" src="img/cat-img-3.jpg" alt=""/><strong class="category-item-title">Watches</strong></a>
+            </div>
+            <div class="col-md-4"><a class="category-item" href="shop.html"><img class="img-fluid" src="img/cat-img-4.jpg" alt=""/><strong class="category-item-title">Electronics</strong></a>
+            </div>
+          </div>
+        </section>*@
+        <!-- TRENDING PRODUCTS-->
+        <section class="py-5">
+             @RenderBody()
+        </section>
+        <!-- NEWSLETTER-->
+        <section class="py-5">
+          <div class="container p-0">
+            <div class="row gy-3">
+              <div class="col-lg-6">
+                <h5 class="text-uppercase">Let's be friends!</h5>
+                <p class="text-sm text-muted mb-0">Nisi nisi tempor consequat laboris nisi.</p>
+              </div>
+              <div class="col-lg-6">
+                <form action="#">
+                  <div class="input-group">
+                    <input class="form-control form-control-lg" type="email" placeholder="Enter your email address" aria-describedby="button-addon2">
+                    <button class="btn btn-dark" id="button-addon2" type="submit">Subscribe</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <partial name="_Footer"/>
+      <!-- JavaScript files-->
+    </div>
+  </body>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/glightbox/js/glightbox.min.js"></script>
+<script src="~/lib/nouislider/nouislider.min.js"></script>
+<script src="~/lib/swiper/swiper-bundle.min.js"></script>
+<script src="~/lib/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="~/js/front.js"></script>
+@await Component.InvokeAsync("Notyf")
+@await RenderSectionAsync("Scripts", required: false)
+</html>

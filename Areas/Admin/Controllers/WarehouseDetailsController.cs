@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin,WarehouseManager")]
     public class WarehouseDetailsController : Controller
     {
         private readonly TN408DbContext _context;
@@ -51,8 +53,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
             return View(warehouseDetail);
         }
 
-        // GET: Admin/WarehouseDetails/Create
-        public IActionResult Create()
+		// GET: Admin/WarehouseDetails/Create
+		[Authorize(policy: Permissions.Warehouses.Create)]
+		public IActionResult Create()
         {
 			var details = _context.Details.Include(x => x.Product);
 			foreach (var detail in details)
@@ -68,7 +71,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/WarehouseDetails/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WarehouseId,ProductDetailId,Stock")] WarehouseDetail warehouseDetail)
+		[Authorize(policy: Permissions.Warehouses.Create)]
+		public async Task<IActionResult> Create([Bind("WarehouseId,ProductDetailId,Stock")] WarehouseDetail warehouseDetail)
         {
             if (ModelState.IsValid)
             {
@@ -96,8 +100,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
             return View(warehouseDetail);
         }
 
-        // GET: Admin/WarehouseDetails/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Admin/WarehouseDetails/Edit/5
+		[Authorize(policy: Permissions.Warehouses.Edit)]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.WarehouseDetails == null)
             {
@@ -119,7 +124,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WarehouseId,ProductDetailId,Stock")] WarehouseDetail warehouseDetail)
+		[Authorize(policy: Permissions.Warehouses.Edit)]
+		public async Task<IActionResult> Edit(int id, [Bind("WarehouseId,ProductDetailId,Stock")] WarehouseDetail warehouseDetail)
         {
             if (id != warehouseDetail.WarehouseId)
             {
@@ -151,8 +157,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
             return View(warehouseDetail);
         }
 
-        // GET: Admin/WarehouseDetails/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Admin/WarehouseDetails/Delete/5
+		[Authorize(policy: Permissions.Warehouses.Delete)]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.WarehouseDetails == null)
             {
@@ -174,7 +181,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/WarehouseDetails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+		[Authorize(policy: Permissions.Warehouses.Delete)]
+		public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.WarehouseDetails == null)
             {

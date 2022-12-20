@@ -1,0 +1,85 @@
+﻿@model THUD_TN408.Models.ProductDetail
+
+<div class="col-lg-6">
+    <!-- PRODUCT SLIDER-->
+    <div class="row m-sm-0">
+        <div class="col-sm-2 p-sm-0 order-2 order-sm-1 mt-2 mt-sm-0 px-xl-2">
+            <div class="swiper product-slider-thumbs">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide h-auto swiper-thumb-item mb-3"><img class="w-100" src="~/images/products/@Model.Image1" alt="..."></div>
+                    <div class="swiper-slide h-auto swiper-thumb-item mb-3"><img class="w-100" src="~/images/products/@Model.Image2" alt="..."></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-10 order-1 order-sm-2">
+            <div class="swiper product-slider">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide h-auto">
+                        <a class="glightbox product-view" href="~/images/products/@Model.Image1" data-gallery="gallery2" data-glightbox="Product item 1">
+                            <img class="img-fluid" src="~/images/products/@Model.Image1" alt="...">
+                        </a>
+                    </div>
+                    <div class="swiper-slide h-auto">
+                        <a class="glightbox product-view" href="~/images/products/@Model.Image2" data-gallery="gallery2" data-glightbox="Product item 2">
+                            <img class="img-fluid" src="~/images/products/@Model.Image2" alt="...">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PRODUCT DETAILS-->
+<div class="col-lg-6">
+    <h1>@Model.Name</h1>
+    <partial name="_ProductPrice" model="Model" />
+    @{
+        ViewData["currentId"] = Model.Id;
+        IEnumerable<ProductDetail> sizes = (IEnumerable<ProductDetail>)ViewData["ListOfGroup"];
+    }
+    <div id="sizeContainer">
+        <partial name="_ListProductSizes" model="sizes" view-data="ViewData" />
+    </div>
+    <p class="text-sm mb-4">
+        @Html.Raw(Model.Product?.Description)
+    </p>
+    <div class="row align-items-stretch mb-4">
+        <div class="col-sm-5 pr-sm-0">
+            <div class="border d-flex align-items-center justify-content-between py-1 px-3 bg-white border-white">
+                <span class="small text-uppercase text-gray mr-2 no-select">Số lượng</span>
+                <div class="quantity">
+                    <button class="dec-btn p-0"><i class="fas fa-caret-left"></i></button>
+                    <input class="form-control border-0 shadow-0 p-0" type="text" id="cartQuantity" data-max="@Model.Stock" disabled style="background-color: white" value="1">
+                    <button class="inc-btn p-0"><i class="fas fa-caret-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 pl-sm-0">
+            @if (Model.Stock <= 0)
+            {
+                <a class="btn btn-dark disabled btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0" href="#">
+                    Hết hàng
+                </a>
+            }
+            else
+            {
+                if (User.Identity == null || User.Identity.Name == null)
+                {
+                    <a class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0" href="/Shop/Login">
+                        Thêm vào giỏ hàng
+                    </a>
+                }
+                else
+                {
+                    <a class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0" href="#" onclick="AddToCart(@Model.Id)">
+                        Thêm vào giỏ hàng
+                    </a>
+                }
+            }
+        </div>
+    </div>
+    <ul class="list-unstyled small d-inline-block">
+        <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Danh mục:</strong><a class="reset-anchor ms-2" asp-action="AllProducts" asp-controller="Products" asp-route-categoryId="@Model.Product?.CategoryId">@Model.Product?.Category?.Name</a></li>
+        <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Xuất xứ:</strong><a class="reset-anchor ms-2" asp-action="AllProducts" asp-controller="Products" asp-route-origin="@Model.Product?.Origin">@Model.Product?.Origin</a></li>
+    </ul>
+</div>

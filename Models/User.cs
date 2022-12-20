@@ -18,5 +18,6 @@ namespace THUD_TN408.Models
 		public virtual ICollection<Cart>? Carts { get; set; }
 		public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<History>? Histories { get; set; }
+        public virtual ICollection<ImportNote>? ImportNotes { get; set; }
 	}
 }

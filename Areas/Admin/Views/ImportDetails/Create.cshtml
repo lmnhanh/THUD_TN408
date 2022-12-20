@@ -1,0 +1,54 @@
+﻿@model THUD_TN408.Models.ImportDetail
+
+@{
+    ViewData["Title"] = "Thêm chi tiết phiếu nhập";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h1>Thêm chi tiết phiếu nhập</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/ImportNotes/Index">Danh sách phiếu nhập</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/ImportDetails/Create">Thêm chi tiết phiếu nhập</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-7 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin chi tiết</h5>
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="ImportNoteId" class="col-3 col-form-label fw-bold">Mã phiếu nhập</label>
+                        <div class="col-9">
+                            <select asp-for="ImportNoteId" class="form-control" asp-items="ViewBag.ImportNoteId"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="ProductDetailId" class="col-3 col-form-label fw-bold">Sản phẩm</label>
+                        <div class="col-9">
+                            <select asp-for="ProductDetailId" class="form-control" asp-items="ViewBag.ProductDetailId"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Quantity" class="col-3 col-form-label fw-bold">Số lượng</label>
+                        <div class="col-9">
+                            <input asp-for="Quantity" class="form-control" placeholder="Số lượng" />
+                            <span asp-validation-for="Quantity" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" value="Thêm" class="btn btn-primary btn-sm" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

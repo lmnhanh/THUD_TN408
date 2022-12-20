@@ -1,0 +1,38 @@
+﻿@model THUD_TN408.Models.ProductDetail
+
+
+<partial name="_Modal" model="Model"/>
+
+<div class="col-xl-3 col-md-3 col-sm-6">
+    <div class="product text-center">
+        <div class="position-relative mb-3">
+            <a class="d-block" asp-action="Details" asp-controller="Products" asp-route-id="@Model.Id"><img class="img-fluid w-100" src="~/images/products/@Model.Image1" alt="..."></a>
+            @{
+                var currentPPromotion = @Model.Product?.Promotions?.Where(x => x.ValidTo.CompareTo(DateTime.Now) >= 0 && x.ApplyFrom.CompareTo(DateTime.Now) <= 0).OrderByDescending(x => x.DiscountPercent).FirstOrDefault();
+                if(currentPPromotion!= null){
+                    <div class="badge text-white bg-primary">Sale -@currentPPromotion.DiscountPercent%</div>
+                }
+            }
+            <div class="product-overlay">
+                <ul class="mb-0 list-inline">
+                    @{
+                        if (Model.Stock > 0)
+                        {
+                            if (User.Identity == null || User.Identity.Name == null)
+                            {
+                                <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-dark" href="/Shop/Login">Thêm vào giỏ hàng</a></li>
+                            }
+                            else
+                            {
+                                <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-dark" href="#" onclick="AddOneToCart(@Model.Id)">Thêm vào giỏ hàng</a></li>
+                            }
+                        }
+                    }
+                    <li class="list-inline-item me-0"><a class="btn btn-sm btn-outline-dark" href="#productView_@Model.Id" data-bs-toggle="modal"><i class="fas fa-expand"></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <h6> <a class="reset-anchor" href="detail.html">@Model.Name @Model.Size</a></h6>
+        <partial name="_ProductPrice" model="Model"/>
+    </div>
+</div>

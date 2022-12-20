@@ -48,6 +48,12 @@
                         <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
                     <div class="row mt-5 mb-1 justify-content-center">
+                        <label asp-for="ProducerId" class="col-3 col-form-label fw-bold">Nhà cung cấp:</label>
+                        <div class="col-9">
+                            <select asp-for="ProducerId" class="form-control" asp-items="ViewBag.ProducerId"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-1 justify-content-center">
                         <label asp-for="CategoryId" class="col-3 col-form-label fw-bold">Danh mục:</label>
                         <div class="col-9">
                             <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>

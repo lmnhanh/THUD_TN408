@@ -1,6 +1,9 @@
 ﻿@model THUD_TN408.Models.ProductDetail
 @if(Model != null){
     <tr id="detail_@Model.Id">
+        <td class="align-middle">
+            @Model.Id
+        </td>
         <td>
             @if (Model.Image1 != null){
                 <img src="/images/products/@Model.Image1" height="50" width="50" />
@@ -20,7 +23,7 @@
             @((Model.Gender)? "Nam" : "Nữ")
         </td>
         <td class="align-middle">
-            @Model.Amount
+            @string.Format("{0:#,##0 VND}",Model.Amount)
         </td>
         <td class="justify-content-center align-middle">
             <div class="btn-group dropdown text-black">
@@ -33,7 +36,7 @@
                             <a class="dropdown-item" asp-action="Edit" asp-controller="ProductDetails" asp-route-id="@Model.Id"><i class="fa fa-pen-to-square me-2 text-primary"></i>Chỉnh sửa</a>
                         }
 					        <a class="dropdown-item" asp-action="Details" asp-controller="ProductDetails" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
-                        @if (Model.Product?.IsActive == true)
+                        @if (Model.Carts == null || Model.Carts.Any() == false)
                         {
 						    <a class="dropdown-item" asp-action="DeleteAsync" asp-controller="ProductDetails" asp-route-id="@Model.Id" onclick="ModifyDetail(@Model.Id)" data-id="@Model.Id"><i class="fa-solid fa-trash-can me-2 text-danger"></i>Xóa</a>
                         }

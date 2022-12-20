@@ -1,0 +1,54 @@
+﻿@model THUD_TN408.Areas.Shop.Models.Login
+@{
+    ViewData["title"] = "Đăng nhập";
+    Layout = "/Views/Shared/_Layout2.cshtml";
+}
+<div class="row justify-content-center">
+    <div class="col-lg-4 col-md-5 col-10">
+        <div class="card shadow mt-5">
+            <h5 class="card-title text-center mt-3">Đăng nhập</h5>
+            <div class="card-body">
+                <form asp-action="Login" asp-controller="Login" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger list-style-none"></div>
+                    <div class="form-floating mt-1">
+                        <input asp-for="Email" class="form-control" placeholder="Email" aria-required="true" />
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="form-floating mt-1">
+                        <input asp-for="Password" class="form-control" placeholder="Mật khẩu" aria-required="true" />
+                        <label asp-for="Password" class="form-label">Mật khẩu</label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <div class="checkbox">
+                            <label asp-for="RememberMe" class="form-label">
+                                <input class="form-check-input" asp-for="RememberMe" />
+                                Ghi nhớ đăng nhập?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-1 mb-0">
+                        <button type="submit" class="btn btn-primary btn-sm mx-auto">Đăng nhập</button>
+                    </div>
+                    <div class ="text-center mt-2">
+                        <div>
+                            <a class="text-decoration-none" href="/Identity/Account/Register">Đăng kí</a>
+                        </div>
+                        <div>
+                            <a class="text-decoration-none" href="/Identity/Account/ForgotPassword">Quên mật khẩu?</a>
+                        </div>
+                        <div>
+                            <a class="text-decoration-none" asp-page="/Identity/Account/ResendEmailConfirmation">Gửi lại email xác nhận</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -12,6 +12,9 @@
                     Sản phẩm
                 </th>
                 <th>
+                    Hình ảnh
+                </th>
+                <th>
                     Kho
                 </th>
                 <th>
@@ -24,7 +27,17 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ProductDetail!.FullName)
+                        @if (item.ProductDetail != null && item.ProductDetail.Image1 != null)
+                        {
+                            <img src="/images/products/@item.ProductDetail.Image1" height="50" width="50" />
+                        }
+                        @if (item.ProductDetail != null && item.ProductDetail.Image2 != null)
+                        {
+                            <img src="/images/products/@item.ProductDetail.Image2" height="50" width="50" />
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-controller="ProductDetails" asp-route-id="@item.ProductDetailId">@item.ProductDetail!.FullName</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Warehouse!.Name)
@@ -49,7 +62,7 @@
                 UlElementClasses = new[] { "pagination", "pagination-sm","justify-content-center", "mt-3" },
                 LinkToNextPageFormat = "<i class=\"fa fa-angle-right\"></i>",
                 LinkToPreviousPageFormat = "<i class=\"fa fa-angle-left\"></i>",
-                MaximumPageNumbersToDisplay = 4,
+                MaximumPageNumbersToDisplay = 6,
                 DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
                 DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
             })
@@ -59,9 +72,6 @@
 else
 {
     <h6 class="card-title text-center">Danh sách tồn kho trống!</h6>
-    <div class="d-flex">
-        <a asp-action="Create" asp-controller="WarehouseDetails" class="btn btn-sm btn-primary mx-auto">Thêm chi tiết tồn kho!</a>
-    </div>
 }
 <script>
     var links = document.querySelectorAll(".page-link");

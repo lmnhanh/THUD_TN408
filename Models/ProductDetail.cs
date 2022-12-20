@@ -12,16 +12,18 @@ namespace THUD_TN408.Models
 		public string Size { set; get; } = null!;
 
 		[MaxLength(20, ErrorMessage = "Màu sắc không quá 20 kí tự!")]
-		public string? Color { set; get; }
+		public string Color { set; get; } = null!;
 		public bool Gender { set; get; } = true;
 		[NotMapped]
 		[Required(ErrorMessage = "Giá không được trống!")]
 		[Range(minimum: '1', maximum: long.MaxValue, ErrorMessage = "Giá phải lớn hơn 0!")]
-		public long Amount { set; get; } = 100000;
+		public long Amount { set; get; } = 0L;
 		[NotMapped]
 		public int Stock { set; get; }
 		[NotMapped]
-		public string? FullName { set; get; } 
+		public string? FullName { set; get; }
+		[NotMapped]
+		public string? Name { set; get; }
 		public string? Image1 { set; get; }
 		public string? Image2 { set; get; }
 
@@ -30,5 +32,6 @@ namespace THUD_TN408.Models
 		public virtual ICollection<Cart>? Carts { get; set; }
 		public virtual ICollection<WarehouseDetail>? StockDetails { get; set; }
 		public virtual ICollection<Price>? Prices { get; set; }
+		public virtual ICollection<ImportDetail>? ImportDetails { get; set; }
 	}
 }

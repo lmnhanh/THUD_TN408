@@ -2,7 +2,16 @@
 @model ConfirmEmailModel
 @{
     ViewData["Title"] = "Confirm email";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
 }
-
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="text-center">
+                    @Model.StatusMessage <a href="/Shop/Login">Đăng nhập</a> ngay!
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+﻿<script>
+	function AddToCart(detailId){
+		event.preventDefault()
+		var quantity = $('#cartQuantity').val()
+		$.ajax({
+			type: 'POST',
+			url: '/Shop/Carts/AddCart',
+			data: {detailId : detailId, quantity : quantity}
+		})
+	}
+	function AddOneToCart(detailId) {
+		event.preventDefault()
+		$.ajax({
+			type: 'POST',
+			url: '/Shop/Carts/AddCart',
+			data: { detailId: detailId, quantity: 1}
+		})
+	}
+</script>

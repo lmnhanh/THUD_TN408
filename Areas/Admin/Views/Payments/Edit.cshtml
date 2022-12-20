@@ -1,33 +1,43 @@
 ﻿@model THUD_TN408.Models.Payment
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa hình thức thanh toán";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>Payment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="pagetitle">
+    <h1>Chỉnh sửa hình thức thanh toán</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Payments/Index">Danh sách hình thức thanh toán</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Payments/Details/@Model.Id">@Model.Name</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Payments/Edit/@Model.Id">Chỉnh sửa</a></li>
+        </ol>
+    </nav>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center">Thông tin chỉnh sửa</h5>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="row mb-1 justify-content-center">
+                        <label asp-for="Name" class="col-3 col-form-label fw-bold">Tên:</label>
+                        <div class="col-9">
+                            <input asp-for="Name" class="form-control" placeholder="Kích cỡ" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <input type="submit" value="Lưu chỉnh sửa" class="mx-auto mt-1 btn btn-sm btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

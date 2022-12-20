@@ -10,13 +10,14 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Areas.Admin.Service;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin")]
     public class ProductPromotionsController : Controller
     {
 		private readonly Services _services;
@@ -73,8 +74,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(productPromotion);
         }
 
-        // GET: Admin/ProductPromotions/Create
-        public IActionResult Create(int? productId = null)
+		// GET: Admin/ProductPromotions/Create
+		[Authorize(policy: Permissions.Promotions.Create)]
+		public IActionResult Create(int? productId = null)
         {
             if(productId != null)
             {
@@ -91,7 +93,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/ProductPromotions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,DiscountPercent,IsActive,ProductId")] ProductPromotion productPromotion)
+		[Authorize(policy: Permissions.Promotions.Create)]
+		public async Task<IActionResult> Create([Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,DiscountPercent,IsActive,ProductId")] ProductPromotion productPromotion)
         {
 			if (_services.ProductPromotionExists(productPromotion.Id))
 			{
@@ -116,8 +119,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(productPromotion);
         }
 
-        // GET: Admin/ProductPromotions/Edit/5
-        public async Task<IActionResult> Edit(string id)
+		// GET: Admin/ProductPromotions/Edit/5
+		[Authorize(policy: Permissions.Promotions.Edit)]
+		public async Task<IActionResult> Edit(string id)
         {
             if (id == null || !_services.HasAnyPPromotion())
             {
@@ -136,7 +140,8 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/ProductPromotions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,DiscountPercent,IsActive,ProductId")] ProductPromotion productPromotion)
+		[Authorize(policy: Permissions.Promotions.Edit)]
+		public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Description,ApplyFrom,ValidTo,Stock,DiscountPercent,IsActive,ProductId")] ProductPromotion productPromotion)
         {
             if (id != productPromotion.Id)
             {
@@ -172,6 +177,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         }
 
 		[HttpPost, ActionName("DeleteAsync")]
+		[Authorize(policy: Permissions.Promotions.Delete)]
 		public async Task<IActionResult> DeleteAsync(string id)
 		{
 			if (!_services.HasAnyPPromotion())

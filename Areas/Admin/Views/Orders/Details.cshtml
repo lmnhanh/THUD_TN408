@@ -1,67 +1,155 @@
 ﻿@model THUD_TN408.Models.Order
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết đơn hàng";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Details</h1>
-
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsPaid)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsPaid)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsTrans)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsTrans)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsSuccess)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsSuccess)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Payment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Payment.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Promotion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Promotion.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductPromotion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductPromotion.Id)
-        </dd>
-    </dl>
+<div class="pagetitle">
+    <h1>Thông tin chi tiết đơn hàng</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Admin/HomePage/Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/Admin/Orders/Index">Danh sách đơn hàng</a></li>
+            <li class="breadcrumb-item active"><a href="/Admin/Orders/Details/@Model.Id">Chi tiết</a></li>
+        </ol>
+    </nav>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-8 col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title title-collapse text-center my-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInfo">Thông tin đơn hàng</h5>
+                <div class="collapse show" id="collapseInfo">
+                    <table class="table table-hover">
+                        <tr>
+                            <td class="fw-bold">ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Khách hàng</td>
+                            <td><a asp-action="Info" asp-controller="Users" asp-route-id="@Model.UserId" class="text-decoration-none">@Model.UserId</a></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Giá trị đơn hàng</td>
+                            <td>@String.Format("{0:#,##0 VND}", Model.Total)</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Ngày tạo</td>
+                            <td>@Model.CreatedDate</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Hình thức thanh toán</td>
+                            <td>@Model.Payment?.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Trạng thái</td>
+                            @if (Model.IsSuccess)
+                            {
+                                @if (Model.IsPaid)
+                                {
+                                    <td>
+                                        <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Thành công</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <span class="badge rounded-pill bg-danger"><i class="fa fa-xmark me-1"></i>Thất bại</span>
+                                    </td>
+                                }
+
+                            }
+                            else
+                            {
+                                @if (Model.IsTrans)
+                                {
+                                    <td>
+                                        <span class="badge rounded-pill bg-primary"><i class="fa fa-truck-fast me-1"></i>Đang vận chuyển</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <span class="badge rounded-pill bg-warning"><i class="fa fa-clock me-1"></i>Đang xử lí</span>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    </table>
+                    <div class="d-flex">
+                        <div class="mx-auto">
+                            <a class="btn btn-sm btn-info mx-auto" href="/Admin/Orders/Index" title="Danh sách"><i class="fa fa-bars "></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body" id="pagingDetail">
+                @{
+                    IEnumerable<Cart>? details = (IEnumerable<Cart>?)ViewData["ListDetails"];
+                }
+                <h5 class="card-title text-center">Danh sách sản phẩm</h5>
+                <table class="table table-hover datatable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Hình ảnh
+                            </th>
+                            <th>
+                                Kích cỡ
+                            </th>
+                            <th>
+                                Màu sắc
+                            </th>
+                            <th>
+                                Phái
+                            </th>
+                            <th>
+                                Giá bán
+                            </th>
+                            <th>
+                                Số lượng
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in details)
+                        {
+                            <tr>
+                                <td>
+                                    @if (detail.Detail.Image1 != null)
+                                    {
+                                        <img src="/images/products/@detail.Detail.Image1" height="50" width="50" />
+                                    }
+                                    @if (detail.Detail.Image2 != null)
+                                    {
+                                        <img src="/images/products/@detail.Detail.Image2" height="50" width="50" />
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelModel => detail.Detail.Size)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelModel => detail.Detail.Color)
+                                </td>
+                                <td class="align-middle">
+                                    @((detail.Detail.Gender) ? "Nam" : "Nữ")
+                                </td>
+                                <td class="align-middle">
+                                    @String.Format("{0:#,##0 VND}", detail.Detail.Amount)
+                                </td>
+                                <td class="align-middle">
+                                    @detail.Quantity
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

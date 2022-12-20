@@ -12,6 +12,9 @@
         <thead>
             <tr>
                 <th>
+                    ID
+                </th>
+                <th>
                     Hình ảnh
                 </th>
                 <th>
@@ -39,10 +42,10 @@
     @if (!Model.IsFirstPage || !Model.IsLastPage)
     {
         <nav>
-            @Html.PagedListPager(Model, page => Url.ActionLink("Paging","ProductDetails", new {page = page}), new PagedListRenderOptions()
+            @Html.PagedListPager(Model, page => Url.ActionLink("Paging","ProductDetails", new {page = page, productId =  ViewData["productId"]}), new PagedListRenderOptions()
             {
                 ActiveLiElementClass = "active",
-                PageClasses = new[]{ "page-link"},
+                PageClasses = new[]{ "page-link", "details"},
                 LiElementClasses=new[] { "page-item" },
                 LinkToFirstPageFormat = "<i class=\"fa fa-angles-left\"></i>",
                 LinkToLastPageFormat = "<i class=\"fa fa-angles-right\"></i>",
@@ -64,7 +67,7 @@ else
     </div>
 }
 <script>
-    var links = document.querySelectorAll(".page-link");
+    var links = document.querySelectorAll(".page-link.details");
     links.forEach(link => {
         link.addEventListener("click", ()=>{
             event.preventDefault();

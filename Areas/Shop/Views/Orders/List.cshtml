@@ -1,0 +1,39 @@
+﻿@model IEnumerable<THUD_TN408.Models.Order>
+@{
+    ViewData["Title"] = "Lịc sử mua hàng";
+    Layout = "/Areas/Shop/Views/Shared/_Layout.cshtml";
+}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        @if (Model?.Any() == true)
+        {
+            <h5 class="text-center">Lịch sử mua hàng</h5>
+            <table class="table table-hover datatable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>
+                            Ngày đặt
+                        </th>
+                        <th>
+                            Tổng giá trị
+                        </th>
+                        <th>
+                            Trạng thái
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <partial name="_Order" model="product" />
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h6 class="card-title text-center">Lịch sử mua hàng trống!</h6>
+        }
+    </div>
+</div>

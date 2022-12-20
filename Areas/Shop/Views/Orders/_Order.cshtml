@@ -1,0 +1,41 @@
+﻿@model THUD_TN408.Models.Order
+
+@if (Model != null)
+{
+    <tr id="order_@Model.Id">
+        <td>
+            @Html.DisplayFor(modelModel => Model.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelModel => Model.CreatedDate)
+        </td>
+        <td>
+            @string.Format("{0:#,##0 VND}", Model.Total)
+        </td>
+        @if (Model.IsSuccess)
+        {
+            @if(Model.IsPaid){
+                <td>
+                    <span class="badge rounded-pill bg-success"><i class="fa fa-check me-1"></i>Thành công</span>
+                </td>
+            }else{
+                <td>
+                    <span class="badge rounded-pill bg-danger"><i class="fa fa-xmark me-1"></i>Thất bại</span>
+                </td>
+            }
+            
+        }
+        else
+        {
+            @if(Model.IsTrans){
+                <td>
+                    <span class="badge rounded-pill bg-info"><i class="fa fa-truck-fast me-1"></i>Đang vận chuyển</span>
+                </td>
+            }else{
+                <td>
+                    <span class="badge rounded-pill bg-warning"><i class="fa fa-clock me-1"></i>Đang xử lí</span>
+                </td>
+            }
+        }
+    </tr>
+}

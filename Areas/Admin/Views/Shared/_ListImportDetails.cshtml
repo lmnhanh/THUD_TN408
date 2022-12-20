@@ -1,0 +1,19 @@
+﻿@model IEnumerable<THUD_TN408.Models.ImportDetail>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Sản phẩm
+            </th>
+            <th>
+                Số lượng
+            </th>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <partial name="_ImportDetail" model="item"/>
+        }
+    </tbody>
+</table>

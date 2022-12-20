@@ -9,13 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using THUD_TN408.Areas.Admin.Service;
+using THUD_TN408.Authorization;
 using THUD_TN408.Data;
 using THUD_TN408.Models;
 using X.PagedList;
 
 namespace THUD_TN408.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize]
+    [Area("Admin"), Authorize(Roles = "Saleman,SuperAdmin,WarehouseManager")]
     public class CategoriesController : Controller
     {
 		private readonly Services _services;
@@ -61,8 +62,9 @@ namespace THUD_TN408.Areas.Admin.Controllers
 			return View(category);
         }
 
-        // GET: Admin/Categories/Create
-        public IActionResult Create()
+		// GET: Admin/Categories/Create
+		[Authorize(policy: Permissions.Categories.Create)]
+		public IActionResult Create()
         {
 			ViewData["page"] = "categories_create";
 			return View();
@@ -71,6 +73,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/Categories/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Authorize(policy: Permissions.Categories.Create)]
 		public async Task<IActionResult> Create([Bind("Id,Name,IsActive")] Category category)
 		{
 			if (ModelState.IsValid)
@@ -84,6 +87,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		}
 
 		// GET: Admin/Categories/Edit/5
+		[Authorize(policy: Permissions.Categories.Edit)]
 		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || !_services.HasAnyCategory())
@@ -103,6 +107,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
         // POST: Admin/Categories/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Authorize(policy: Permissions.Categories.Edit)]
 		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsActive")] Category category)
 		{
 			if (id != category.Id)
@@ -135,6 +140,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(policy: Permissions.Categories.Delete)]
 		public async Task<IActionResult> Delete(int id)
 		{
 			if (!_services.HasAnyCategory())
@@ -159,6 +165,7 @@ namespace THUD_TN408.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(policy: Permissions.Categories.Delete)]
 		public async Task<IActionResult> Recovery(int id)
 		{
 			if (!_services.HasAnyCategory())

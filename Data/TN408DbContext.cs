@@ -23,6 +23,11 @@ namespace THUD_TN408.Data
 		public DbSet<History> Histories { get; set; } = null!;
 		public DbSet<ProductPromotion> PPromotions { get; set; } = null!;
 		public DbSet<OrderPromotion> OPromotions { get; set; } = null!;
+		public DbSet<ImportNote> ImportNotes { get; set; } = null!;
+		public DbSet<ImportDetail> ImportDetails { get; set; } = null!;
+		public DbSet<Producer> Producers { get; set; } = null!;
+		public DbSet<Shipment> Shipments { get; set; } = null!;
+
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -39,17 +44,28 @@ namespace THUD_TN408.Data
 				user.HasMany<Cart>(u => u.Carts).WithOne(c => c.User).HasForeignKey(c => c.UserId);
 				user.HasMany<Order>(u => u.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId);
 				user.HasMany<History>(u => u.Histories).WithOne(h => h.User).HasForeignKey(h => h.UserId);
+				user.HasMany<ImportNote>(u => u.ImportNotes).WithOne(i => i.User).HasForeignKey(i => i.UserId);
 			});
 
 			builder.Entity<Product>(product =>
 			{
 				product.HasKey(p => p.Id);
 				product.Property("Id").ValueGeneratedOnAdd();
-				product.Property("Name").HasMaxLength(30);
+				product.Property("Name").HasMaxLength(40);
 				product.Property("Origin").HasMaxLength(15);
 				product.Property("Description").HasMaxLength(500);
 				product.HasMany<ProductDetail>(p => p.Details).WithOne(d => d.Product);
 				product.HasMany<ProductPromotion>(d => d.Promotions).WithOne(p => p.Product).HasForeignKey(p => p.ProductId);
+			});
+
+			builder.Entity<Producer>(producer =>
+			{
+				producer.HasKey(producer => producer.Id);
+				producer.Property("Id").ValueGeneratedOnAdd();
+				producer.Property("Name").HasMaxLength(40);
+				producer.Property("PhoneNumber").HasMaxLength(15);
+				producer.Property("Email").HasMaxLength(100);
+				producer.HasMany<Product>(pr => pr.Products).WithOne(p => p.Producer).HasForeignKey(p => p.ProducerId);
 			});
 
 			builder.Entity<ProductDetail>(detail =>
@@ -63,6 +79,7 @@ namespace THUD_TN408.Data
 				detail.Property("Image2").HasMaxLength(50);
 				detail.HasMany<Cart>(d => d.Carts).WithOne(c => c.Detail);
 				detail.HasMany<Price>(d => d.Prices).WithOne(p => p.Detail);
+				detail.HasMany<ImportDetail>(d => d.ImportDetails).WithOne(i => i.ProductDetail).HasForeignKey(i => i.ProductDetailId);
 			});
 
 			builder.Entity<Warehouse>(warehouse =>
@@ -71,6 +88,7 @@ namespace THUD_TN408.Data
 				warehouse.Property("Id").ValueGeneratedOnAdd();
 				warehouse.Property("Name").HasMaxLength(30);
 				warehouse.Property("Address").HasMaxLength(100);
+				warehouse.HasMany<ImportNote>(wh => wh.ImportNotes).WithOne(i => i.Warehouse).HasForeignKey(i => i.WarehouseId);
 			});
 
 			builder.Entity<WarehouseDetail>(wDetail =>
@@ -78,6 +96,19 @@ namespace THUD_TN408.Data
 				wDetail.HasKey(wd => new { wd.WarehouseId, wd.ProductDetailId});
 				wDetail.HasOne<ProductDetail>(wd => wd.ProductDetail).WithMany(d => d.StockDetails);
 				wDetail.HasOne<Warehouse>(wd => wd.Warehouse).WithMany(w => w.Details);
+			});
+
+			builder.Entity<ImportNote>(note =>
+			{
+				note.HasKey(note => note.Id);
+				note.Property("Id").ValueGeneratedOnAdd();
+			});
+
+			builder.Entity<ImportDetail>(iDetail =>
+			{
+				iDetail.HasKey(id => new {id.ImportNoteId, id.ProductDetailId });
+				iDetail.HasOne<ProductDetail>(id => id.ProductDetail).WithMany(d => d.ImportDetails);
+				iDetail.HasOne<ImportNote>(id => id.ImportNote).WithMany(i => i.Details);
 			});
 
 			builder.Entity<Category>(category =>
@@ -93,14 +124,22 @@ namespace THUD_TN408.Data
 				payment.HasKey(p => p.Id);
 				payment.Property("Id").ValueGeneratedOnAdd();
 				payment.Property("Name").HasMaxLength(30);
-				payment.HasMany<Order>(p => p.Orders).WithOne(o => o.Payment);
+				payment.HasMany<Order>(p => p.Orders).WithOne(o => o.Payment).HasForeignKey(o => o.PaymentId);
+			});
+
+			builder.Entity<Shipment>(shipment =>
+			{
+				shipment.HasKey(p => p.Id);
+				shipment.Property("Id").ValueGeneratedOnAdd();
+				shipment.Property("Name").HasMaxLength(30);
+				shipment.HasMany<Order>(p => p.Orders).WithOne(o => o.Shipment).HasForeignKey(o => o.ShipmentId);
 			});
 
 			builder.Entity<Order>(order =>
 			{
 				order.HasKey(o => o.Id);
 				order.Property("Id").ValueGeneratedOnAdd();
-				order.Property("CreatedDate").HasDefaultValue(DateTime.UtcNow).HasColumnName("Created_at");
+				order.Property("CreatedDate").HasColumnName("Created_at");
 				order.Property("IsTrans").HasDefaultValue(false);
 				order.Property("IsSuccess").HasDefaultValue(false);
 				order.HasMany<Cart>(o => o.Carts).WithOne(c => c.Order).OnDelete(DeleteBehavior.NoAction);
@@ -110,7 +149,6 @@ namespace THUD_TN408.Data
 			{
 				cart.HasKey(c => c.Id);
 				cart.Property("Id").ValueGeneratedOnAdd();
-				cart.Property("IsDeleted").HasDefaultValue(false);
 				cart.Property("IsCheckedOut").HasDefaultValue(false);
 				cart.Property("OrderId").IsRequired(false);
 			});
@@ -119,7 +157,6 @@ namespace THUD_TN408.Data
 			{
 				price.HasKey(p => p.Id);
 				price.Property("Id").ValueGeneratedOnAdd();
-				price.Property("ApplyFrom").HasDefaultValue(DateTime.UtcNow);
 			});
 
 			builder.Entity<History>(history =>
@@ -137,7 +174,6 @@ namespace THUD_TN408.Data
 				ppromotion.Property("Id").HasMaxLength(12).IsRequired(true);
 				ppromotion.Property("Name").HasMaxLength(30).IsRequired(true);
 				ppromotion.Property("Description").HasMaxLength(100).IsRequired(true);
-				ppromotion.HasMany<Order>(p => p.Orders).WithOne(o => o.ProductPromotion).HasForeignKey(o => o.ProductPromotionId);
 			});
 
 			builder.Entity<OrderPromotion>(opromotion =>
@@ -148,7 +184,6 @@ namespace THUD_TN408.Data
 				opromotion.Property("Description").HasMaxLength(100).IsRequired(true);
 				opromotion.Property("MaxDiscount").IsRequired(false);
 				opromotion.Property("ApplyCondition").IsRequired(false);
-				opromotion.HasMany<Order>(p => p.Orders).WithOne(o => o.Promotion).HasForeignKey(o => o.OrderPromotionId);
 			});
 
 			builder.Entity<IdentityRole>(entity =>

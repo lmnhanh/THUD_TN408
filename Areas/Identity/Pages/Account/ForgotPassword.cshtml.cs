@@ -45,7 +45,7 @@ namespace THUD_TN408.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Email không được trống")]
             [EmailAddress]
             public string Email { get; set; }
         }
@@ -74,7 +74,7 @@ namespace THUD_TN408.Areas.Identity.Pages.Account
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    $"Nhấn <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>vào đây</a> để tiến hành đặt lại mật khẩu.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

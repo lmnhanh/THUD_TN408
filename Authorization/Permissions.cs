@@ -19,6 +19,13 @@
 			public const string Edit = "Permissions.Products.Edit";
 			public const string Delete = "Permissions.Products.Delete";
 		}
+		public static class Producers
+		{
+			public const string View = "Permissions.Producers.View";
+			public const string Create = "Permissions.Producers.Create";
+			public const string Edit = "Permissions.Producers.Edit";
+			public const string Delete = "Permissions.Producers.Delete";
+		}
 
 		public static class Categories
 		{
@@ -30,10 +37,10 @@
 
 		public static class StaffAccounts
 		{
-			public const string View = "Permissions.Accounts.View";
-			public const string Create = "Permissions.Accounts.Create";
-			public const string Edit = "Permissions.Accounts.Edit";
-			public const string Delete = "Permissions.Accounts.Delete";
+			public const string View = "Permissions.StaffAccounts.View";
+			public const string Create = "Permissions.StaffAccounts.Create";
+			public const string Edit = "Permissions.StaffAccounts.Edit";
+			public const string Delete = "Permissions.StaffAccounts.Delete";
 		}
 
 		public static class CustomerAccounts
@@ -76,10 +83,26 @@
 
 		public static class Payments
 		{
-			public const string View = "Permissions.Warehouses.View";
-			public const string Create = "Permissions.Warehouses.Create";
-			public const string Edit = "Permissions.Warehouses.Edit";
-			public const string Delete = "Permissions.Warehouses.Delete";
+			public const string View = "Permissions.Payments.View";
+			public const string Create = "Permissions.Payments.Create";
+			public const string Edit = "Permissions.Payments.Edit";
+			public const string Delete = "Permissions.Payments.Delete";
+		}
+
+		public static class Shipments
+		{
+			public const string View = "Permissions.Shipments.View";
+			public const string Create = "Permissions.Shipments.Create";
+			public const string Edit = "Permissions.Shipments.Edit";
+			public const string Delete = "Permissions.Shipments.Delete";
+		}
+
+		public static class ImportNotes
+		{
+			public const string View = "Permissions.ImportNotes.View";
+			public const string Create = "Permissions.ImportNotes.Create";
+			public const string Edit = "Permissions.ImportNotes.Edit";
+			public const string Delete = "Permissions.ImportNotes.Delete";
 		}
 	}
 }

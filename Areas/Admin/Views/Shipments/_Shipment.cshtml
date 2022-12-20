@@ -1,0 +1,21 @@
+﻿@model THUD_TN408.Models.Shipment
+<tr>
+    <td>
+        @Model.Id
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Name)
+    </td>
+    <td>
+        <div class="btn-group dropdown text-black">
+            <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Tùy chọn
+            </button>
+            <ul class="dropdown-menu">
+                <a class="dropdown-item" asp-action="Edit" asp-route-Id="@Model.Id"><i class="fas fa-pen-to-square me-2 text-primary"></i>Chỉnh sửa</a>
+                <a class="dropdown-item" asp-action="Details" asp-route-id="@Model.Id"><i class="fa fa-circle-info me-2 text-info"></i>Chi tiết</a>
+                <a class="dropdown-item" asp-action="Delete" asp-route-id="@Model.Id"><i class="fas fa-trash-can me-2 text-danger"></i>Xóa</a>
+            </ul>
+        </div>
+    </td>
+</tr>

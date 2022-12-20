@@ -1,5 +1,18 @@
-﻿@{
-    Layout = "_Layout";
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<THUD_TN408.Models.ProductDetail>
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "/Areas/Shop/Views/Shared/_Layout.cshtml";
 }
-<div>Hello</div>
+<div class="row">
+    @foreach(var product in Model){
+        <partial name="_ProductCard" model="product"/>
+    }
+</div>
+<partial name="_Service" />
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_CartScriptPartial");
+    }
+}
